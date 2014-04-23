@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Monkey PHP Framework</title>
+<link type="text/css" href="statics/css/base.css" rel="stylesheet" />
+<script type="text/javascript" src="statics/js/jquery.min.js"></script>
+<!--prettify-->
+<link type="text/css" href="statics/css/prettify.css" rel="stylesheet" />
+<script type="text/javascript" src="statics/js/prettify.js"></script>
+<script type="text/javascript" src="statics/js/html5.js"></script>
+<script type="text/javascript" src="statics/js/monkey.js"></script>
+</head>
+
+<body>
+<!--page_wrap:start-->
+<div class="page_wrap">
+
+<p>
+<h2>1.7  URL 路由解析</h2>
+<br />
+<b>路由解析器的构成：路由器+路由表。</b><br />
+这使得站长可以随时在线编辑路由表，从而更方便的控制网站。<br />
+<b>URL 中路由字符串的查找模式</b><br />
+
+（1）rewrite：http://… /www/route.html 或 http://… /www/route<br />
+（2）pathinfo：http://… /www/index.php/route<br />
+（3）get：http://… /www/index.php?r=route<br /><br />
+
+<b>查找原理：</b><br />
+路由组件先编译路由表，目的是可以让查询既高效又强大。
+<br />
+路由匹配虽然使用了正则表达式，但是巧妙的编译方式使得查询匹配过程非常高效。
+
+<b>注意：</b><br />
+（1）当选择 rewrite 查找模式时需要服务器支持，比如 apache 的.htaccess 文件（位置在 www 目录下）：<br />
+
+<pre class="prettyprint linenums">
+&lt;IfModule mod_rewrite.c&gt;
+RewriteEngine On
+#RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]
+&lt;/IfModule&gt;
+</pre>
+
+（2）当选择 pathinfo 查找模式也需要服务器支持，开启方法请百度哈。注意，IIS默认只支持pathinfo。<br />
+
+</p>
+
+
+</div>
+<!--page_wrap:end-->
+</body>
+</html>
