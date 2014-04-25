@@ -2,10 +2,10 @@
 namespace Monkey\Router;
 
 /**
- * 路由组件 Router
+ * Router
+ * 路由组件
  * @package Monkey\Router
  */
-
 class Router
 {
     public
@@ -37,7 +37,7 @@ class Router
     public function __construct($app)
     {
         $this->app=$app;
-        $config= $app->config->getComponentConfig('router','default');
+        $config= $app->config()->getComponentConfig('router','default');
         $this->config= $config;
         $this->root= $app->FRONT_ROOT_URL;
         $this->resource= $this->root;

@@ -1,13 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-3-1
- * Time: 下午10:28
- */
-
 namespace Monkey\View;
 
+/**
+ * View
+ * 视图组件
+ * @package Monkey\View
+ */
 class View {
 
     protected
@@ -49,7 +47,7 @@ class View {
     public function __construct($app)
     {
         $this->app=$app;
-        $this->config=$app->config->getComponentConfig('view','default');
+        $this->config=$app->config()->getComponentConfig('view','default');
         $this->themeUrlBase=$app->FRONT_ROOT_URL.$this->config['theme_url_base'];
         $this->themeDirName=$this->config['theme_dir'];
         $this->template= new Template($app,$this->config);

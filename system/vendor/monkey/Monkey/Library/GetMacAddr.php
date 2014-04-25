@@ -1,9 +1,12 @@
 <?php
-    /**
-    获取网卡的MAC地址原码；目前支持WIN/LINUX系统
-    获取机器网卡的物理（MAC）地址
-    **/
+namespace Library;
 
+/**
+ * GetMacAddr
+ * 网卡MAC地址原码获取类
+ * 目前支持WIN/LINUX系统
+ * @package Library
+ */
 class GetMacAddr{
 
         var $return_array = array(); // 返回带有MAC地址的字串数组

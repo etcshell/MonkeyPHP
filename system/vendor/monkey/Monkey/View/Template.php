@@ -2,10 +2,10 @@
 namespace Monkey\View;
 
 /**
- * 模板组件 Template
+ * Template
+ * 模板类
  * @package \Monkey\View
  */
-
 class Template
 {
     private static

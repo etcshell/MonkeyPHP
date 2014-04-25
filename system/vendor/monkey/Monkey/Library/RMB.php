@@ -8,6 +8,15 @@ namespace Library;
  * $rmb=$cn->to_rmb($num);
  * $date=$cn->to_date();
  */
+/**
+ * RMB
+ * 人民币处理类
+ * @package Library
+ *
+ * $cn=new rmb();
+ * $rmb=$cn->to_rmb($num);
+ * $date=$cn->to_date();
+ */
 class RMB {
     /**
      * 将数字金额转换为人民币金额

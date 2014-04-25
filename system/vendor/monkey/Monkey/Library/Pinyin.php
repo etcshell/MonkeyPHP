@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 汉字拼音工具 pinyin
+ * Pinyin
+ * 汉字拼音转换类
+ * @package Library
  */
 class Pinyin {
     private $_lib; //汉字ASCII码库

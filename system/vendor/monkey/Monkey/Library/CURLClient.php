@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * curl工具
+ * CURLClient
+ * curl客户端类
+ * @package Library
  */
 final class CURLClient {
     private $_cookie_file; //cookie保存路径

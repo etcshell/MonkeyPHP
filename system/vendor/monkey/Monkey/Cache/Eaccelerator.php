@@ -4,19 +4,22 @@ namespace Monkey\Cache;
 use Monkey\Cache;
 
 /**
- * cache的Eaccelerator实现\Monkey\Cache\Eaccelerator
+ * Eaccelerator
+ * cache的Eaccelerator实现
+ * @package Monkey\Cache
  */
 class Eaccelerator implements Cache
 {
     private $_expire = 3600;
+
     /**
-     * eaccelerator缓存实现
+     * @param \Monkey\App\App $app
      */
     public function __construct($app)
     {
         if(!extension_loaded('eaccelerator'))
-            throw new \Exception('没有安装eaccelerator扩展,请先在php.ini中配置安装eaccelerator。');
-        $config=$app->config->getComponentConfig('cache','eaccelerator');
+            $app->exception('没有安装eaccelerator扩展,请先在php.ini中配置安装eaccelerator。');
+        $config=$app->config()->getComponentConfig('cache','eaccelerator');
         $this->_expire=$config['expire'];
     }
 

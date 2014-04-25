@@ -1,6 +1,11 @@
 <?php
 namespace Monkey;
 
+/**
+ * Container
+ * 依赖容器类
+ * @package Monkey
+ */
 class Container {
     private static
         $app,
@@ -13,7 +18,7 @@ class Container {
     public function __construct($app)
     {
         self::$app=$app;
-        self::$config= $app->config;
+        self::$config= $app->config();
     }
 
     /**

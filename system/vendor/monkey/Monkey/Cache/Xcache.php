@@ -3,19 +3,22 @@ namespace Monkey\Cache;
 use Monkey\Cache;
 
 /**
- * cache的xcache实现\Monkey\Cache\Xcache
+ * Xcache
+ * cache的xcache实现
+ * @package Monkey\Cache
  */
 class Xcache implements Cache
 {
     private $_expire = 3600;
+
     /**
      * @param \Monkey\App\App $app
      */
     public function __construct($app)
     {
         if(!extension_loaded('xcache'))
-            throw new \Exception('没有安装xcache扩展,请先在php.ini中配置安装xcache。');
-        $config=$app->config->getComponentConfig('cache','xcache');
+            $app->exception('没有安装xcache扩展,请先在php.ini中配置安装xcache。');
+        $config=$app->config()->getComponentConfig('cache','xcache');
         $this->_expire=$config['expire'];
     }
 
@@ -30,6 +33,7 @@ class Xcache implements Cache
         if($time==-1 ) $time=$this->_expire;
         return xcache_set($key, serialize($value), $time);
     }
+
     /**
      * 读取缓存
      * @param string $key       要读取的缓存项目名称
@@ -42,6 +46,7 @@ class Xcache implements Cache
         $result=unserialize(xcache_get($key));
         return TRUE;
     }
+
     /**
      * 清除缓存
      * @return $this
@@ -49,6 +54,7 @@ class Xcache implements Cache
     public function clear(){
         return TRUE;//xcache_clear_cache只能在管理端使用
     }
+
     /**
      * 删除缓存单元
      * @param string $key

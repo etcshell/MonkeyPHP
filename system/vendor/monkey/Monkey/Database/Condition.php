@@ -4,7 +4,9 @@ namespace Monkey\Database;
 use \Countable;
 
 /**
+ * Condition
  * 条件类
+ * @package Monkey\Database
  */
 class Condition implements Countable
 {

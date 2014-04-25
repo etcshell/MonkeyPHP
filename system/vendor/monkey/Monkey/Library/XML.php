@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * xml工具
+ * XML
+ * xml编码解码类
+ * @package Library
  */
 class XML
 {

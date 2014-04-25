@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * email工具
+ * Email
+ * 电子邮件处理类
+ * @package Library
  */
 final class Email {
     var $smtp_port;

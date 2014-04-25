@@ -1,14 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-3-2
- * Time: 下午9:45
- */
-
 namespace Monkey\View;
 
-
+/**
+ * Widget
+ * 挂件抽象基类
+ * @package Monkey\View
+ */
 abstract class Widget extends View {
 
     protected

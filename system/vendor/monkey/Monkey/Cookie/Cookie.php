@@ -2,8 +2,8 @@
 namespace Monkey\Cookie;
 
 /**
- * cookie工具\Monkey\Cookie\Cookie
- *
+ * Cookie
+ * @package Monkey\Cookie
  */
 final class Cookie
 {
@@ -19,7 +19,7 @@ final class Cookie
      * @param \Monkey\App\App $app
      */
     public function __construct($app){
-        $config=$app->config->getComponentConfig('cookie','default');
+        $config=$app->config()->getComponentConfig('cookie','default');
         $this->TIME=$app->TIME;
         $this->prefix= $config['prefix'];
         $this->defExpire= $config['defExpire'];

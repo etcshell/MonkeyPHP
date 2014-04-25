@@ -1,6 +1,11 @@
 <?php
 namespace Monkey;
 
+/**
+ * Exception
+ * 异常接管类
+ * @package Monkey
+ */
 class Exception extends \Exception{
 
     private static
@@ -24,6 +29,7 @@ class Exception extends \Exception{
         parent::__construct($message,$code);
         $this->file= is_null($file)? parent::getFile() : $file;
         $this->line= is_null($line)? parent::getLine() : $line;
+        $app=Monkey::app();
         $backtrace=debug_backtrace();
         $info=$backtrace[0];
         $lines=file($info['file']);
@@ -44,11 +50,11 @@ class Exception extends \Exception{
             $lines=file($info['file']);
             $info['source']=trim($lines[$info['line']-1]);
         }
-        $info['time']=date('Y-m-d H:i:s',TIME);
+        $info['time']=date('Y-m-d H:i:s',$app->TIME);
         $info['title']= isset(self::$_title[$this->code])? self::$_title[$this->code] : '应用程序错误';
         $info['code']=$this->code;
-        $info['path']= Monkey::app()->request()->getUri();
-        $info['ip'] = Monkey::app()->request()->getIP();
+        $info['path']= $app->request()->getUri();
+        $info['ip'] = $app->request()->getIP();
         $info['message']=$this->message;
         foreach ($backtrace as $key=>$value){
             $lines=file($value['file']);
@@ -57,7 +63,7 @@ class Exception extends \Exception{
         }
         $info['backtrace']=print_r($backtrace, true);
         self::$_errorInfo=$info;
-        !DEBUG and Monkey::app()->logger()->error(self::$_errorInfo);
+        !$app->DEBUG and $app->logger()->error(self::$_errorInfo);
     }
 
     public static function getErrorInfo(){

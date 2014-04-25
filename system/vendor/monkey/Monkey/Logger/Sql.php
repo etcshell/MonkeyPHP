@@ -2,10 +2,10 @@
 namespace Monkey\Logger;
 
 /**
- * 数据库错误日志工具 Sql
+ * Sql
+ * 数据库错误日志类
  * @package Monkey\Logger
  */
-
 class Sql implements _Interface
 {
     private static

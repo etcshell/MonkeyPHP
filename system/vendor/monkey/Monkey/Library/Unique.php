@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 唯一码工具 unique
+ * Unique
+ * 唯一码生成类
+ * @package Library
  */
 final class Unique
 {

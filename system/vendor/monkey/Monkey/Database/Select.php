@@ -2,10 +2,10 @@
 namespace Monkey\Database;
 
 /**
- * 数据查询工具 Select
+ * Select
+ * 数据选择查询类
  * @package Monkey\Database
  */
-
 class Select
 {
     /**
@@ -257,6 +257,7 @@ class Select
     }
 
     /**
+     * exists
      * @param Select $select
      * @return $this
      */
@@ -266,6 +267,7 @@ class Select
     }
 
     /**
+     * notExists
      * @param Select $select
      * @return $this
      */
@@ -378,7 +380,6 @@ class Select
         isset($set) and $this->forUpdate = $set;
         return $this;
     }
-
 
     /**
      * 获取结果集字段列表

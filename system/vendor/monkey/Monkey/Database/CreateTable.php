@@ -2,10 +2,10 @@
 namespace Monkey\Database;
 
 /**
- * 数据表库创建工具 SqlBuilderForCreateTable
+ * CreateTable
+ * 数据表创建语句生成类
  * @package Monkey\Database
  */
-
 class CreateTable
 {
     /**

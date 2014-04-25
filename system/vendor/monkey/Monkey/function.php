@@ -1,10 +1,5 @@
 <?php
 
-// 统计程序运行时间
-function run_time() {
-    return number_format(microtime(true) - TIME, 6);
-}
-
 /**
  * 格式化目录变量：1、分隔符统一替换为'/'2、末尾统一去掉'/'
  * @param string $dir 待格式化的字符串
@@ -61,6 +56,7 @@ function dump($var, $echo=true, $label=null, $strict=true) {
         return $output;
     }
 }
+
 /**
  * 公用通知包装
  * @param bool $status 状态
@@ -72,6 +68,7 @@ function notice($status,$info,$type='array'){
     $data=array('status'=>(bool)$status,'info'=>$info);
     return $type==='json'?json_encode($data):$data;
 }
+
 //如果json_encode没有定义，则定义json_encode函数，常用于返回ajax数据
 if (!function_exists('json_encode')){
     /**
@@ -124,6 +121,7 @@ if (!function_exists('json_encode')){
         return $json;
     }
 }
+
 /**
  *
  * 获取接受JS传递中文编码
@@ -157,6 +155,7 @@ function unescape_js_cn($data){
     }
     return $ret;
 }
+
 /**
  * 转义变量 用于安全调用，如SQL值
  * @param array|string $data 字符或数组
@@ -214,6 +213,7 @@ function dir_check_writable($targetDir){
     elseif(!is_writable($targetDir) && !@chmod($targetDir,0777))return false;
     return true;
 }
+
 /**
  * @static
  * 检查目录是否存在
@@ -239,6 +239,7 @@ function dir_check(&$targetDir) {
     }
     return true;
 }
+
 /**
  * @static
  * 递归删除文件夹
@@ -264,6 +265,7 @@ function dir_delete($targetDir) {
     }
     return TRUE;
 }
+
 /**
  * @static
  * 将一个文件夹内容，复制或移动到另一个文件夹
@@ -317,6 +319,7 @@ function file_save_variable($file, $variable){
 function file_save_serialize($file,$variable){
     file_put_contents($file,serialize($variable),LOCK_EX); //echo '<br/>保存扫描结果到缓存文件中...<br/>';
 }
+
 /**
  * 从一个序列化文件中读取并还原变量
  * @param string $file 文件名
@@ -325,6 +328,7 @@ function file_save_serialize($file,$variable){
 function file_read_serialize($file){
     return unserialize(file_get_contents($file));
 }
+
 /**
  * @static
  * 将文件名的扩展名去掉，支持中文名
@@ -337,6 +341,7 @@ function file_basename($filename){
     $extLen = 1+strlen($pathinfo['extension']);
     return  substr($pathinfo['basename'], 0, 0-$extLen);
 }
+
 /**
  * @static
  * 字节数转换成MB格式等
@@ -354,6 +359,7 @@ function bit_to_size($bit) {
     }
     return $bit.$type[$j];
 }
+
 /**
  * @static
  * MB等字符大小格式转换成字节数
@@ -377,6 +383,7 @@ function size_to_bit($size){
     }
     return $bit;
 }
+
 /**
  * @static
  * 生成客户端可访问的路径（前端绝对路径）
@@ -387,6 +394,7 @@ function file_to_url($real_path){
     $url=substr($real_path, strlen($_SERVER['DOCUMENT_ROOT']));
     return $url[0]=='/'?$url:'/'.$url;
 }
+
 /**
  * ddos拦截防御
  */
@@ -499,7 +507,6 @@ function gz_start()
     }
     */
 }
-
 
 function framework_exception_handler(\Exception $e) {
     throw new Monkey\Exception($e->getMessage(),$e->getCode(),$e->getFile(),$e->getLine());

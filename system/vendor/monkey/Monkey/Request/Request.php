@@ -2,10 +2,10 @@
 namespace Monkey\Request;
 
 /**
- * 请求组件 Request
+ * Request
+ * Web请求组件
  * @package Monkey\Request
  */
-
 class Request
 {
     private

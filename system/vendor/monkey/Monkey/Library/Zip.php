@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 压缩解压工具 zip
+ * Zip
+ * Zip算法压缩解压类
+ * @package Library
  */
 class Zip{
     protected $datasec = array();

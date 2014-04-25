@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 模拟http协议和别的网站进行通讯类 http
+ * HttpClient
+ * http客户端类
+ * @package Library
  */
 class HttpClient {
     private $_defaultFlen  = 8192;//fread默认读取最大长度

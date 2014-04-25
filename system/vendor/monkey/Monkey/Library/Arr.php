@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 数组工具
+ * Arr
+ * 数组类
+ * @package Library
  */
 class Arr
 {

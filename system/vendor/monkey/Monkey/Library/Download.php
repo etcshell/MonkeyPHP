@@ -1,10 +1,10 @@
 <?php
 namespace Library;
 
-use \Monkey\Exception;
-
 /**
- * Download下载工具
+ * Download
+ * 文件下载类
+ * @package Library
  */
 class Download
 {

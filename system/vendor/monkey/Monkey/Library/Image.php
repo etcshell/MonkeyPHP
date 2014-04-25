@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 图像生成和处理工具 Image
+ * Image
+ * 图像生成和处理类
+ * @package Library
  */
 class Image {
     /**

@@ -1,8 +1,11 @@
 <?php
 namespace Monkey\Session;
 use Monkey\Session;
+
 /**
- * Session的File实现
+ * File
+ * Session的FileCache实现
+ * @package Monkey\Session
  */
 class File extends Session
 {
@@ -37,7 +40,7 @@ class File extends Session
     public function __construct($app)
     {
         $this->app=$app;
-        $this->config= $config= $app->config->getComponentConfig('session','file');
+        $this->config= $config= $app->config()->getComponentConfig('session','file');
         $this->TIME=$app->TIME;
         $this->_cache_path=$app->DIR.($config['dir']?$config['dir']:'/temp/sessionCache');
         $this->_cache_file=$config['filename']?'/'.$config['filename']:'/data';

@@ -2,10 +2,10 @@
 namespace Monkey\Database;
 
 /**
- * 数据库事务工具 Transaction
+ * Transaction
+ * 数据库事务对象
  * @package Monkey\Database
  */
-
 class Transaction
 {
     /**

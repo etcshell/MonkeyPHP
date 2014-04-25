@@ -2,10 +2,10 @@
 namespace Monkey\Shutdown;
 
 /**
+ * Shutdown
  * Shutdown组件
  * @package Monkey\Shutdown
  */
-
 class Shutdown
 {
     private
@@ -23,7 +23,7 @@ class Shutdown
     {
         $this->app=$app;
         register_shutdown_function(array($this,'execute'), $this->calledByMe);
-        $config=$app->config->getComponentConfig('shutdown', 'default');
+        $config=$app->config()->getComponentConfig('shutdown', 'default');
         foreach($config as $call){
             $this->register($call);
         }
@@ -45,11 +45,18 @@ class Shutdown
         $this->Callbacks[]=$Callback;
     }
 
+    /**
+     * 不建议使用，框架内部方法
+     * @return array
+     */
     public function getCallbacks()
     {
         return $this->Callbacks;
     }
 
+    /**
+     * 不建议使用，框架内部方法
+     */
     public function execute()
     {
         if(func_get_arg(0)!=$this->calledByMe)return;

@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * date日期工具
+ * Date
+ * 日期工具类
+ * @package Library
  */
 class Date {
     private $year, $month, $day;  //定义年 月 日

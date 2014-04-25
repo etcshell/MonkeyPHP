@@ -15,30 +15,19 @@ class Index extends Web{
     public function action_index()
     {
         //演示使用响应对象向浏览器发送内容
-        $response=$this->getResponse();
-        //$response->setCache('test',60);
-        $response->writeLine('测试 response::writeLine');
-        $response->writeLine('');
+        $this->writeLine('测试 response::writeLine');
+        $this->writeLine('');
         $param=$this->getRouteParameter();
         if(empty($param)){
-            $response->writeLine('--你好hello!--');
+            $this->writeLine('--你好hello!--');
         }
         if($param['language']=='zh'){
-            $response->writeLine('--你好!--');
+            $this->writeLine('--你好!--');
         }
         if($param['language']=='en'){
-            $response->writeLine('--hello!--');
+            $this->writeLine('--hello!--');
         }
-        //ob_start();
-        //ob_end_flush();
-        //response()->HttpHeader()->setContentType();
-
-        $response->writeLine(date('Y-m-d H:i:s'));
-
-        //$data=db()->select('role')->where('rid',1)->execute(1)->fetch();
-
-        //dump($data);
-
+        $this->writeLine(date('Y-m-d H:i:s'));
     }
 
     /**
@@ -47,7 +36,7 @@ class Index extends Web{
      */
     public function action_hello()
     {
-        echo '测试hello!<br/>';
+        $this->writeLine('测试hello!');
     }
 
 }

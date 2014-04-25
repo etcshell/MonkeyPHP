@@ -2,8 +2,11 @@
 namespace Monkey\View;
 
 use Monkey;
+
 /**
- * html伪静态缓存
+ * Cache
+ * html伪静态缓存类
+ * @package Monkey\View
  */
 class Cache{
 

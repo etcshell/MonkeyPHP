@@ -2,17 +2,23 @@
 namespace Monkey\Cache;
 
 use Monkey\Cache;
+
 /**
- * cache的Apc实现\Monkey\Cache\Apc
+ * Apc
+ * cache的Apc实现
+ * @package Monkey\Cache
  */
 class Apc implements Cache
 {
     private $_expire = 3600;
+
+    /**
+     * @param \Monkey\App\App $app
+     */
     public function __construct($app)
     {
-        if(!extension_loaded('apc'))
-            throw new \Exception('没有安装APC扩展,请先在php.ini中配置安装APC。');
-        $config=$app->config->getComponentConfig('cache','apc');
+        if(!extension_loaded('apc')) $app->exception('没有安装APC扩展,请先在php.ini中配置安装APC。');
+        $config=$app->config()->getComponentConfig('cache','apc');
         $this->_expire=$config['expire'];
     }
 

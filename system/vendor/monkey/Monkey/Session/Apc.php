@@ -3,7 +3,9 @@ namespace Monkey\Session;
 use Monkey\Session;
 
 /**
- * Session的APC实现 \Monkey\Session
+ * Apc
+ * Session的APC实现
+ * @package Monkey\Session
  */
 class Apc extends Session
 {
@@ -14,7 +16,7 @@ class Apc extends Session
     {
         if(!extension_loaded('apc')) $app->exception('会话出错:没有安装APC扩展。',2048,__FILE__,__LINE__);
         $this->app=$app;
-        $this->config = $app->config->getComponentConfig('session','apc');
+        $this->config = $app->config()->getComponentConfig('session','apc');
         $this->init();
     }
     /**

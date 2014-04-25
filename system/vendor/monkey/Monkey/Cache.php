@@ -2,7 +2,9 @@
 namespace Monkey;
 
 /**
- * 缓存接口\Monkey\Cache\_Interface
+ * Interface Cache
+ * 缓存接口
+ * @package Monkey
  */
 interface Cache
 {

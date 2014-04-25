@@ -2,9 +2,9 @@
 namespace Monkey\Router;
 
 /**
- * 路由映射管理
+ * Map
+ * 路由映射管理类
  * @package Monkey\Router
- *
  */
 class Map
 {

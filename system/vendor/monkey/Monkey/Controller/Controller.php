@@ -1,14 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-3-3
- * Time: 下午4:20
- */
-
 namespace Monkey\Controller;
 
 use Monkey;
+
+/**
+ * Controller
+ * 控制器基类
+ * @package Monkey\Controller
+ */
 class Controller {
 
     public
@@ -40,7 +39,7 @@ class Controller {
     public function __construct($app)
     {
         $this->app=$app;
-        $this->appConfig=$app->config;
+        $this->appConfig=$app->config();
         $this->request=$app->request();
         $this->response=$app->response();
         $app->controller=$this;
@@ -227,6 +226,9 @@ class Controller {
         return $this->response->getBody();
     }
 
+    /**
+     * 清除写入响应对象中的响应体
+     */
     public function clearBody()
     {
         $this->response->clearBody();

@@ -3,9 +3,10 @@ namespace Monkey\Session;
 use Monkey\Session;
 
 /**
- * Session的Memcache实现 \Monkey\Session\Memcache
+ * Memcache
+ * Session的Memcache实现
+ * @package Monkey\Session
  */
-
 class Memcache extends Session
 {
     /**
@@ -19,7 +20,7 @@ class Memcache extends Session
     {
         if(!extension_loaded('apc')) $app->exception('会话出错:没有安装APC扩展。',2048,__FILE__,__LINE__);
         $this->app=$app;
-        $this->config = $app->config->getComponentConfig('session','memcache');
+        $this->config = $app->config()->getComponentConfig('session','memcache');
         $this->handler=new \Memcache();
         if(!$this->handler->connect($this->config['host'],$this->config['port'])){
             $app->exception('会话出错:Memcache连接失败。',2048,__FILE__,__LINE__);

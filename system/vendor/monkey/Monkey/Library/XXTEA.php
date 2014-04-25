@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * xxtea_encrypt算法的PHP加密解密类 xxtea_encrypt
+ * XXTEA
+ * xxtea_encrypt算法加密解密类
+ * @package Library
  */
 class XXTEA
 {

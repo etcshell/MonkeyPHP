@@ -2,7 +2,8 @@
 namespace Monkey\ErrorReporting;
 
 /**
- * 错误报告组件 ErrorReporting
+ * ErrorReporting
+ * 错误报告组件
  * @package Monkey\ErrorReporting
  */
 class ErrorReporting {
@@ -19,7 +20,7 @@ class ErrorReporting {
     public function __construct($app)
     {
         $this->app=$app;
-        $config=$app->config->getComponentConfig('errorReporting','default');
+        $config=$app->config()->getComponentConfig('errorReporting','default');
         $dir=$config['errorTemplate']?$app->DIR.$config['errorTemplate']:__DIR__.'/errorTemplate';
         $this->config=array(
             'error_tpl_403'     =>$dir.'/403.tpl.php',

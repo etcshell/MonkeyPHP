@@ -2,10 +2,10 @@
 namespace Monkey\Request;
 
 /**
- * Http请求头 HttpHeader
+ * Header
+ * Http请求头类
  * @package Monkey\Request
  */
-
 class Header {
 
     private

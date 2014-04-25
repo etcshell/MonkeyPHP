@@ -3,6 +3,11 @@ namespace Monkey;
 
 use Monkey\App;
 
+/**
+ * Monkey
+ * 框架类
+ * @package Monkey
+ */
 class Monkey {
     public static
         $DIR=__DIR__
