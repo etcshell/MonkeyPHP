@@ -9,8 +9,12 @@ use Monkey\Controller\Web;
 
 class Index extends Web{
 
+    /**
+     * index action示例，方面名前面必须加“action_”前缀，以标明这是浏览器路由访问的方法
+     */
     public function action_index()
     {
+        //演示使用响应对象向浏览器发送内容
         $response=$this->getResponse();
         //$response->setCache('test',60);
         $response->writeLine('测试 response::writeLine');
@@ -37,6 +41,10 @@ class Index extends Web{
 
     }
 
+    /**
+     * hello测试
+     * 方面名前面必须加“action_”前缀，以标明这是浏览器路由访问的方法
+     */
     public function action_hello()
     {
         echo '测试hello!<br/>';
