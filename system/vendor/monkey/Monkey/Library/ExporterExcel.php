@@ -4,6 +4,12 @@ namespace Library;
 /**
  * 导出xml格式的EXCEL表格工具（大数据专用）excel_exporter
  */
+/**
+ * ExporterExcel
+ * 导出EXCEL表格类
+ * 实质是xml格式，已经针对大数据表特别优化
+ * @package Library
+ */
 class ExporterExcel {
     private static $file;
     private static $limit=100;
@@ -19,7 +25,7 @@ class ExporterExcel {
      * @param bool $convert_types 单元格中的数字处理方式，FALSE：按文本处理，TRUE：按数字处理
      */
     public function __construct($filename, $worksheet_title = 'Table1',$encoding = 'UTF-8', $convert_types = false){
-        $file_name = urlencode($filename);//消除下的中文文件名乱码
+        $filename = urlencode($filename);//消除下的中文文件名乱码
         self::$convert_types = $convert_types;
         self::$encoding=$encoding;
         $title = preg_replace ('/[\\\|:|\/|\?|\*|\[|\]]/', '', $worksheet_title);
@@ -31,6 +37,7 @@ class ExporterExcel {
         fwrite(self::$file, $header);
         fwrite(self::$file, PHP_EOL.'<Worksheet ss:Name="' . $title . '">'.PHP_EOL.'<Table>'.PHP_EOL);
     }
+
     /**
      * 添加数据行
      * @param array $row
@@ -47,6 +54,7 @@ class ExporterExcel {
         }
         fwrite(self::$file, '<Row>'.PHP_EOL.$cells.'</Row>'.PHP_EOL);
     }
+
     /**
      * 结束输出（必须要，否则表格的格式不完整，Office不认可。）
      */
@@ -56,6 +64,7 @@ class ExporterExcel {
         $this->_push();
         self::$_end=TRUE;
     }
+
     private function _push(){
         ob_flush();
         flush();

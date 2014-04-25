@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * php代码压缩类 php_code_compress
+ * CodeCompress
+ * php代码压缩类
+ * @package Library
  */
 class CodeCompress{
     /**

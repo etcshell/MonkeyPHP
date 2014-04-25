@@ -2,10 +2,10 @@
 namespace Monkey\Database;
 
 /**
- * 数据结构修改工具 Schema
+ * Schema
+ * 数据表结构修改类
  * @package Monkey\Database
  */
-
 class Schema
 {
     /**

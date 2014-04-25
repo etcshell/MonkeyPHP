@@ -1,14 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-2-24
- * Time: 下午10:05
- */
-
 namespace Monkey\App;
 
-
+/**
+ * Web
+ * 浏览器Web应用基类
+ * 所有Web应用继承此类
+ * @package Monkey\App
+ */
 class Web extends App {
 
     public

@@ -4,6 +4,11 @@ namespace Monkey\App;
 use Monkey;
 use Composer\Autoload;
 
+/**
+ * AppCreator
+ * 应用生成器类
+ * @package Monkey\App
+ */
 class AppCreator {
 
     /**
@@ -35,6 +40,10 @@ class AppCreator {
         $app->container= new Monkey\Container($app);//装载注入容器
     }
 
+    /**
+     * 获取应用
+     * @return App
+     */
     public function getApp()
     {
         return $this->app;

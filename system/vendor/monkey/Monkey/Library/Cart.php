@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * cart购物车
+ * Cart
+ * 购物车类
+ * @package Library
  */
 class Cart {
     private $_cookier; //wy_cookie对象

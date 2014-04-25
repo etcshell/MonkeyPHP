@@ -1,6 +1,11 @@
 <?php
 namespace Monkey\View;
 
+/**
+ * Header
+ * Html头生成类
+ * @package Monkey\View
+ */
 class Header
 {
     private

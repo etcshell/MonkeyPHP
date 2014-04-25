@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 无限分类工具 tree
+ * Tree
+ * 无限分类类
+ * @package Library
  */
 class Tree {
     private $_id_key='id';

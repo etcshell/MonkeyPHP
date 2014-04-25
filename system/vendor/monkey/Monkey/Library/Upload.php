@@ -2,10 +2,10 @@
 namespace Library;
 
 /**
- * 上传组件 Upload
- * @package Monkey\Upload
+ * Upload
+ * 文件上传类
+ * @package Library
  */
-
 class Upload
 {
     private

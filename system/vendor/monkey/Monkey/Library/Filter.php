@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 过滤浏览器输入的内容 Filter
+ * Filter
+ * 浏览器输入数据的过滤类
+ * @package Library
  */
 class Filter
 {
@@ -19,6 +21,7 @@ class Filter
         $data = preg_replace ( '/(\r?\n)+/','$1', $data );//压缩回车换行
         return $data;
     }
+
     /**
      * @static
      * 防止XSS攻击代码——0
@@ -35,6 +38,7 @@ class Filter
         $data = addslashes($data);
         return $data;
     }
+
     /**
      * @static
      * 防止XSS攻击代码——1
@@ -52,6 +56,7 @@ class Filter
         $data = str_replace("\n",'<br>',   $data);
         return $data;
     }
+
     /**
      * @static
      * 防止XSS攻击代码——3
@@ -97,6 +102,7 @@ class Filter
         if(is_array($data)) return array_map(__METHOD__ , $data);
         return trim (preg_replace ( '/(\015)?(\012)/', '<br/>', $data ));
     }
+
     /**
      * @static
      * 删除文本中连续重复的换行符号
@@ -107,6 +113,7 @@ class Filter
         if(is_array($data)) return array_map(__METHOD__ , $data);
         return trim (preg_replace ( '/((\015)?(\012))+/', '$1', $data ));
     }
+
     /**
      * @static
      * 编码PHP标签

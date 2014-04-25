@@ -2,10 +2,10 @@
 namespace Monkey\Database;
 
 /**
- * 数据删除工具 Delete
+ * Delete
+ * 数据删除类
  * @package Monkey\Database
  */
-
 class Delete
 {
     /**
@@ -93,6 +93,7 @@ class Delete
     }
 
     /**
+     * exists
      * @param Select $select
      * @return $this
      */
@@ -102,6 +103,7 @@ class Delete
     }
 
     /**
+     * notExists
      * @param Select $select
      * @return $this
      */

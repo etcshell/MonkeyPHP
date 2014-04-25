@@ -2,8 +2,9 @@
 namespace Monkey\Response;
 
 /**
- * Cli Response
- * @package Monkey\Cli
+ * ResponseCli
+ * Cli响应组件
+ * @package Monkey\Response
  */
 class ResponseCli
 {
@@ -45,16 +46,27 @@ class ResponseCli
         return $this->statusCode;
     }
 
+    /**
+     * 向屏幕输出内容
+     * @param $text
+     */
     public function write($text)
     {
         echo $text;
     }
 
+    /**
+     * 向屏幕输出一行内容
+     * @param $text
+     */
     public function writeLine($text)
     {
         echo $text.'\n';
     }
 
+    /**
+     * 清空屏幕
+     */
     public function clearScreen()
     {
         system('clear');

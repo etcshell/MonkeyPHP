@@ -1,14 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-3-13
- * Time: 下午11:05
- */
-
 namespace Monkey\Router;
 
-
+/**
+ * Pattern
+ * 路由匹配类
+ * @package Monkey\Router
+ */
 class Pattern {
 
     public

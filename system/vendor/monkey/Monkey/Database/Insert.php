@@ -2,10 +2,10 @@
 namespace Monkey\Database;
 
 /**
- * 数据插入工具 Insert
+ * Insert
+ * 数据插入
  * @package Monkey\Database
  */
-
 class Insert
 {
     /**
@@ -44,7 +44,7 @@ class Insert
     }
 
     /**
-     * 使用表结构填充插入字段
+     * 使用表结构自动填充插入字段
      * @return $this
      * @throws \Exception
      */
@@ -72,6 +72,10 @@ class Insert
         return $this;
     }
 
+    /**
+     * 从表结构中获取字段的默认值
+     * @return array
+     */
     public function getFieldsDefaultFromMate()
     {
         return $this->fieldsValuesDefault;

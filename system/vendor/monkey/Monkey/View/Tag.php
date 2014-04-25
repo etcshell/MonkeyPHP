@@ -4,7 +4,11 @@ namespace Monkey\View;
 /**
  * 标签方案\Monkey\View\Tag
  */
-
+/**
+ * Tag
+ * MonkeyPHP的标签方案
+ * @package Monkey\View
+ */
 class Tag
 {
     public static $appName='';

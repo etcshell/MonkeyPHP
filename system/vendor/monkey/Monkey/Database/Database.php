@@ -2,10 +2,10 @@
 namespace Monkey\Database;
 
 /**
- * 数据库组件 Database
+ * Database
+ * 数据库组件
  * @package Monkey\Database
  */
-
 class Database
 {
     //返回:Connection对象
@@ -34,9 +34,10 @@ class Database
      */
     public function __construct($app)
     {
-        if( !extension_loaded('pdo') ) $app->exception('没有安装pdo驱动扩展,请先在php.ini中配置安装pdo！',1024,__FILE__,__LINE__);
+        if( !extension_loaded('pdo') )
+            $app->exception('没有安装pdo驱动扩展,请先在php.ini中配置安装pdo！',1024,__FILE__,__LINE__);
         $this->app= $app;
-        $config= $app->config->getComponentConfig('database','default');
+        $config= $app->config()->getComponentConfig('database','default');
         $this->config=$config;
         $this->pool= $config['pool'];
         $this->default= $config['default_connection'];
@@ -68,6 +69,7 @@ class Database
     }
 
     /**
+     * 获取活动记录行对象
      * @param string $table 表名
      * @param string $priKey 主键
      * @return ActiveRecorder
@@ -78,6 +80,7 @@ class Database
     }
 
     /**
+     * 获取选择查询对象
      * @param $table
      * @param null $alias
      * @param array $options
@@ -94,6 +97,7 @@ class Database
     }
 
     /**
+     * 获取插入查询对象
      * @param $table
      * @return Insert
      *   ->insert('table')
@@ -107,6 +111,7 @@ class Database
     }
 
     /**
+     * 获取更新查询对象
      * @param $table
      * @return Update
      *   ->update('table')
@@ -121,6 +126,7 @@ class Database
     }
 
     /**
+     * 获取删除查询对象
      * @param $table
      * @return Delete
      *   ->delete('table')
@@ -141,6 +147,7 @@ class Database
     }*/
 
     /**
+     * 获取表结构修改查询对象
      * @return Schema
      */
     public function schema()
@@ -149,6 +156,7 @@ class Database
     }
 
     /**
+     * 获取表创建查询对象
      * @param string $tableName 表名
      * @param string $comment 表注释
      * @param string $engine 存储引擎， 默认使用'InnoDB'
@@ -194,7 +202,6 @@ class Database
 
     /**
      * 获取指定名称的查询连接
-     *
      * @param string|null $name 连接名称。留空时，使用当前活动连接
      * @return \Monkey\Database\Connection|bool|null
      *
@@ -220,10 +227,6 @@ class Database
         return $this->oConnections[$name];
     }
 
-    /**
-     * @param $name
-     * @return \Monkey\Database\Connection|false
-     */
     /**
      * 尝试连接
      * @param array $config 连接配置

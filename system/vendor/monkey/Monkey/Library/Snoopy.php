@@ -1,8 +1,5 @@
 <?php
-
-/**
- * PHP采集库 Snoopy
- */
+namespace Library;
 
 /*************************************************
 
@@ -32,7 +29,11 @@ The latest version of Snoopy can be obtained from:
 http://snoopy.sourceforge.net/
 
 *************************************************/
-
+/**
+ * Snoopy
+ * PHP采集库
+ * @package Library
+ */
 class Snoopy
 {
     /**** Public variables ****/

@@ -2,7 +2,10 @@
 namespace Monkey\Response;
 
 /**
- * 响应组件\Monkey\Response\Response
+ * Response
+ * Web响应组件
+ * @package Monkey\Response
+ *
  * 相应状态码信息描述：
  * 1xx：信息，请求收到，继续处理
  * 2xx：成功，行为被成功地接受、理解和采纳
@@ -87,7 +90,7 @@ class Response
         if( 'HEAD' == $app->request()->getMethod() ){
             $this->setHttpHeaderOnly(true);
         }
-        $config=$app->config->getComponentConfig('response','web');
+        $config=$app->config()->getComponentConfig('response','web');
         $config['charset'] and $this->charset= $config['charset'];
         $app->shutdown()->register(array($this,'send'));
         if(strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== FALSE
@@ -130,6 +133,9 @@ class Response
         return $body;
     }
 
+    /**
+     * 清除Html正文Body内容
+     */
     public function clearBody()
     {
         $this->body=null;

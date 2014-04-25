@@ -2,8 +2,9 @@
 namespace Monkey\Request;
 
 /**
- * Cli Request
- * @package Monkey\Cli
+ * RequestCli
+ * Cli请求组件
+ * @package Monkey\Request
  */
 class RequestCli
 {
@@ -37,8 +38,7 @@ class RequestCli
     }
 
     /**
-     * Get method
-     *
+     * 获取请求方法
      * @return string
      */
     public function getMethod()
@@ -47,8 +47,7 @@ class RequestCli
     }
 
     /**
-     * Get root of application
-     *
+     * 获取请求文件根目录
      * @return string
      */
     public function getRoot()
@@ -57,8 +56,7 @@ class RequestCli
     }
 
     /**
-     * Get body
-     *
+     * 获取请求内容主体
      * @return string
      */
     public function getBody()

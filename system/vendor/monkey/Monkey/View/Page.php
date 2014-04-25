@@ -2,7 +2,10 @@
 namespace Monkey\View;
 
 /**
- * 分页栏生成器，支持ajax（可选） page
+ * Page
+ * 分页栏生成器
+ * 支持ajax（可选）
+ * @package Monkey\View
  */
 class Page {
 

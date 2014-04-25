@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 去除bom
+ * BomRemover
+ * Bom去除类
+ * @package Library
  */
 final class BomRemover {
     private function __construct() {}

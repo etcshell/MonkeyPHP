@@ -2,7 +2,8 @@
 namespace Monkey\App;
 
 /**
- * Class Config
+ * Config
+ * 应用配置类
  * @package Monkey\App
  * 职能：存取配置
  * 使用：不建议直接使用，参见\Monkey\App\App。
@@ -29,6 +30,7 @@ class Config {
     {
         self::$data[$key]=$value;
     }
+
     /**
      * 获取一个配置项
      * @param string $key 配置名称

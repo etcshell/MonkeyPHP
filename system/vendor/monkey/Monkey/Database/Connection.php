@@ -5,10 +5,10 @@ use \PDO;
 use Monkey\App\App;
 
 /**
- * 连接工具 Connection
+ * Connection
+ * 连接类
  * @package Monkey\Database
  */
-
 class Connection
 {
     /**
@@ -202,6 +202,7 @@ class Connection
     }
 
     /**
+     * 获取活动记录行对象
      * @param string $table 表名
      * @param string $priKey 主键
      * @return ActiveRecorder
@@ -212,6 +213,7 @@ class Connection
     }
 
     /**
+     * 获取选择查询对象
      * @param $table
      * @param null $alias
      * @param array $options
@@ -227,6 +229,7 @@ class Connection
     }
 
     /**
+     * 获取插入查询对象
      * @param $table
      * @return Insert
      *   ->insert('table')
@@ -240,6 +243,7 @@ class Connection
     }
 
     /**
+     * 获取更新查询对象
      * @param $table
      * @return Update
      *   ->update('table')
@@ -254,6 +258,7 @@ class Connection
     }
 
     /**
+     * 获取删除查询对象
      * @param $table
      * @return Delete
      *   ->delete('table')
@@ -274,6 +279,7 @@ class Connection
     }*/
 
     /**
+     * 获取表结构修改查询对象
      * @return Schema
      */
     public function schema()
@@ -283,6 +289,7 @@ class Connection
     }
 
     /**
+     * 获取表创建查询对象
      * @param string $tableName 表名
      * @param string $comment 表注释
      * @param string $engine 存储引擎， 默认使用'InnoDB'
@@ -447,7 +454,7 @@ class Connection
     }
 
     /**
-     * 创建一个嵌套事务对象
+     * 获取一个嵌套事务对象
      * 注意保存这个对象，提交 和 回滚 事务需要它
      * @param null $transName 事务名称，可以不指定
      * @return Transaction

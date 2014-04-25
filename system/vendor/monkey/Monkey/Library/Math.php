@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 数学计算工具 math
+ * Math
+ * 数学计算类
+ * @package Library
  */
 final class Math
 {

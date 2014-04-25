@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * FTP工具
+ * FTPClient
+ * FTP客户端类
+ * @package Library
  */
 class FTPClient {
     private $_link;

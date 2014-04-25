@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 字符串工具 str
+ * Str
+ * 字符串类
+ * @package Library
  */
 final class Str
 {

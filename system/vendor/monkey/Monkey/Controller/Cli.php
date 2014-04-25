@@ -1,14 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-3-8
- * Time: 下午8:39
- */
-
 namespace Monkey\Controller;
 
 use Monkey;
+
+/**
+ * Cli
+ * 命令行控制器基类
+ * @package Monkey\Controller
+ */
 class Cli extends Controller{
 
     public

@@ -2,10 +2,10 @@
 namespace Monkey\Database;
 
 /**
- * 数据更新 Update
+ * Update
+ * 数据更新查询类
  * @package Monkey\Database
  */
-
 class Update
 {
     /**
@@ -96,6 +96,7 @@ class Update
     }
 
     /**
+     * exists
      * @param Select $select
      * @return $this
      */
@@ -105,6 +106,7 @@ class Update
     }
 
     /**
+     * exists
      * @param Select $select
      * @return $this
      */

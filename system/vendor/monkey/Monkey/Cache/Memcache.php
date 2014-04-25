@@ -3,7 +3,9 @@ namespace Monkey\Cache;
 use Monkey\Cache;
 
 /**
- * cache的Memcache实现\Monkey\Cache\Memcache
+ * Memcache
+ * \Monkey\App\App
+ * @package Monkey\Cache
  */
 class Memcache implements Cache
 {
@@ -15,16 +17,15 @@ class Memcache implements Cache
      */
     public function __construct($app)
     {
-        if(!extension_loaded('memcache')){
-            throw new \Exception('没有安装memcache扩展,请先在php.ini中配置安装memcache。');
-        }
-        $config=$app->config->getComponentConfig('cache','memcache');
+        if(!extension_loaded('memcache'))
+            $app->exception('没有安装memcache扩展,请先在php.ini中配置安装memcache。');
+        $config=$app->config()->getComponentConfig('cache','memcache');
         $this->_expire=$config['expire'];
         $this->_compressed=$config['compressed']?$config['compressed']:FALSE;
         $this->_connection=new \Memcache();
-        if(!$this->_connection->addserver($config['host'],$config['port'],$config['persistent'])) {
-            throw new \Exception('连接memcache服务器时失败，请确认你的连接参数是否正确。');
-        }
+        if(!$this->_connection->addserver($config['host'],$config['port'],$config['persistent']))
+            $app->exception('连接memcache服务器时失败，请确认你的连接参数是否正确。');
+
     }
 
     /**
@@ -42,6 +43,7 @@ class Memcache implements Cache
         }
         return TRUE;
     }
+
     /**
      * 读取缓存
      * @param string $key       要读取的缓存项目名称
@@ -55,6 +57,7 @@ class Memcache implements Cache
         $result=unserialize($temp);
         return TRUE;
     }
+
     /**
      * 清除缓存
      * @return $this
@@ -63,6 +66,7 @@ class Memcache implements Cache
         $this->_connection->flush();
         return ;
     }
+
     /**
      * 删除缓存单元
      * @param string $key
@@ -80,6 +84,7 @@ class Memcache implements Cache
         $this->_connection->getStats();
         return ;
     }
+
     /**
      * 析构函数
      *

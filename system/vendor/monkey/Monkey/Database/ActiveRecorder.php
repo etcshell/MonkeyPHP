@@ -2,12 +2,9 @@
 namespace Monkey\Database;
 
 /**
- * \Monkey\Database\ActiveRecorder
- * @package    Monkey\Database
- * @author     HuangYi
- * @copyright  Copyright (c) 2011-07-01——2014-03-30
- * @license    New BSD License
- * @version    $Id: \Monkey\Database\Model.php 版本号 2014-03-30 $
+ * ActiveRecorder
+ * 活动记录行类
+ * @package Monkey\Database
  */
 class ActiveRecorder{
     public
@@ -54,11 +51,19 @@ class ActiveRecorder{
         return array_key_exists($field,$this->fields) ? $this->fields[$field] : $defaultValue;
     }
 
+    /**
+     * 获取主键值
+     * @return string|int
+     */
     public function getPriValue()
     {
         return $this->fields[$this->priKey];
     }
 
+    /**
+     * 设置主键值
+     * @param string|int $value
+     */
     public function setPriValue($value)
     {
         $this->fields[$this->priKey]=$value;

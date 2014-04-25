@@ -2,10 +2,10 @@
 namespace Monkey\Logger;
 
 /**
- * 日志组件 Logger
+ * Logger
+ * 日志组件
  * @package Monkey\Logger
  */
-
 class Logger
 {
     private
@@ -29,7 +29,7 @@ class Logger
     public function __construct($app)
     {
         $this->app=$app;
-        $this->config = $config= $app->config->getComponentConfig('logger','default');
+        $this->config = $config= $app->config()->getComponentConfig('logger','default');
         $config['error_dir'] = $app->DIR.$config['error_dir'];
         $config['sql_dir'] = $app->DIR.$config['sql_dir'];
         $config['error_enable'] and $this->error= new Error($app,$config);

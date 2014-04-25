@@ -2,7 +2,9 @@
 namespace Monkey\View;
 
 /**
- * html文档素生成工具
+ * Document
+ * html元素生成类
+ * @package Monkey\View
  */
 class Document {
     /**

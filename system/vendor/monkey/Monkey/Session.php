@@ -1,8 +1,11 @@
 <?php
 namespace Monkey;
+
 /**
-  * session接口
-  */
+ * Session
+ * session抽象父类
+ * @package Monkey
+ */
 abstract class Session
 {
     protected

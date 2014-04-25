@@ -3,7 +3,9 @@ namespace Monkey\Cache;
 use Monkey\Cache;
 
 /**
- * cache的File实现\Monkey\Cache\File
+ * File
+ * \Monkey\App\App
+ * @package Monkey\Cache
  */
 final class File implements Cache
 {
@@ -38,7 +40,7 @@ final class File implements Cache
      */
     public function __construct($app)
     {
-        $config=$app->config->getComponentConfig('cache','file');
+        $config=$app->config()->getComponentConfig('cache','file');
         $this->TIME=$app->TIME;
         $this->_expire=$config['expire'];
 
@@ -72,6 +74,7 @@ final class File implements Cache
         $result=unserialize($content);//解序列化数据
         return TRUE;
     }
+
     /**
      * 设置缓存
      * @param string $key 要设置的缓存项目名称
@@ -90,6 +93,7 @@ final class File implements Cache
         $data = sprintf('%012d',$time).$check.$data;
         return $this->_store(md5($key),$data);//存储数据
     }
+
     /**
      * 清空缓存
      * @return bool
@@ -97,6 +101,7 @@ final class File implements Cache
     public function clear(){
         return $this->_format(true);
     }
+
     /**
      * 删除缓存文件中指定的内容
      * @param string $key 要删除的项目的key
@@ -105,6 +110,7 @@ final class File implements Cache
     public function delete($key) {
         return $this->_delete(md5($key));
     }
+
     //以下是辅助函数
     private function _all_schemas(){
         $schema = array();

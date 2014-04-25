@@ -2,8 +2,11 @@
 namespace Library;
 
 use Monkey;
+
 /**
- * db_ghost数据库备份恢复工具
+ * DatabaseGhost
+ * 数据库备份恢复类
+ * @package Library
  */
 class DatabaseGhost {
     /**

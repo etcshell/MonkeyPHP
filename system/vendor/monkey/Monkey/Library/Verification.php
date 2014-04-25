@@ -2,7 +2,9 @@
 namespace Library;
 
 /**
- * 客户端输入数据验证工具 verification
+ * Verification
+ * 客户端输入数据验证类
+ * @package Library
  */
 class Verification {
     /**

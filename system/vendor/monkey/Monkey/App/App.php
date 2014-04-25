@@ -2,8 +2,12 @@
 namespace Monkey\App;
 
 use Monkey;
+
 /**
- * 应用信息容器类
+ * App
+ * 应用基类
+ * 所有的应用类都继承此类
+ * @package Monkey\App
  */
 class App
 {
@@ -15,20 +19,23 @@ class App
         $MONKEY_DIR,//Monkey框架所在目录
         $FRONT_ROOT_DIR,//前端根文件所在目录
         $FRONT_ROOT_URL,//前端根文件网址
-        $isCli=false,
-        $type='web'
+        $isCli=false,//是否为命令行应用
+        $type='web' //应用类型
     ;
 
     public
         /**
+         * 依赖容器类
          * @var \Monkey\Container
          */
         $container,
         /**
+         * 配置类
          * @var \Monkey\App\Config
          */
         $config,
         /**
+         * 控制器类
          * @var \Monkey\Controller\Controller
          */
         $controller
@@ -39,9 +46,21 @@ class App
 
     }
 
+    /**
+     * 运行应用
+     */
     public function run()
     {
         $this->dispatching();
+    }
+
+    /**
+     * 获取配置类
+     * @return \Monkey\App\Config
+     */
+    public function config()
+    {
+        return $this->config;
     }
 
     /**
@@ -224,6 +243,7 @@ class App
                 $this->exception('访问的方法['.$router['action'].']不存在（不公有 或 未实现——为抽象的 或为静态方法）！', 404);
             }
             /*
+             * 验证控制器是否规范，严格遵守控制器的命名空间写法，可以注释掉这里的代码。
             $class=$controller;
             while ($parent = $class->getParentClass()) {
                 if($parent->getName()=='Monkey\Controller\Controller'){

@@ -1,10 +1,6 @@
 <?php
 namespace Library;
 
-/**
- * UBB转换工具
- */
-
 /*!
  * ubb2html support for php
  * @requires xhEditor
@@ -14,6 +10,11 @@ namespace Library;
  * @licence LGPL(http://www.opensource.org/licenses/lgpl-license.php)
  *
  * @Version: 0.9.10 (build 110801)
+ */
+/**
+ * UBB
+ * UBB转换类
+ * @package Library
  */
 class UBB{
     private static $emotPath='../xheditor_emot/';//表情根路径
