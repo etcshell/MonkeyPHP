@@ -1,0 +1,132 @@
+
+
+
+
+
+
+    /**
+     * 注册组件
+     * @param string $name 组件名
+     * @param string|object $handler 处理对象的类名、对象（要求已经初始化了）、甚至是匿名函数。
+     */
+    public static function registerComponent($name,$handler)
+    {
+        self::$config['component'][$name]=$handler;
+    }
+
+    /**
+     * 获取组件实例（此处获取的结果均为单例）
+     * @param $name
+     * @return object
+     */
+    public static function getComponent($name)
+    {
+        static $components;
+        if(!$components[$name])
+        {
+            $component= self::$config['component'][$name];
+            if(is_string($component))
+            {
+                $component=$component::_instance();
+            }
+            $components[$name]=$component;
+        }
+        return $components[$name];
+    }
+
+    /**
+     * 获取缓存组件
+     * @return \Monkey\Cache\Cache
+     */
+    public function cache()
+    {
+        return self::getComponent('cache');
+    }
+
+    /**
+     * @return \Monkey\Shutdown\Shutdown
+     */
+    public function shutdown()
+    {
+        return self::getComponent('shutdown');
+    }
+
+    /**
+     * @return \Monkey\Logger\Logger
+     */
+    public function logger()
+    {
+        return self::getComponent('logger');
+    }
+
+
+    /**
+     * 获取Cookie对象
+     * @return \Monkey\Cookie\Cookie
+     */
+    public function cookie()
+    {
+        return self::getComponent('cookie');
+    }
+
+    /**
+     * @return \Monkey\Request\Request
+     */
+    public function request()
+    {
+        return self::getComponent('request');
+    }
+
+    /**
+     * @return \Monkey\Response\Response
+     */
+    public function response()
+    {
+        return self::getComponent('response');
+    }
+
+    /**
+     * @return \Monkey\Session\Session
+     */
+    public function session()
+    {
+        return self::getComponent('session');
+    }
+
+    /**
+     * @return \Monkey\Router\Router
+     */
+    public function router()
+    {
+        return self::getComponent('router');
+    }
+
+    /**
+     * @return \Monkey\Database\Database
+     */
+    public function database()
+    {
+        return self::getComponent('database');
+    }
+
+
+    /**
+     * @return \Monkey\Xiunodb\Xiunodb
+     */
+    public function xiunodb()
+    {
+        return self::getComponent('xiunodb');
+    }
+
+    /**
+     * @return \Monkey\ErrorReporting\ErrorReporting
+     */
+    public function errorReporting()
+    {
+        return self::getComponent('errorReporting');
+    }
+
+    public function regShutdown()
+    {
+
+    }

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Monkey PHP Framework</title>
+<link type="text/css" href="statics/css/base.css" rel="stylesheet" />
+<script type="text/javascript" src="statics/js/jquery.min.js"></script>
+<!--prettify-->
+<link type="text/css" href="statics/css/prettify.css" rel="stylesheet" />
+<script type="text/javascript" src="statics/js/prettify.js"></script>
+<script type="text/javascript" src="statics/js/html5.js"></script>
+<script type="text/javascript" src="statics/js/monkey.js"></script>
+</head>
+
+<body>
+<!--page_wrap:start-->
+<div class="page_wrap">
+
+<p>
+<h2>2.22  安全解决方案</h2>
+<br />
+
+<b>CSRF 跨站请求伪造解决方案：表单提交时使用 token 效验</b><br />
+请自己实现<br /><br />
+
+<b>XSS 跨站脚本攻击解决方案：过滤浏览器输入的值</b><br />
+使用方法：<br />
+选择上节 Monkey\Library\Filter 类中的 xss####方法来过滤输入值：<br />
+1．xssToText($data)，直接删除所有 html 和 php 标签，使得浏览器输入的内容只剩下文本，是最高级别的过滤；<br />
+2．xssToHtml($data)，不是删除任何标签，但对标签进行彻底的编码，使得浏览器输入的内容按源码输出，是普通级别的过滤；<br />
+3．xssDeleteScript($data)，有选择性的删除 javascript,iframes,object 等有害标签，使得其它内容能保留浏览器输入的 html 样式，是最弱的过滤级别；<br /><br />
+
+<b>SQL 防注入解决方案：drupal数据库组件</b><br />
+原理（详见源码）<br /><br />
+
+<b>目录遍历漏洞解决方案：不向浏览器输出后台目录变量</b><br />
+MonkeyPHP 的目录部署分为两个部分<br />
+1．www 目录，是 web 服务器指定浏览器可以访问的虚拟目录，这里仅仅存放静态资源文件和浏览器上传的文件。同时还要通过系统设置保证这个目录里的文件没有执行权。<br />
+2．system 目录绝不能让浏览器有访问权限。<br /><br />
+
+<b>DDOS 攻击解决方案：拦截浏览器恶意刷新</b><br />
+公共函数中有一个有效拦截防御 DDOS 的代码。如需使用，请在 system/vendor/autoload.php 文件末尾新增一行 intercept_DDOS();<br /><br />
+
+<b>会话劫持解决方案：请使用 SSH 或 https 协议取代 http 协议</b>
+
+
+</p>
+
+
+</div>
+<!--page_wrap:end-->
+</body>
+</html>
