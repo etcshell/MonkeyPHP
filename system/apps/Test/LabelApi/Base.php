@@ -1,5 +1,5 @@
 <?php
-namespace Label;
+namespace Test\LabelApi;
 
 /**
  * 自定义标签示例
