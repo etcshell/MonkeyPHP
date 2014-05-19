@@ -20,16 +20,21 @@ class Router
         /**
          * @var Pattern
          */
-        $pattern
+        $pattern,
+        /**
+         * @var Hook
+         */
+        $hook
     ;
 
     private
         $config,
         $path,
-        $router,
+        $route,
         $params,
         $root,
-        $resource
+        $resource,
+        $requestMethod
     ;
     /**
      * @param \Monkey\App\App $app
@@ -44,14 +49,33 @@ class Router
         $this->map= new Map($app, $config);
         $this->pattern= new Pattern($app, $config);
         $this->loadPath();
-        $match= $this->pattern->matchPath($this->app->request()->getMethod(),$this->path);
+        $this->requestMethod=$app->request()->getMethod();
+        $match= $this->pattern->matchPath($this->requestMethod,$this->path);
         $this->params= $match['params'];
-        $router=array();
+        $route=array();
         if($match['router_name']){
             $config['router_class_auto_prefix'] and $match['router_name']='\\'.$this->app->NAME.'\\Controller\\'.$match['router_name'];
-            list($router['controller'],$router['action'])= explode(':',$match['router_name'],2);
+            list($route['controller'],$route['action'])= explode(':',$match['router_name'],2);
         }
-        $this->router= $router;
+        $this->route= $route;
+        $this->hook=new Hook($app);
+    }
+
+    /**
+     * 获取路由hook管理器
+     * @return Hook
+     */
+    public function getHook()
+    {
+        return $this->hook;
+    }
+
+    /**
+     * 启动路由hook
+     */
+    public function startHook()
+    {
+        $this->hook->start($this->path,$this->requestMethod);
     }
 
     /**
@@ -67,9 +91,9 @@ class Router
      * 获取请求路由
      * @return array|null 存在时候为array；不存在则为空值。
      */
-    public function getRouter()
+    public function getRoute()
     {
-        return $this->router;
+        return $this->route;
     }
 
     /**

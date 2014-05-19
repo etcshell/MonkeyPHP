@@ -216,7 +216,9 @@ class App
         else
             $isDispatching=true;
         try{
-            $router=$this->router()->getRouter();
+            $router=$this->router();
+            $router->startHook();
+            $route=$router->getRoute();
             /**
              * 路由结构为数组：
              *      array(
@@ -224,23 +226,23 @@ class App
              *         'action'=>'hello',//要激活的方法
              *      ),
              */
-            if(!$router){
+            if(!$route){
                 $this->exception('无法找到你访问的网页！', 404);
             }
-            $controller=$router['controller'];
+            $controller=$route['controller'];
             $action=$this->getConfig('action_prefix','');
-            $action.=$router['action'];
+            $action.=$route['action'];
             $controllerFile =strtr($controller,'\\','/').'.php';//这句注意与自动加载规则保持一致！
             if(!file_exists(dirname($this->DIR).$controllerFile)){
-                $this->exception('访问的控制器['.$router['controller'].']的类文件['.$controllerFile.']丢失！', 404);
+                $this->exception('访问的控制器['.$route['controller'].']的类文件['.$controllerFile.']丢失！', 404);
             }
             $controller = new \ReflectionClass($controller);//建立反射类
             if(!$controller->hasMethod($action)){
-                $this->exception('访问的方法['.$router['action'].']不存在！', 404);
+                $this->exception('访问的方法['.$route['action'].']不存在！', 404);
             }
             $action=$controller->getMethod($action);
             if(!$action->isPublic() or $action->isAbstract() or $action->isStatic()){
-                $this->exception('访问的方法['.$router['action'].']不存在（不公有 或 未实现——为抽象的 或为静态方法）！', 404);
+                $this->exception('访问的方法['.$route['action'].']不存在（不公有 或 未实现——为抽象的 或为静态方法）！', 404);
             }
             /*
              * 验证控制器是否规范，严格遵守控制器的命名空间写法，可以注释掉这里的代码。
@@ -257,10 +259,10 @@ class App
             }
             */
             $controller=$controller->newInstance($this);
-            $controller->actionName=$router['action'];
-            $controller->before($router['action']);
+            $controller->actionName=$route['action'];
+            $controller->before($route['action']);
             $action->invoke($controller);
-            $controller->after($router['action']);
+            $controller->after($route['action']);
         }
         catch(Monkey\BreakException $e){
         }
