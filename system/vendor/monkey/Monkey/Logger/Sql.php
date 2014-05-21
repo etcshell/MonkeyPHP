@@ -25,7 +25,7 @@ class Sql implements _Interface
     public function __construct($app,$config)
     {
         $this->app=$app;
-        self::$dir= $app->DIR.($config['sql_dir'] ? $config['sql_dir'] : '/logs/sql');
+        self::$dir= dir_format($app->DIR.($config['sql_dir'] ? $config['sql_dir'] : '/logs/sql'));
         self::$dir.='/'.date("Y-m-d",$app->TIME).'/'.date("H",$app->TIME);
         $app->shutdown()->register(array($this,'write'));
     }
