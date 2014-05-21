@@ -39,8 +39,7 @@ class Cache{
     {
         $this->cache_file=$this->app->DIR.'/temp/html'.$file.'.php';
         $this->expire_file=$this->cache_file.'_expire.php';
-        $path= dirname($this->cache_file);
-        dir_check($path);
+        dir_check(dirname($this->cache_file));
         return $this;
     }
 

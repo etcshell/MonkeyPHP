@@ -225,6 +225,7 @@ class Upload
     private function _upload($index, $upName, $upSize, $upTmp, $upError,
                              $saveDir, $saveName, $filterType=null, $maxSize=0, $overwrite=FALSE)
     {
+        $saveDir=dir_format($saveDir);
         dir_check($saveDir);
         if(!is_uploaded_file($upTmp)){
             return $this->_notice(0, '这不是一个上传的文件!');

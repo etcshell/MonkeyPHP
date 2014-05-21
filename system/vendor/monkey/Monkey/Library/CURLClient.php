@@ -21,6 +21,7 @@ final class CURLClient {
         if(is_null($cookie_path)){
             $this->_cookie_file = APP_PATH.'/temp/curl/curl.txt';
         }  else {
+            $cookie_path=dir_format($cookie_path);
             dir_check($cookie_path);
             $this->_cookie_file = $cookie_path.'/curl.txt';
         }

@@ -44,7 +44,7 @@ final class File implements Cache
         $this->TIME=$app->TIME;
         $this->_expire=$config['expire'];
 
-        $this->_cache_path=$app->DIR.($config['dir']?$config['dir']:'/temp/fileCache');
+        $this->_cache_path=dir_format($app->DIR.($config['dir']?$config['dir']:'/temp/fileCache'));
         $this->_cache_file=$config['filename']?'/'.$config['filename']:'/data';
         $this->_cache_size=$config['filesize']?$config['filesize']:'15M';
         $this->_data_onCheck=$config['check']?$config['check']:false;//是否验证数据

@@ -80,8 +80,7 @@ class Template
             || (filemtime($compFile) < filemtime($tplFile))
         ){
             $compiled = $this->_compile($tplFile); //获取经编译后的内容
-            $dir = dirname($compFile);
-            dir_check($dir);//保证编译后目录存在
+            dir_check(dirname($compFile));//保证编译后目录存在
             file_put_contents($compFile, $compiled, LOCK_EX);
         }
         extract($this->variable, EXTR_OVERWRITE);

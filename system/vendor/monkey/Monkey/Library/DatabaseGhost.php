@@ -22,6 +22,7 @@ class DatabaseGhost {
      * @param \PDO $pdo 数据库层管理器
      */
     public function __construct($data_dir, \PDO $pdo) {
+        $data_dir=dir_format($data_dir);
         $this->_data_dir=$data_dir;
         dir_check($data_dir);
         dir_check_writable($data_dir);

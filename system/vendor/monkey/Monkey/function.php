@@ -221,11 +221,10 @@ function dir_check_writable($targetDir){
  * @param string $targetDir 目标目录,不支持相对目录
  * @return boolean
  */
-function dir_check(&$targetDir) {
-    $targetDir=dir_format($targetDir);
+function dir_check($targetDir) {
+    //$targetDir=dir_format($targetDir);
     if(is_dir($targetDir))return TRUE;
-    $temp=$targetDir[0];
-    if($temp=='.')return false;
+    if($targetDir[0]=='.')return false;
     $tempDir=explode('/', $targetDir);
     $subDir=$tempDir[0];
     array_shift($tempDir);

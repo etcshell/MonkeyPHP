@@ -25,7 +25,7 @@ class Error implements _Interface
     public function __construct($app,$config)
     {
         $this->app=$app;
-        self::$logDir= $app->DIR.($config['error_dir'] ? $config['error_dir'] : '/logs/error');
+        self::$logDir= dir_format($app->DIR.($config['error_dir'] ? $config['error_dir'] : '/logs/error'));
         self::$logDir.='/'.date("Y-m-d",$app->TIME).'/'.date("H",$app->TIME);
         $app->shutdown()->register(array($this,'write'));
     }
