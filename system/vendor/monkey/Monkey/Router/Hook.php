@@ -15,7 +15,7 @@ class Hook {
     ;
     private
         $hooks,
-        $select,
+        $select=array(),
         $called,
         $started=false
     ;
@@ -53,6 +53,7 @@ class Hook {
     public function start($requestPath,$requestMethod='get')
     {
         if($this->started)return;
+        if(empty($this->hooks))return;
         $this->started=true;
         $requestPath='/'.ltrim(strtolower($requestPath),'/');
         $requestMethod=strtolower($requestMethod);
