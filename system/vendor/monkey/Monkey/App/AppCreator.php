@@ -32,11 +32,11 @@ class AppCreator {
         $app->TIME=$_SERVER['REQUEST_TIME'];
         empty($app->DIR) and $app->DIR=strtr($appDir,DIRECTORY_SEPARATOR,'/').'/'.$appName;
         $app->MONKEY_DIR=Monkey\Monkey::$DIR;
-        $this->setError();
         $this->setConfig();
         $this->setEnvironment();
         $app->FRONT_ROOT_DIR= $staticDir;
         $app->FRONT_ROOT_URL= $_SERVER['DOCUMENT_ROOT']==$staticDir?'':substr($staticDir, strlen($_SERVER['DOCUMENT_ROOT']));
+        $this->setError(); //修正异常接管步骤。异常处理里面用了$app，所以必须在完成$app创建后接管异常。
         $app->container= new Monkey\Container($app);//装载注入容器
     }
 
