@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Monkey' => array($vendorDir .DIRECTORY_SEPARATOR. 'monkey'),
+    'Markdown' => array($vendorDir .DIRECTORY_SEPARATOR. 'markdown'),
 );
