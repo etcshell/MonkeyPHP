@@ -270,18 +270,16 @@ http://web目录/hello
 这使得站长可以随时在线编辑路由表，从而更方便的控制网站。  
 URL 中路由字符串的查找模式
 
-(1). **rewrite**：http://… /www/route.html 或 http://… /www/route
-
-(2). **pathinfo**：http://… /www/index.php/route
-
-(3). **get**：http://… /www/index.php?r=route
+(1) **rewrite**：http://… /www/route.html 或 http://… /www/route  
+(2) **pathinfo**：http://… /www/index.php/route  
+(3) **get**：http://… /www/index.php?r=route
 
 ###2. 查找原理：
 路由组件先编译路由表，目的是可以让查询既高效又强大。   
 路由匹配虽然使用了正则表达式，但是巧妙的编译方式使得查询匹配过程非常高效。   
 注意： 
  
-(1). 当选择 rewrite 查找模式时需要服务器支持，比如 apache 的.htaccess 文件（位置在 www 目录下）：  
+(1) 当选择 rewrite 查找模式时需要服务器支持，比如 apache 的.htaccess 文件（位置在 www 目录下）：  
 	
 		<IfModule mod_rewrite.c>  
 		RewriteEngine On  
@@ -291,7 +289,7 @@ URL 中路由字符串的查找模式
 		RewriteRule ^(.*)$ index.php/$1 [L]  
 		</IfModule>  
 
-(2). 当选择 pathinfo 查找模式也需要服务器支持，开启方法请百度哈。注意，IIS默认只支持pathinfo。
+(2) 当选择 pathinfo 查找模式也需要服务器支持，开启方法请百度哈。注意，IIS默认只支持pathinfo。
 
 ##控制器
 
@@ -361,11 +359,9 @@ MonkeyPHP的代码规范绝大多数是遵循PSR-0，1，2中的标准。
 **使用方法：**
 选择上节 Monkey\Library\Filter 类中的 xss####方法来过滤输入值：
 
-(1). **xssToText($data)**，直接删除所有 html 和 php 标签，使得浏览器输入的内容只剩下文本，是最高级别的过滤；
-
-(2). **xssToHtml($data)**，不是删除任何标签，但对标签进行彻底的编码，使得浏览器输入的内容按源码输出，是普通级别的过滤；
-
-(3). **xssDeleteScript($data)**，有选择性的删除 javascript,iframes,object 等有害标签，使得其它内容能保留浏览器输入的 html 样式，是最弱的过滤级别；
+(1) **xssToText($data)**，直接删除所有 html 和 php 标签，使得浏览器输入的内容只剩下文本，是最高级别的过滤；  
+(2) **xssToHtml($data)**，不是删除任何标签，但对标签进行彻底的编码，使得浏览器输入的内容按源码输出，是普通级别的过滤；  
+(3) **xssDeleteScript($data)**，有选择性的删除 javascript,iframes,object 等有害标签，使得其它内容能保留浏览器输入的 html 样式，是最弱的过滤级别；  
 
 ###3. SQL 防注入解决方案：drupal数据库组件
 原理（详见源码）
@@ -373,9 +369,8 @@ MonkeyPHP的代码规范绝大多数是遵循PSR-0，1，2中的标准。
 ###4. 目录遍历漏洞解决方案：不向浏览器输出后台目录变量
 MonkeyPHP 的目录部署分为两个部分
 
-(1). **www** 目录，是 web 服务器指定浏览器可以访问的虚拟目录，这里仅仅存放静态资源文件和浏览器上传的文件。同时还要通过系统设置保证这个目录里的文件没有执行权。
-
-(2). **system** 目录绝不能让浏览器有访问权限。
+(1) **www** 目录，是 web 服务器指定浏览器可以访问的虚拟目录，这里仅仅存放静态资源文件和浏览器上传的文件。同时还要通过系统设置保证这个目录里的文件没有执行权。  
+(2) **system** 目录绝不能让浏览器有访问权限。  
 
 ###5. DDOS 攻击解决方案：拦截浏览器恶意刷新
 公共函数中有一个有效拦截防御 DDOS 的代码。如需使用，请在 system/vendor/autoload.php 文件末尾新增一行 intercept_DDOS();
@@ -384,7 +379,7 @@ MonkeyPHP 的目录部署分为两个部分
 
 ##安全工具——过滤浏览器输入类：Monkey\Library\Filter
 
-###公开方法：
+###1. 公开方法：
 
 **方法名：** ::compressWhite  
 **参数：** array|string $data 待处理数据   
@@ -414,11 +409,11 @@ MonkeyPHP 的目录部署分为两个部分
 **参数：** array|string $data 待处理数据   
 **作用：** 仅仅编码 PHP 标签。返回原格式数据。
 
-###注意：
+###2. 注意：
 
-1. ::white 主要减少浏览器输入的冗余信息量。
-2. ::xss####则主要用来防止 xss 攻击。
-3. 本类都是静态类，且所有方法均返回原$data 格式的数据。 
+(1) ::white 主要减少浏览器输入的冗余信息量。  
+(2) ::xss####则主要用来防止 xss 攻击。  
+(3) 本类都是静态类，且所有方法均返回原$data 格式的数据。   
 
 
 ##协议
