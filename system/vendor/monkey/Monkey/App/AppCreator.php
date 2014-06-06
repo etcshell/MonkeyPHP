@@ -63,9 +63,9 @@ class AppCreator {
     private function setConfig()
     {
         $app=$this->app;
-        $app->config= new Config($app);
+        $configFile= $app->DIR.'/temp/Config/data.php';
+        $app->config= new Config($configFile);
         //下面的代码可以用Config类的方法完成，但这里重写可以提高速度，Config内的方法用于后期动态修改配置用。
-        $configFile=$app->DIR.'/temp/Config/data.php';
         if($app->DEBUG && file_exists($configFile)) unlink($configFile);
         if(file_exists($configFile)){
             Config::$data=unserialize(file_get_contents($configFile))+Config::$data;

@@ -14,11 +14,11 @@ class Config {
     private static $compileFile;
 
     /**
-     * @param \Monkey\App\App $app
+     * @param string $compileFile
      */
-    public function __construct($app)
+    public function __construct($compileFile)
     {
-        self::$compileFile=$app->DIR.'/temp/Config/data.php';
+        self::$compileFile=$compileFile;
     }
 
     /**
