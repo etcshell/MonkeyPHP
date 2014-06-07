@@ -118,6 +118,14 @@ class App
     }
 
     /**
+     * @return \Monkey\Permission\Permission
+     */
+    public function Permission()
+    {
+        return $this->container->getter('permission');
+    }
+
+    /**
      * @param string $provider
      * @return \Monkey\Request\Request
      */
