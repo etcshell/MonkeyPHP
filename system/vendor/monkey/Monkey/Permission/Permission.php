@@ -21,12 +21,12 @@ class Permission
 
     /**
      * 设置查找行为授权的方法
-     * @param \Closure $finder
+     * @param callable $finder
      * $finder方法将获得行为编码参数，见behaviourCoder方法，
      * $finder方法返回值应为allowed、denied、own、others之一，
      * $finder方法返回值分别代表具有该角色的：所有用户允许、所有用户拒绝、仅创建者允许、除开创建者允许
      */
-    public function setAuthFinder(\Closure $finder)
+    public function setAuthFinder(callable $finder)
     {
         $this->authFinder=$finder;
     }
