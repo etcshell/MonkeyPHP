@@ -1,6 +1,32 @@
 <?php
 namespace Monkey\View;
 
+/*
+ * 分页栏配置在view.ini.php中：
+    'page_style_name'       =>'def',
+    'def_link'              =>'<a href="http://urlPre{number}">{text}</a>',
+    'def_link_ajax'         =>'<a href="javascript:ajaxActionName(\'http://urlPre{number}\')">{text}</a>',
+    'def_span_current'      =>'<span class="current_style">{number}</span>',
+    'def_span_total'        =>'<span class="total_style">共{number}页</span>',
+    'def_input_jump'        =>'转到<input type="text" class="jump_style" size="2" title="输入页码，按回车快速跳转" value="1" onkeydown="if(event.keyCode==13) {window.location=\'http://urlPre\'+this.value; doane(event);}" />',
+    'def_text_first'        =>'首页',//另外，图片可以设置为：'<img src="..." width="16" height="11" />'，下同
+    'def_text_pre'          =>'上一页',
+    'def_text_next'         =>'下一页',
+    'def_text_last'         =>'尾页',
+    'def_layout'            =>'pre-current-next',//'first-pre-current-next-last'， 'first-pre-list-next-last'（list包含current）
+                                                 //支持 first、pre、current、list（包含current）、next、last、total、jump
+ * 分页栏使用方法：
+    $page=$this->app->view()->page();
+    $page->setStyle('def');//样式是配置中的默认样式，则这步可以省略
+    $page->setCurrentLayout('first-pre-current-next-last');//使用上一步样式中的默认布局，则这步可以省略
+    $currentPage=5;
+    $totalPage=92;
+    $barLimit=10;
+    $pageHtml=$page->getByList($currentPage,$totalPage,$barLimit);
+    简化下来就是：
+    $pageHtml=$this->app->view()->page()->getByList(5,92,10);
+ */
+
 /**
  * Page
  * 分页栏生成器
@@ -28,12 +54,13 @@ class Page {
         $pre            ='_text_pre',//上一页
         $next           ='_text_next',//下一页
         $last           ='_text_last',//尾页
-        $loading        ='_loading',
+        $layout         ='_layout',
 
         $currentPage,
         $barLimit,
         $totalPage,
-        $isAjax=false//是否支持AJAX分页模式
+        $isAjax=false,//是否支持AJAX分页模式
+        $currentLayout
     ;
     /**
      * @param \Monkey\App\App $app
@@ -64,6 +91,20 @@ class Page {
     public function setStyle($style=null)
     {
         $this->style= $style ? $style : $this->config['page_style_name'];
+        $this->currentLayout='';
+        return $this;
+    }
+
+    /**
+     * 设置分页栏布局
+     * @param string | null $currentLayout  当前布局序列，为空相当于使用配置中对应样式的分页布局
+     * 支持 first、pre、current、list（包含current）、next、last、total、jump 及其任意组合，
+     * 如'pre-current-next'
+     * @return $this
+     */
+    public function setCurrentLayout($currentLayout=null)
+    {
+        $this->currentLayout= $currentLayout ? $currentLayout : $this->config[$this->style.$this->layout];
         return $this;
     }
 
@@ -96,8 +137,9 @@ class Page {
         $this->totalPage=$totalPage;
         $this->_link=$this->config[$this->style.($this->isAjax?$this->linkAjax:$this->link)];
         $result='';
-        $loading=$this->config[$this->style.$this->loading];
-        foreach($loading as $method){
+        $layout=$this->currentLayout?$this->currentLayout:$this->config[$this->style.$this->layout];
+        $layout=explode ('-',$layout);
+        foreach($layout as $method){
             $method='get_'.$method;
             if(method_exists($this,$method))
                 $result.=$this->$method();

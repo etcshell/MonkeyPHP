@@ -28,7 +28,7 @@
         'def_text_pre'          =>'上一页',
         'def_text_next'         =>'下一页',
         'def_text_last'         =>'尾页',
-        'def_loading'           =>'pre-current-next',//'first-pre-current-next-last'， 'first-pre-list-next-last'（list包含current）
+        'def_layout'            =>'pre-current-next',//'first-pre-current-next-last'， 'first-pre-list-next-last'（list包含current）
                                                      //支持 first、pre、current、list（包含current）、next、last、total、jump
 
         //主题配置：结果是 'theme_url_base'.'theme_dir'.'cssFile'
