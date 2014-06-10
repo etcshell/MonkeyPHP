@@ -226,6 +226,10 @@ class App
         try{
             $router=$this->router();
             $router->startHook();
+//            增加hook执行后的status判断和处理
+//            if(isset($router->hook->status['denied'])){
+//                //todo
+//            }
             $route=$router->getRoute();
             /**
              * 路由结构为数组：

@@ -11,7 +11,8 @@ class Hook {
         /**
          * @var \Monkey\App\App
          */
-        $app
+        $app,
+        $status=array()
     ;
     private
         $hooks,
@@ -79,10 +80,10 @@ class Hook {
     /**
      * 迭代运行路由hook
      * 本来可以用start方法中的循环语句直接运行hook的，但是为了更灵活的控制hook流程，在此改为迭代方式
-     * 从call_user_func调用hook的方式可以看出，hook处理函数handle有两个参数：应用容器$app、hook管理器$this
+     * 从call_user_func调用hook的方式可以看出，hook处理函数handle有1个参数：hook管理器$this
      * 另外handle中要想迭代继续，必须显示调用hook管理器中的next方法，也就是这个方法。
      * handle例：
-     * function myHandle($app,$hook){
+     * function myHandle($hook){
      *     ...//Todo，处理你的逻辑
      *     $hook->next();
      * }
@@ -92,7 +93,7 @@ class Hook {
         if(empty($this->select))return;
         $this->called[]=key($this->select);
         $handle=array_shift($this->select);
-        call_user_func($handle,$this->app,$this);//$handle($this->app,$this);
+        call_user_func($handle,$this);//$handle($this->app,$this);
     }
 
     /**
