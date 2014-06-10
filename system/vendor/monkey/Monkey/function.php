@@ -60,13 +60,12 @@ function dump($var, $echo=true, $label=null, $strict=true) {
 /**
  * 公用通知包装
  * @param bool $status 状态
- * @param mixed $info 信息
- * @param string $type =array 返回通知包的数据类型： array（默认）、json（对array进行json编码）
- * @return array|string
+ * @param mixed $data 通知的数据
+ * @param string $msg 附加信息
+ * @return array
  */
-function notice($status,$info,$type='array'){
-    $data=array('status'=>(bool)$status,'info'=>$info);
-    return $type==='json'?json_encode($data):$data;
+function notice($status,$data,$msg=''){
+    return array('status'=>(bool)$status,'msg'=>$msg,'data'=>$data);
 }
 
 //如果json_encode没有定义，则定义json_encode函数，常用于返回ajax数据

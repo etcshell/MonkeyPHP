@@ -26,6 +26,7 @@ class Response
         $isSend=false,//内容
         $headers = array(),//设置输出的头部信息
         $body, //内容
+        $jsonBody = array(),//json数据
         $httpHeaderOnly  = false,
         $redirectUrl=null,//立即跳转网址
         $statusCode  = 200,//状态码
@@ -123,6 +124,39 @@ class Response
     }
 
     /**
+     * 设置响应正文
+     * @param string $content 内容
+     */
+    public function setBody($content)
+    {
+        $this->body=$content;
+    }
+
+    /**
+     * 设置响应json的数据
+     * @param array $data
+     */
+    public function setJsonData(array $data)
+    {
+        $this->jsonBody= $data;
+    }
+
+    /**
+     * 设置响应json的通知
+     * @param bool $status 状态
+     * @param mixed $data 通知的数据
+     * @param string $msg 附加信息
+     */
+    public function setJsonNotice($status,$data,$msg='')
+    {
+        $this->jsonBody=array(
+            'status'=>(bool)$status,
+            'msg'=>$msg,
+            'data'=>$data
+        );
+    }
+
+    /**
      * 获取Html正文Body文档正文
      * @return string
      */
@@ -162,7 +196,9 @@ class Response
         $this->isSend=true;
         $this->sendHeaders();
         $httpHeaderOnly= ($this->httpHeaderOnly or ($this->statusCode>399)) ;
-        if(!$httpHeaderOnly) echo $this->getBody();
+        if(!$httpHeaderOnly){
+            echo $this->app->request()->isAjax()?json_encode($this->jsonBody):$this->getBody();
+        }
         if (function_exists('fastcgi_finish_request')) {
             $httpHeaderOnly and $this->ob_end_flush(false);
             fastcgi_finish_request();
