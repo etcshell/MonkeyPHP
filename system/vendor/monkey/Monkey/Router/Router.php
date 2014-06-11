@@ -14,10 +14,6 @@ class Router
          */
         $app,
         /**
-         * @var Map
-         */
-        $map,
-        /**
          * @var Pattern
          */
         $pattern,
@@ -28,6 +24,10 @@ class Router
     ;
 
     private
+        /**
+         * @var Map
+         */
+        $map,
         $config,
         $path,
         $route,
@@ -46,7 +46,6 @@ class Router
         $this->config= $config;
         $this->root= $app->FRONT_ROOT_URL;
         $this->resource= $this->root;
-        $this->map= new Map($app, $config);
         $this->pattern= new Pattern($app, $config);
         $this->loadPath();
         $this->requestMethod=$app->request()->getMethod();
@@ -59,6 +58,15 @@ class Router
         }
         $this->route= $route;
         $this->hook=new Hook($app);
+    }
+
+    /**
+     * @return Map
+     */
+    public function map()
+    {
+        if(!$this->map) $this->map= new Map($this->app, $this->config);
+        return $this->map;
     }
 
     /**
