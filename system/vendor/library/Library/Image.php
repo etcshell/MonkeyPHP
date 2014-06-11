@@ -18,7 +18,7 @@ class Image {
      * 生成png图像直接输出到屏幕
      * @return string 验证码字符串
      */
-   public static function verificationByCode( $width=120,$height=40 ,$charset='',$char_num=4,$font_size=25  ,$font_file=NULL  ){
+   public function verificationByCode( $width=120,$height=40 ,$charset='',$char_num=4,$font_size=25  ,$font_file=NULL  ){
         if(empty($font_file) || !file_exists($font_file))
             $font_file= dirname(__FILE__).'/font/Molengo-Regular.ttf';
         //验证码字符全集
@@ -81,7 +81,7 @@ class Image {
      *          "mime"=>
      *      );
      */
-    public static function getInfo($image_path) {
+    public function getInfo($image_path) {
         $imageInfo = @getimagesize($image_path);
         if( $imageInfo== false) return false;
         $imageType = strtolower(
@@ -105,8 +105,8 @@ class Image {
      * @param bool $interlace           启用隔行扫描
      * @return bool 成功返回true，失败返回false
      */
-    public static function thumb($image,$thumb_filePath=null,$type='',$thumb_width_max=200,$thumb_height_max=50,$interlace=true){
-        $info  = self::getInfo($image);// 获取原图信息
+    public function thumb($image,$thumb_filePath=null,$type='',$thumb_width_max=200,$thumb_height_max=50,$interlace=true){
+        $info  = $this->getInfo($image);// 获取原图信息
         if($info == false) return false;
         $source_width  = $info['width'];
         $source_height = $info['height'];
@@ -179,11 +179,11 @@ class Image {
             return false;
         if(!is_null($result_path))dir_check(dirname($result_path));
         //读取原图像文件
-        $imageInfo = self::getInfo($image_path);
+        $imageInfo = $this->getInfo($image_path);
         $imageFun = 'imagecreatefrom' . $imageInfo['type'];
         $image_handler = $imageFun($image_path);
         //读取水印文件
-        $waterInfo = self::getInfo($water_path);
+        $waterInfo = $this->getInfo($water_path);
         $waterFun = 'imagecreatefrom' . $waterInfo['type'];
         $water_handler = $waterFun($water_path);
         //设置透明色
@@ -196,7 +196,7 @@ class Image {
                     );
             imagecolortransparent($water_handler,$trans_color);
         }
-        self::_water($image_handler, $water_handler
+        $this->_water($image_handler, $water_handler
                 , $result_path, $imageInfo['type']
                 , $imageInfo['width'], $imageInfo['height']
                 , $waterInfo['width'], $waterInfo['height']
@@ -214,7 +214,7 @@ class Image {
      * @param array $font_style     字体样式：array('size'=>12,'color'=>array(192,192,192),'angle'=>0,//逆时针旋转角度)
      * @return boolean
      */
-    public static function waterByText($image_path,$water_text, $result_path=NULL, $water_position_option =9, $alpha=85,$font_file=NULL,$font_style=array('size'=>12,'color'=>array(192,192,192),'angle'=>0)){
+    public function waterByText($image_path,$water_text, $result_path=NULL, $water_position_option =9, $alpha=85,$font_file=NULL,$font_style=array('size'=>12,'color'=>array(192,192,192),'angle'=>0)){
         //检查图片是否存在
         if (!file_exists($image_path))
             return false;
@@ -222,7 +222,7 @@ class Image {
         if(empty($font_file) || !file_exists($font_file))
             $font_file= config()->dir_frame.'/font/Molengo-Regular.ttf';
         //读取原图像文件
-        $imageInfo = self::getInfo($image_path);
+        $imageInfo = $this->getInfo($image_path);
         $imageFun = "imagecreatefrom" . $imageInfo['type'];
         $image_handler = $imageFun($image_path);
         //设置水印文本
@@ -249,7 +249,7 @@ class Image {
                 , $text_color
                 , $font_file
                 , $water_text);//写入文本
-        self::_water($image_handler, $water_handler
+        $this->_water($image_handler, $water_handler
                 , $result_path, $imageInfo['type']
                 , $imageInfo['width'], $imageInfo['height']
                 , $water_text_w, $water_text_h
@@ -269,7 +269,7 @@ class Image {
      * @param string $result_path   带水印的结果图片路径,默认输出到浏览器
      * @return boolean
      */
-    public static function waterByTextOfEmboss($image_path
+    public function waterByTextOfEmboss($image_path
             ,$water_text
             ,$font_file
             ,$font_size=50
@@ -282,7 +282,7 @@ class Image {
         if(!file_exists($image_path))return false;
         if(!is_null($result_path))dir_check(dirname($result_path));
         //读取原图像文件
-        $imageInfo = self::getInfo($image_path);
+        $imageInfo = $this->getInfo($image_path);
         $imageFun = "imagecreatefrom" . $imageInfo['type'];
         $image_handler = $imageFun($image_path);
         //设置水印文本
@@ -330,7 +330,7 @@ class Image {
             , $font_file
             , $water_text);//写入文本
         imagecolortransparent($water_handler, $background_color);
-        self::_water($image_handler, $water_handler
+        $this->_water($image_handler, $water_handler
                 , $result_path, $imageInfo['type']
                 , $imageInfo['width'], $imageInfo['height']
                 , $water_text_w, $water_text_h
@@ -351,7 +351,7 @@ class Image {
      * @param int $alpha 水印的透明度，0（完全透明）-100（完全不透明）之间
      * @param bool $water_type_is_png 是否生成png格式，否则生成jpg格式
      */
-    private static function _water($image_handler,$water_handler
+    private function _water($image_handler,$water_handler
             ,$result_image_path,$result_image_type
             ,$image_w,$image_h
             ,$water_w,$water_h
