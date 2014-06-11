@@ -67,6 +67,7 @@ class Map
     public function add($pattern,$controller,$action)
     {
         $pattern[0]=='/' and $pattern='get'.$pattern;
+        $pattern=trim($pattern,'/');
         $pos=strpos($controller,'\\Controller\\');
         $pos!==false and $controller=substr($controller,$pos+12);
         $this->map[$pattern]=$controller.':'.$action;

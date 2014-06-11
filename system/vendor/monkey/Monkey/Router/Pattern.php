@@ -139,6 +139,7 @@ class Pattern {
     private function addPattern($pattern,$router)
     {
         $pattern[0]=='/' and $pattern='get'.$pattern;
+        $pattern=trim($pattern,'/');
         if(strpos($pattern, ':')===false){
             $this->patterns['static'][$pattern]=$router;//get/article/list
             return;
