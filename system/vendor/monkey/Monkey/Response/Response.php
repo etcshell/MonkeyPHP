@@ -26,6 +26,7 @@ class Response
         $isSend=false,//内容
         $headers = array(),//设置输出的头部信息
         $body, //内容
+        $isAjax=false,
         $jsonBody = array(),//json数据
         $httpHeaderOnly  = false,
         $redirectUrl=null,//立即跳转网址
@@ -94,6 +95,7 @@ class Response
         $config=$app->config()->getComponentConfig('response','web');
         $config['charset'] and $this->charset= $config['charset'];
         $app->shutdown()->register(array($this,'send'));
+        if($this->app->request()->isAjax())$this->setAjax();
         if(strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== FALSE
             && !ini_get('zlib.output_compression')
             && extension_loaded("zlib")
@@ -197,7 +199,7 @@ class Response
         $this->sendHeaders();
         $httpHeaderOnly= ($this->httpHeaderOnly or ($this->statusCode>399)) ;
         if(!$httpHeaderOnly){
-            echo $this->app->request()->isAjax()?json_encode($this->jsonBody):$this->getBody();
+            echo $this->isAjax?json_encode($this->jsonBody):$this->getBody();
         }
         if (function_exists('fastcgi_finish_request')) {
             $httpHeaderOnly and $this->ob_end_flush(false);
@@ -296,6 +298,7 @@ class Response
     public function setAjax()
     {
         $this->setContentType('application/json');
+        $this->isAjax=true;
         return $this;
     }
 
