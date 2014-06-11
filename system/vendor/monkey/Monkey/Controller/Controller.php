@@ -145,25 +145,15 @@ class Controller {
     }
 
     /**
-     * 200=>操作成功,300=>操作失败,301=>会话超时
+     * 向浏览器返回ajax数据
      * @param int $statusCode
      * @param string $message
      * @param array $data
      */
     protected function ajaxReturn($statusCode, $message, $data=array())
     {
-        $jsonData = array (
-            'statusCode' => $statusCode,
-            'message' => $message,
-            'data' => $data
-        );
-        $this->app->response()->setAjax()->sendHeaders();
-        exit (json_encode($jsonData));
-    }
-
-    protected function tokenCheck()
-    {
-
+        $this->app->response()->setAjax()->setJsonNotice($statusCode,$data,$message);
+        exit;
     }
 
     /**
