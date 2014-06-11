@@ -25,7 +25,7 @@ class Memcache extends Session
         if(!$this->handler->connect($this->config['host'],$this->config['port'])){
             $app->exception('会话出错:Memcache连接失败。',2048,__FILE__,__LINE__);
         }
-        $this->init();
+        $this->start();
     }
     /**
      * 打开Session文件

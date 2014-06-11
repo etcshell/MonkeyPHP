@@ -17,7 +17,7 @@ class Apc extends Session
         if(!extension_loaded('apc')) $app->exception('会话出错:没有安装APC扩展。',2048,__FILE__,__LINE__);
         $this->app=$app;
         $this->config = $app->config()->getComponentConfig('session','apc');
-        $this->init();
+        $this->start();
     }
     /**
      * 打开Session文件

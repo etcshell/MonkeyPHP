@@ -49,7 +49,7 @@ class File extends Session
         if(!dir_check($this->_cache_path)) $this->_error('缓存目录校验失败。');
         $this->_workat($this->_cache_path.$this->_cache_file);
 
-        $this->init();
+        $this->start();
     }
 
     /**

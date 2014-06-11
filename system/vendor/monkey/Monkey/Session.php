@@ -24,7 +24,7 @@ abstract class Session
     {
 
     }
-    protected function init()
+    protected function start()
     {
         $config=$this->config;
         $this->prefix= empty($config['prefix']) ? $this->app->NAME : $config['prefix'];
