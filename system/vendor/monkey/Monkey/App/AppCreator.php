@@ -38,6 +38,7 @@ class AppCreator {
         $app->FRONT_ROOT_URL= $_SERVER['DOCUMENT_ROOT']==$staticDir?'':substr($staticDir, strlen($_SERVER['DOCUMENT_ROOT']));
         $this->setError(); //修正异常接管步骤。异常处理里面用了$app，所以必须在完成$app创建后接管异常。
         $app->container= new Monkey\Container($app);//装载注入容器
+        $app->sessionStart();
     }
 
     /**
