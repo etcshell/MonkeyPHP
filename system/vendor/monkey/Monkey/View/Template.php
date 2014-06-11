@@ -14,7 +14,7 @@ class Template
         $tplRoot,
         $compiledRoot
     ;
-    private
+    public
         /**
          * @var \Monkey\App\App
          */

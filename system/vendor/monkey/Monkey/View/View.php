@@ -54,6 +54,17 @@ class View {
     }
 
     /**
+     * 模板赋值变量整体设置
+     * @param array $data
+     * @return $this
+     */
+    public function setVariable(array $data=array())
+    {
+        $this->template->variable= $data;
+        return $this;
+    }
+
+    /**
      * 模板赋值
      * @param string $name 变量名
      * @param mixed $value 变量值
