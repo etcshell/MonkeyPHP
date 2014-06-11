@@ -10,14 +10,15 @@ use Monkey;
  */
 class Web extends Controller{
 
-    public
-        /**
-         * @var Monkey\Request\Request
-         */
-        $request,
-        /**
-         * @var \Monkey\Response\Response
-         */
-        $response
-    ;
+//    public
+//        /**
+//         * @var Monkey\Request\Request
+//         */
+//        $request,
+//        /**
+//         * @var \Monkey\Response\Response
+//         */
+//        $response
+//    ;
+
 } 
