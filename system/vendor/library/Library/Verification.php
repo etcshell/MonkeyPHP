@@ -180,7 +180,7 @@ class Verification {
      *  @return bool
      */
     public function isSafeAll($str) {
-        return preg_match('/[\"\'<>\?\#\$\*\&;\\\/\[\]\{\}=\(\)\^%,]/i', $str);
+        return !preg_match('/[\"\'<>\?\#\$\*\&;\\\/\[\]\{\}=\(\)\^%,]/i', $str);
     }
     /**
      * 	mysql内容安全验证
@@ -188,25 +188,18 @@ class Verification {
      *  @return bool
      */
     public function isSafeMysql($str) {
-        return preg_match('/[\"\'`\-\*;\s\[\]\{\}=\(\)\^%,', $str);
+        return !preg_match('/[\"\'`\-\*;\s\[\]\{\}=\(\)\^%,', $str);
     }
     /**
      * 是否为合法的用户名
      * @param string $username 用户名
-     * @param boolean $chinese 是否是中文人名
-     * @param boolean $asia 是否是亚洲人名
      * @return boolean 
      */
-    public function isUserName($username='', $chinese=false, $asia=false) {
+    public function isUserName($username) {
         if(!$username) return false;
-        if($asia) {
-            return preg_match("/^[\x{2e80}-\x{9fff}_a-zA-Z0-9]+$/u",$username);
-        }
-        elseif($chinese) {
-            return preg_match("/^[\x{4e00}-\x{9fa5}_a-zA-Z0-9]+$/u",$username);
-        }
-        else {
-            return preg_match("/^[_a-zA-Z0-9]+$/",$username);
-        }
+        return
+            preg_match("/^[_a-zA-Z0-9]+$/",$username) //欧美语系
+            or preg_match("/^[\x{4e00}-\x{9fa5}_a-zA-Z0-9]+$/u",$username)  //汉字
+            or preg_match("/^[\x{2e80}-\x{9fff}_a-zA-Z0-9]+$/u",$username);   //亚洲语系
     }
 }
