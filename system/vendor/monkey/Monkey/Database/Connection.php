@@ -178,7 +178,7 @@ class Connection
             $this->expandArguments($sql, $args);
             $this->oStmt=$this->oPDO->prepare($sql);
             $this->lastSQL=$sql;
-            !is_null($args) and $args=$this->quote($args);
+            //!is_null($args) and $args=$this->quote($args);dump($sql);dump($args);
             $this->isExecuteTrue = $this->oStmt->execute($args);
         }
         catch (\PDOException $e) {
