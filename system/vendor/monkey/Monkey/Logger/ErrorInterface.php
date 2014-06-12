@@ -6,7 +6,7 @@ namespace Monkey\Logger;
  * @package Monkey\Logger
  */
 
-interface _Interface
+interface ErrorInterface
 {
 
     /**

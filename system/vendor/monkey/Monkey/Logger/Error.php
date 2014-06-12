@@ -6,7 +6,7 @@ namespace Monkey\Logger;
  * 一般错误日志类
  * @package Monkey\Logger
  */
-class Error implements _Interface
+class Error implements ErrorInterface
 {
     private static
         $logDir,

@@ -6,7 +6,7 @@ namespace Monkey\Logger;
  * 数据库错误日志类
  * @package Monkey\Logger
  */
-class Sql implements _Interface
+class Sql implements ErrorInterface
 {
     private static
         $dir,
