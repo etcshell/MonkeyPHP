@@ -33,7 +33,6 @@ class Router
         $route,
         $params,
         $root,
-        $resource,
         $requestMethod
     ;
     /**
@@ -44,8 +43,7 @@ class Router
         $this->app=$app;
         $config= $app->config()->getComponentConfig('router','default');
         $this->config= $config;
-        $this->root= $app->FRONT_ROOT_URL;
-        $this->resource= $this->root;
+        $this->root= $app->INDEX_ROOT_URL;
         $this->pattern= new Pattern($app, $config);
         $this->loadPath();
         $this->requestMethod=$app->request()->getMethod();
