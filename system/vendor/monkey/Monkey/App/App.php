@@ -19,6 +19,7 @@ class App
         $MONKEY_DIR,//Monkey框架所在目录
         $FRONT_ROOT_DIR,//前端根文件所在目录
         $FRONT_ROOT_URL,//前端根文件网址
+        $INDEX_ROOT_URL,//前端入口文件网址
         $isCli=false,//是否为命令行应用
         $type='web' //应用类型
     ;
