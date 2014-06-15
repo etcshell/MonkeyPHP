@@ -32,7 +32,7 @@ class Router
         $path,
         $route,
         $params,
-        $root,
+        $indexRoot,
         $requestMethod
     ;
     /**
@@ -43,7 +43,7 @@ class Router
         $this->app=$app;
         $config= $app->config()->getComponentConfig('router','default');
         $this->config= $config;
-        $this->root= $app->INDEX_ROOT_URL;
+        $this->indexRoot= $app->INDEX_ROOT_URL;
         $this->pattern= new Pattern($app, $config);
         $this->loadPath();
         $this->requestMethod=$app->request()->getMethod();
@@ -135,19 +135,12 @@ class Router
         if($parameters or strpos($pattern,':')!==false){
             return $pattern=$this->pattern->packagePath($pattern,$parameters);
         }
-        $url= $this->root;
+        $mode= $this->config['search_mode'];
+        $pattern[0]!='/' and $pattern= '/'.$pattern;
         //rewrite（需服务器支持）、pathinfo（需服务器支持）、get（传统方式）
-        switch($this->config['search_mode']){
-            case 'rewrite':
-                $url.='/'.$pattern;
-                break;
-            case 'pathinfo':
-                $url.='/'.basename($_SERVER['SCRIPT_NAME']).'/'.$pattern;
-                break;
-            default ://get
-                $url.='/'.basename($_SERVER['SCRIPT_NAME']).'?'.$this->config['search_get'].'='.$pattern;
-        }
-        return $url;
+        if($mode=='rewrite') return $this->indexRoot.$pattern;
+        if($mode=='pathinfo') return $this->indexRoot.'/'.basename($_SERVER['SCRIPT_NAME']).$pattern;
+        return $this->indexRoot.'/'.basename($_SERVER['SCRIPT_NAME']).'?'.$this->config['search_get'].'='.$pattern;
     }
 
     /**
@@ -188,7 +181,7 @@ class Router
         $temp=strstr($url,'?',true);
         $temp!==false and $url=$temp;
         //默认认为REQUEST_URI包含了子目录，那么就要去除网址偏移量
-        $this->root and $url=substr($url,strlen($this->root));
+        $this->indexRoot and $url=substr($url,strlen($this->indexRoot));
         $url='/'.trim($url,'/');
         $frontFile=basename($_SERVER['SCRIPT_NAME']);
         strrchr($url,'/') == '/'.$frontFile and $url=substr($url, 0, 0-strlen($frontFile)-1);

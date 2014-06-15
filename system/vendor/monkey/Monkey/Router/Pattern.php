@@ -31,7 +31,7 @@ class Pattern {
         $this->app=$app;
         $this->pattern_option=$config['pattern_option'];
         $this->map_file= $app->DIR.($config['map_file'] ? $config['map_file'] : '/data/router.map.php');
-        $this->pattern_file= $app->DIR.($config['pattern_file'] ? $config['pattern_file'] : '/temp/router/pattern.php');
+        $this->pattern_file= $app->DIR.'/temp/router/pattern.php';
         $this->loadPattern();
     }
 
