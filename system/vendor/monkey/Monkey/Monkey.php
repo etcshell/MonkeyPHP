@@ -9,13 +9,9 @@ use Monkey\App;
  * @package Monkey
  */
 class Monkey {
-    public static
-        $DIR=__DIR__
-    ;
-    private static
-        $app,
-        $VERSION= '2014.04.01'
-    ;
+    const VERSION= '2014.04.01';
+    public static $DIR=__DIR__;
+   private static $app;
 
     /**
      * 创建应用程序实例
@@ -43,14 +39,5 @@ class Monkey {
     public static function app()
     {
         return self::$app;
-    }
-
-    /**
-     * 获取版本号
-     * @return string
-     */
-    public static function version()
-    {
-        return self::$VERSION;
     }
 }
