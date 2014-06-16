@@ -118,7 +118,7 @@ class Router
      * @param string $parameters 参数  array('language'=>'en','year'=>'2014','id'=4025
      * @return string  /test/abc-en/blog/2014-4025
      */
-    public function packagePath($pattern,$parameters=null)
+    public function toPath($pattern,$parameters=null)
     {
         return $this->pattern->packagePath($pattern,$parameters);
     }
@@ -130,7 +130,7 @@ class Router
      * @param string $parameters 参数  array('language'=>'en','year'=>'2014','id'=4025
      * @return string  /.../test/abc-en/blog/2014-4025
      */
-    public function packageRelativelyURL($pattern,$parameters=null)
+    public function toURL($pattern,$parameters=null)
     {
         if($parameters or strpos($pattern,':')!==false){
             return $pattern=$this->pattern->packagePath($pattern,$parameters);
@@ -151,9 +151,9 @@ class Router
      * @param bool $forceHttps 是否强制使用https协议， false时将使用请求时的协议。
      * @return string  http://www.host.com/.../test/abc-en/blog/2014-4025
      */
-    public function packageAbsolutelyURL($pattern,$parameters=null,$forceHttps=false)
+    public function toAbsURL($pattern,$parameters=null,$forceHttps=false)
     {
-        $uri=$this->packageRelativelyURL($pattern,$parameters);
+        $uri=$this->toURL($pattern,$parameters);
         $uri=$this->app->request()->getUriPrefix().$uri;
         $forceHttps and $uri='https'.strstr($uri,':');
         return $uri;

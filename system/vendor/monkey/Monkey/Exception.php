@@ -30,7 +30,7 @@ class Exception extends \Exception{
         $this->file= is_null($file)? parent::getFile() : $file;
         $this->line= is_null($line)? parent::getLine() : $line;
         $app=Monkey::app();
-        $backtrace=debug_backtrace();
+        $backtrace=debug_backtrace();//debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
         $info=$backtrace[0];
         $lines=file($info['file']);
         $info['source']=trim($lines[$info['line']-1]);
