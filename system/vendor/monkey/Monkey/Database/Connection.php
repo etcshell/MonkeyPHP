@@ -53,7 +53,7 @@ class Connection
         $this->name=$name;
         !isset($config['prefix']) and $config['prefix']='';
         $this->config=$config;
-        $this->transactionSupport = !isset($config['transactions']) || ($config['transactions'] !== FALSE);
+        $this->transactionSupport = isset($config['transactions']) ? (bool)$config['transactions'] : FALSE;
         $this->oPDO=$this->connecting($config);
     }
 
