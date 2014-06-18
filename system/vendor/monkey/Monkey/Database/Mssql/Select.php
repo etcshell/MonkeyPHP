@@ -14,12 +14,13 @@ class Select extends Query\Select
      */
     public function __construct(Connection $connection, $table, $alias = NULL, $options = array())
     {
+        $this->app=$connection->app;
+        $this->connection=$connection;
         $this->queryIdentifier=uniqid('', TRUE);
         $conjunction  = isset($options['conjunction']) ? $options['conjunction'] : 'AND';
-        $this->where  = new Condition($this->queryIdentifier, $conjunction);
-        $this->having = new Condition($this->queryIdentifier, $conjunction);
+        $this->where  = new Condition($this->app, $conjunction);
+        $this->having = new Condition($this->app, $conjunction);
         $this->addJoin(NULL, $table, $alias);
-        $this->connection=$connection;
     }
 
     /**

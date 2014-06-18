@@ -48,7 +48,7 @@ class Schema extends Query\Schema
     public function existsTable($tableName)
     {
         $sql="select count(*) as table_count from sysobjects where [name] = '{:$tableName:}' and xtype='U'";
-        $result=$this->connection->query($sql)->fetch(\PDO::FETCH_ASSOC);
+        $result=$this->connection->query($sql)->fetch();
         return isset($result['table_count']);
     }
 
@@ -58,7 +58,7 @@ class Schema extends Query\Schema
     public function existsField($tableName, $columnName)
     {
         $sql="select name as columnName from syscolumns where id=object_id('{:$tableName:}') and name=$columnName";
-        $result=$this->connection->query($sql)->fetch(\PDO::FETCH_ASSOC);
+        $result=$this->connection->query($sql)->fetch();
         return isset($result['columnName']);
     }
 
@@ -68,7 +68,7 @@ class Schema extends Query\Schema
     public function existsIndex($tableName, $indexName)
     {
         $sql="select count(*) as index_count from sysindexes where id=object_id('{:$tableName:}') and name='$indexName'";
-        $result = $this->connection->query($sql)->fetch(\PDO::FETCH_ASSOC);
+        $result = $this->connection->query($sql)->fetch();
         return isset($result['index_count']);
     }
 
@@ -119,7 +119,8 @@ class Schema extends Query\Schema
     /**
      * 添加字段
      */
-    public function addField($tableName, $fieldName, $spec) {
+    public function addField($tableName, $fieldName, $spec)
+    {
         $sql='ALTER TABLE {:'.$tableName.':} ADD '.$fieldName.' '.$spec;
         return $this->connection->query($sql)->isSuccess();
     }
@@ -127,7 +128,8 @@ class Schema extends Query\Schema
     /**
      * 删除字段
      */
-    public function dropField($tableName, $fieldName) {
+    public function dropField($tableName, $fieldName)
+    {
         return $this->connection->query('ALTER TABLE {:'.$tableName.':} DROP COLUMN `'. $fieldName .'`')->isSuccess();
     }
 
@@ -138,7 +140,8 @@ class Schema extends Query\Schema
      * @param string $newFieldName 	新字段名称
      * @return bool
      */
-    public function renameField($tableName, $fieldName, $newFieldName){
+    public function renameField($tableName, $fieldName, $newFieldName)
+    {
         $sql='sp_rename {:'.$tableName.':}.'.$fieldName.', '.$newFieldName.', "COLUMN"';
         return $this->connection->query($sql)->isSuccess();
     }
@@ -150,7 +153,8 @@ class Schema extends Query\Schema
      * @param string $spec
      * @return bool
      */
-    public function alertField($tableName, $fieldName, $spec){
+    public function alertField($tableName, $fieldName, $spec)
+    {
         $sql='ALTER TABLE {:'.$tableName.':} ALTER COLUMN '.$fieldName.' '.$spec;
         return $this->connection->query($sql)->isSuccess();
     }

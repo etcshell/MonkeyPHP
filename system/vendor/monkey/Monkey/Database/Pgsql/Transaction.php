@@ -7,17 +7,17 @@ class Transaction extends Query\Transaction
 {
     protected static $transactionsTotal;
     protected
-        $pdo,//连接驱动
+        $conn,//连接驱动
         $pdoTrans,//当前驱动的事务清单
         $name,//当前事务名称
         $rolledBack //当前事务是否已经回滚了
     ;
 
-    public function __construct(\PDO $pdo, $pdoName, $transName=null)
+    public function __construct(Connection $connection, $connectionName, $transName=null)
     {
-        $this->pdo=$pdo;
-        self::$transactionsTotal += array($pdoName=>array());
-        $this->pdoTrans= &self::$transactionsTotal[$pdoName];
+        $this->conn=$connection;
+        self::$transactionsTotal += array($connectionName=>array());
+        $this->pdoTrans= &self::$transactionsTotal[$connectionName];
 
         $depth = $this->getDepth()+1;
         if($depth==1 ) {
@@ -30,11 +30,11 @@ class Transaction extends Query\Transaction
         if ($this->pdoTrans[$this->name]) {
             throw new \Exception($transName . ' 这个事务名称已经被占用了，不能重复开启。');
         }
-        if ($this->pdo->inTransaction()) {
-            $this->pdo->query('SAVEPOINT ' . $transName);
+        if ($this->conn->inTransaction()) {
+            $this->conn->query('SAVEPOINT ' . $transName);
         }
         else {
-            $this->pdo->beginTransaction();
+            $this->conn->beginTransaction();
         }
         $this->pdoTrans[$this->name]=$transName;
     }
@@ -56,31 +56,31 @@ class Transaction extends Query\Transaction
      */
     public function rollback()
     {
-        if (!$this->getDepth() or !$this->pdo->inTransaction()) {
+        if (!$this->getDepth() or !$this->conn->inTransaction()) {
             throw new \Exception('不在事务处理中.');
         }
         if (!$this->pdoTrans[$this->name]) {
             throw new \Exception('当前事务 '.$this->name.' 已经不存在了.');
         }
-        $rolled_back_other_active_savepoints = FALSE;
+        $rolled_back_other_active_savepoint = FALSE;
         while ($savepoint = array_pop($this->pdoTrans)) {
             if ($savepoint == $this->name) {
                 if (empty($this->pdoTrans)) {
                     break;
                 }
-                $this->pdo->query('ROLLBACK TO SAVEPOINT ' . $savepoint);
+                $this->conn->query('ROLLBACK TO SAVEPOINT ' . $savepoint);
                 $this->_pop();
-                if ($rolled_back_other_active_savepoints) {
+                if ($rolled_back_other_active_savepoint) {
                     throw new \Exception(' 存在未处理的子事务');
                 }
                 return;
             }
             else {
-                $rolled_back_other_active_savepoints = TRUE;
+                $rolled_back_other_active_savepoint = TRUE;
             }
         }
-        $this->pdo->rollBack();
-        if ($rolled_back_other_active_savepoints) {
+        $this->conn->rollBack();
+        if ($rolled_back_other_active_savepoint) {
             throw new \Exception(' 存在未处理的子事务');
         }
         $this->rolledBack = TRUE;
@@ -124,12 +124,12 @@ class Transaction extends Query\Transaction
             }
             unset($this->pdoTrans[$name]);
             if (empty($this->pdoTrans)) {
-                if (!$this->pdo->commit()) {
+                if (!$this->conn->commit()) {
                     throw new \Exception('commit failed.');
                 }
             }
             else {
-                $this->pdo->query('RELEASE SAVEPOINT ' . $name);
+                $this->conn->query('RELEASE SAVEPOINT ' . $name);
             }
         }
     }

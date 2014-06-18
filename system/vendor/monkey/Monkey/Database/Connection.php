@@ -39,7 +39,7 @@ class Connection extends PDO
         $name,
         $transactionSupport = TRUE,//是否支持事务
         $transactionLayers = array(),//事务层级数组
-        $lastPrepareSQL
+        $prepareSQL
     ;
 
     /**
@@ -177,14 +177,14 @@ class Connection extends PDO
         try {
             $sql = preg_replace('/\{:(\S+?):\}/',$this->config['prefix'].'$1',$sql);
             $this->expandArguments($sql, $args);
-            $this->lastPrepareSQL=$sql;
+            $this->prepareSQL=$sql;
             $this->stmt= parent::prepare($sql);
             $this->stmt->execute($args);
         }
         catch (\PDOException $e) {
             $error=array(
                 'code'=>$e->getCode(),
-                'prepareSQL'=>$this->lastPrepareSQL ,'sql'=>$this->stmt->queryString,
+                'prepareSQL'=>$this->prepareSQL ,'sql'=>$this->stmt->queryString,
                 'message'=>$e->getMessage(),
                 'file'=>$e->getFile(),'line'=>$e->getLine(),
                 'connectionName'=>$this->name
@@ -202,17 +202,6 @@ class Connection extends PDO
     }
 
     /**
-     * 获取活动记录行对象
-     * @param string $table 表名
-     * @param string $priKey 主键
-     * @return ActiveRecorder
-     */
-    public function activeRecorder($table, $priKey)
-    {
-        return new ActiveRecorder($this, $table, $priKey);
-    }
-
-    /**
      * 获取选择查询对象
      * @param $table
      * @param null $alias
@@ -221,7 +210,7 @@ class Connection extends PDO
      *   ->select('table', 'alias')
      *   ->fields('alias')
      *   ->condition('id', 1)
-     *   ->execute(1) //return statement对象
+     *   ->execute()
      *   ->fetchAll();
      */
     public function select($table, $alias = NULL, array $options = array()) {
@@ -236,7 +225,8 @@ class Connection extends PDO
      *   ->fields(array(
      *      'name' => 'value',
      *   ))
-     *   ->execute(3);//return lastInsertId;
+     *   ->execute()
+     *   ->lastInsertId();
      */
     public function insert($table) {
         return new Insert($this, $table);
@@ -251,7 +241,8 @@ class Connection extends PDO
      *      'name' => 'value',
      *   ))
      *   ->condition('id', 1)
-     *   ->execute(2);//return affected数目
+     *   ->execute()
+     *   ->affected();
      */
     public function update($table) {
         return new Update($this, $table);
@@ -263,20 +254,12 @@ class Connection extends PDO
      * @return Delete
      *   ->delete('table')
      *   ->condition('id', 1)
-     *   ->execute(2);//return affected数目
+     *   ->execute()
+     *   ->affected();
      */
     public function delete($table) {
         return new Delete($this, $table);
     }
-
-    /**
-     * @param $table
-     * @param array $options
-     * @return
-     */
-    /*public function merge($table, array $options = array()) {
-        return new Merge($this, $table, $options);
-    }*/
 
     /**
      * 获取表结构修改查询对象
@@ -324,7 +307,7 @@ class Connection extends PDO
         if(!$this->query($sql)->isSuccess()){
             return FALSE;
         }
-        $tableMate=$this->stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $tableMate=$this->stmt->fetchAll();
         $mate['pri_name']=null;
         $mate['pri_is_auto']=false;
         foreach($tableMate as $field){
@@ -342,18 +325,18 @@ class Connection extends PDO
      * 获取查询结果生成的Statement对象
      * @return Statement
      */
-    public function lastStmt()
+    public function stmt()
     {
         return $this->stmt;
     }
 
     /**
-     * 获取上次查询的真实sql语句
+     * 获取上次查询的预处理后的sql语句
      * @return string
      */
-    public function getLastPrepareSQL()
+    public function getPrepareSQL()
     {
-        return $this->lastPrepareSQL;
+        return $this->prepareSQL;
     }
 
     /**

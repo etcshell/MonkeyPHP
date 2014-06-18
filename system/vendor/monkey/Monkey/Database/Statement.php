@@ -79,11 +79,11 @@ class Statement extends PDOStatement
     }
 
     /**
-     * 获取QueryString
+     * 获取查询的真实语句QueryString
      *
      * implements PDOStatement
      */
-    public function getQueryString()
+    public function getSQL()
     {
         return $this->queryString;
     }

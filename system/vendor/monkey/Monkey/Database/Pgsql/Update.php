@@ -13,10 +13,11 @@ class Update extends Query\Update
      */
     public function __construct(Connection $connection, $table)
     {
+        $this->app= $connection->app;
         $this->connection=$connection;
         $this->queryIdentifier=uniqid('', TRUE);
         $this->table = $table;
-        $this->condition = new Condition($this->queryIdentifier,'AND');
+        $this->condition = new Condition($this->app,'AND');
     }
 
     protected function compile()

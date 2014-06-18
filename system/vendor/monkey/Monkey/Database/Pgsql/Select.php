@@ -14,12 +14,13 @@ class Select extends Query\Select
      */
     public function __construct(Connection $connection, $table, $alias = NULL, $options = array())
     {
+        $this->app= $connection->app;
+        $this->connection=$connection;
         $this->queryIdentifier=uniqid('', TRUE);
         $conjunction  = isset($options['conjunction']) ? $options['conjunction'] : 'AND';
-        $this->where  = new Condition($this->queryIdentifier, $conjunction);
-        $this->having = new Condition($this->queryIdentifier, $conjunction);
+        $this->where  = new Condition($this->app, $conjunction);
+        $this->having = new Condition($this->app, $conjunction);
         $this->addJoin(NULL, $table, $alias);
-        $this->connection=$connection;
     }
 
     /**
@@ -218,8 +219,8 @@ class Select extends Query\Select
 
     /**
      * 添加一个字段到结果集中
-     * @param $table_alias 表名或表别名
-     * @param $field 字段名
+     * @param string $table_alias 表名或表别名
+     * @param string $field 字段名
      * @param null $alias 设置字段的别名
      * @return $this
      */

@@ -13,10 +13,11 @@ class Delete extends Query\Delete
      */
     public function __construct(Connection $connection, $table)
     {
+        $this->app= $connection->app;
         $this->queryIdentifier=uniqid('', TRUE);
         $this->connection=$connection;
         $this->table = $table;
-        $this->condition = new Condition($this->queryIdentifier,'AND');
+        $this->condition = new Condition($this->app,'AND');
     }
 
     protected function compile()

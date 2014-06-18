@@ -77,7 +77,7 @@ class Select
      * field('a', array('aF1', 'aliasF2'=>'aF2', 'aF3')) //即，第二个参数中，可以用字符串键名来设置别名
      *
      *
-     * @param $table_alias 表名或表别名
+     * @param string $table_alias 表名或表别名
      * @param string|array $fields 默认为该表的所有字段 array('f1','f2','f3')  或 'f3'
      * @return $this
      */
@@ -579,8 +579,8 @@ class Select
 
     /**
      * 添加一个字段到结果集中
-     * @param $table_alias 表名或表别名
-     * @param $field 字段名
+     * @param string $table_alias 表名或表别名
+     * @param string $field 字段名
      * @param null $alias 设置字段的别名
      * @return $this
      */

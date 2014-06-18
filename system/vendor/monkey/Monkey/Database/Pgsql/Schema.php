@@ -27,6 +27,7 @@ class Schema extends Query\Schema
      */
     public function __construct(Connection $connection, $databaseName=null)
     {
+        $this->app= $connection->app;
         $this->connection=$connection;
         $this->dbConfig=$connection->getConfig();
         if(!$databaseName){
@@ -38,7 +39,8 @@ class Schema extends Query\Schema
     /**
      * 获取Schema信息
      */
-    public function getSchema() {
+    public function getSchema()
+    {
         return $this->schema;
     }
 
@@ -53,17 +55,18 @@ class Schema extends Query\Schema
     /**
      * 字段是否存在
      */
-    public function existsField($tableName, $columnName) {
+    public function existsField($tableName, $columnName)
+    {
         return isset($this->schema[$this->prefix($tableName)][$columnName]);
     }
 
     /**
      * 索引是否存在
      */
-    public function existsIndex($tableName, $indexName) {
+    public function existsIndex($tableName, $indexName)
+    {
         $row = $this->connection->query('SHOW INDEX FROM {:' . $tableName . ':} WHERE key_name = '.$indexName)
-            ->fetch(\PDO::FETCH_ASSOC);
-
+            ->fetch();
         return isset($row['Key_name']);
     }
 
@@ -73,7 +76,8 @@ class Schema extends Query\Schema
      * @param string $tableCreateSql 创建表的sql
      * @return bool
      */
-    public function createTable($tableName, $tableCreateSql) {
+    public function createTable($tableName, $tableCreateSql)
+    {
         if ($this->existsTable($tableName)) {
             return false;
         }
@@ -83,7 +87,8 @@ class Schema extends Query\Schema
     /**
      * 删除表
      */
-    public function dropTable($tableName) {
+    public function dropTable($tableName)
+    {
         if (!$this->existsTable($tableName)) {
             return true;
         }
@@ -93,7 +98,8 @@ class Schema extends Query\Schema
     /**
      * 修改表名
      */
-    public function renameTable($tableName, $newTableName) {
+    public function renameTable($tableName, $newTableName)
+    {
         if (!$this->existsTable($tableName) || $this->existsTable($newTableName)) {
             return false;
         }
@@ -118,7 +124,8 @@ class Schema extends Query\Schema
     /**
      * 添加字段
      */
-    public function addField($tableName, $fieldName, $spec) {
+    public function addField($tableName, $fieldName, $spec)
+    {
         if (!$this->existsTable($tableName) || $this->existsField($tableName, $fieldName)) {
             return false;
         }
@@ -129,7 +136,8 @@ class Schema extends Query\Schema
     /**
      * 删除字段
      */
-    public function dropField($tableName, $fieldName) {
+    public function dropField($tableName, $fieldName)
+    {
         if (!$this->existsField($tableName, $fieldName)) {
             return FALSE;
         }
@@ -143,7 +151,8 @@ class Schema extends Query\Schema
      * @param string $newFieldName  新字段名称
      * @return bool
      */
-    public function renameField($tableName, $fieldName, $newFieldName){
+    public function renameField($tableName, $fieldName, $newFieldName)
+    {
         if (!$this->existsField($tableName, $fieldName) ||
             (($fieldName != $newFieldName) && $this->existsField($tableName, $newFieldName)) ) {
             return false;
@@ -159,7 +168,8 @@ class Schema extends Query\Schema
      * @param string $spec
      * @return bool
      */
-    public function alertField($tableName, $fieldName, $spec){
+    public function alertField($tableName, $fieldName, $spec)
+    {
         if (!$this->existsField($tableName, $fieldName) ) {
             return false;
         }
@@ -171,7 +181,8 @@ class Schema extends Query\Schema
     /**
      * 设置字段默认值
      */
-    public function fieldSetDefault($tableName, $fieldName, $defaultValue=null) {
+    public function fieldSetDefault($tableName, $fieldName, $defaultValue=null)
+    {
         if (!$this->existsField($tableName, $fieldName)) {
             return false;
         }
@@ -182,7 +193,8 @@ class Schema extends Query\Schema
     /**
      * 设置字段无默认值
      */
-    public function fieldSetNoDefault($tableName, $fieldName) {
+    public function fieldSetNoDefault($tableName, $fieldName)
+    {
         if (!$this->existsField($tableName, $fieldName)) {
             return false;
         }
@@ -192,7 +204,8 @@ class Schema extends Query\Schema
     /**
      * 添加主键
      */
-    public function addPrimaryKey($tableName, $fields) {
+    public function addPrimaryKey($tableName, $fields)
+    {
         if (!$this->existsTable($tableName) || $this->existsIndex($tableName, 'PRIMARY')) {
             return false;
         }
@@ -202,7 +215,8 @@ class Schema extends Query\Schema
     /**
      * 删除主键
      */
-    public function dropPrimaryKey($tableName) {
+    public function dropPrimaryKey($tableName)
+    {
         if (!$this->existsIndex($tableName, 'PRIMARY')) {
             return FALSE;
         }
@@ -212,7 +226,8 @@ class Schema extends Query\Schema
     /**
      * 添加唯一索引
      */
-    public function addUniqueKey($tableName, $uniqueKeyName, $fieldName) {
+    public function addUniqueKey($tableName, $uniqueKeyName, $fieldName)
+    {
         if (!$this->existsTable($tableName) || $this->existsIndex($tableName, $uniqueKeyName)) {
             return false;
         }
@@ -222,7 +237,8 @@ class Schema extends Query\Schema
     /**
      * 删除唯一索引
      */
-    public function dropUniqueKey($tableName, $uniqueKeyName) {
+    public function dropUniqueKey($tableName, $uniqueKeyName)
+    {
         if (!$this->existsIndex($tableName, $uniqueKeyName)) {
             return FALSE;
         }
@@ -232,7 +248,8 @@ class Schema extends Query\Schema
     /**
      * 添加索引
      */
-    public function addIndex($tableName, $indexName, $fieldName) {
+    public function addIndex($tableName, $indexName, $fieldName)
+    {
         if (!$this->existsTable($tableName) || $this->existsIndex($tableName, $indexName)) {
             return false;
         }
@@ -242,7 +259,8 @@ class Schema extends Query\Schema
     /**
      * 删除索引
      */
-    public function dropIndex($tableName, $indexName) {
+    public function dropIndex($tableName, $indexName)
+    {
         if (!$this->existsIndex($tableName, $indexName)) {
             return FALSE;
         }
@@ -250,7 +268,8 @@ class Schema extends Query\Schema
     }
 
     //拼缀索引SQL
-    protected function createKeySql($fields) {
+    protected function createKeySql($fields)
+    {
         $return = array();
         foreach ((array)$fields as $field) {
             if (is_array($field)) {

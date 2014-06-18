@@ -6,6 +6,18 @@ use Monkey\Database as Query;
 
 class Insert extends Query\Insert
 {
+
+    /**
+     * @param Connection $connection
+     * @param $table
+     */
+    public function __construct(Connection $connection, $table)
+    {
+        $this->app=$connection->app;
+        $this->connection=$connection;
+        $this->table = $table;
+    }
+
     /**
      * 使用表结构填充插入字段
      * @return $this
