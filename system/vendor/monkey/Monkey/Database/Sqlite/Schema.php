@@ -41,7 +41,7 @@ class Schema extends Query\Schema
     public function existsTable($tableName)
     {
         $sql="SELECT COUNT(*)  as table_count FROM sqlite_master where type='table' and name='{:$tableName:}'";
-        $result=$this->connection->query($sql, 1)->fetch(\PDO::FETCH_ASSOC);
+        $result=$this->connection->query($sql)->fetch(\PDO::FETCH_ASSOC);
         return isset($result['table_count']);
     }
 
@@ -52,7 +52,7 @@ class Schema extends Query\Schema
     {
         $sql='PRAGMA table_info({:'.$tableName.':})';
         if(!$this->connection->query($sql)->isSuccess())return FALSE;
-        $tableMate=$this->connection->getResultStmt()->fetchAll(\PDO::FETCH_ASSOC);
+        $tableMate=$this->connection->lastStmt()->fetchAll(\PDO::FETCH_ASSOC);
         foreach($tableMate as $field){
             if($field['name']==$columnName) return true;
         }
@@ -66,7 +66,7 @@ class Schema extends Query\Schema
     {
         $sql="SELECT count(*) AS index_count FROM sqlite_master WHERE type='index' AND tbl_name='{:$tableName:}' AND name='$indexName'";
         if(!$this->connection->query($sql)->isSuccess())return FALSE;
-        $result=$this->connection->query($sql, 1)->fetch(\PDO::FETCH_ASSOC);
+        $result=$this->connection->query($sql)->fetch(\PDO::FETCH_ASSOC);
         return isset($result['index_count']);
     }
 
@@ -133,7 +133,7 @@ class Schema extends Query\Schema
         if(empty($fieldName))return false;
         $sql='PRAGMA table_info({:'.$tableName.':})';
         if(!$this->connection->query($sql)->isSuccess())return FALSE;
-        $tableMate=$this->connection->getResultStmt()->fetchAll(\PDO::FETCH_ASSOC);
+        $tableMate=$this->connection->lastStmt()->fetchAll(\PDO::FETCH_ASSOC);
         $fieldExists=false;
         $fields=array();
         $tempTable="sqlite_mk_temp_{:$tableName:}";
@@ -175,7 +175,7 @@ class Schema extends Query\Schema
     {
         $sql="SELECT sql FROM sqlite_master WHERE type='table' AND name='{:$tableName:}'";
         if(!$this->connection->query($sql)->isSuccess())return FALSE;
-        $sql=$this->connection->getResultStmt()->fetch(\PDO::FETCH_ASSOC);
+        $sql=$this->connection->lastStmt()->fetch(\PDO::FETCH_ASSOC);
         $sql=$sql['sql'];
         if(empty($sql)) return false;
         $tempTable="sqlite_mk_temp_{:$tableName:}";
@@ -184,7 +184,7 @@ class Schema extends Query\Schema
 
         $sql='PRAGMA table_info({:'.$tableName.':})';
         if(!$this->connection->query($sql)->isSuccess())return FALSE;
-        $tableMate=$this->connection->getResultStmt()->fetchAll(\PDO::FETCH_ASSOC);
+        $tableMate=$this->connection->lastStmt()->fetchAll(\PDO::FETCH_ASSOC);
         $fields=array();
         foreach($tableMate as $field){
             $fields[]= $field['name']==$fieldName ? "$fieldName AS $newFieldName" : $field['name'];

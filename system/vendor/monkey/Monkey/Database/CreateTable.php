@@ -216,14 +216,13 @@ class CreateTable
     }
 
     /**
-     * @param int $returnType
-     * @return mixed
+     * @return Statement
      * @throws \Exception
      */
-    public function execute($returnType=Database::RETURN_CONNECTION)
+    public function execute()
     {
         $sql=$this->getSql();
         !$sql and $this->app->exception('sql语句为空，创建数据库表失败',1024,__FILE__,__LINE__);
-        return $this->connection->query( $sql, $returnType );
+        return $this->connection->query($sql);
     }
 }

@@ -48,7 +48,7 @@ class Schema extends Query\Schema
     public function existsTable($tableName)
     {
         $sql="select count(*) as table_count from sysobjects where [name] = '{:$tableName:}' and xtype='U'";
-        $result=$this->connection->query($sql,1)->fetch(\PDO::FETCH_ASSOC);
+        $result=$this->connection->query($sql)->fetch(\PDO::FETCH_ASSOC);
         return isset($result['table_count']);
     }
 
@@ -58,7 +58,7 @@ class Schema extends Query\Schema
     public function existsField($tableName, $columnName)
     {
         $sql="select name as columnName from syscolumns where id=object_id('{:$tableName:}') and name=$columnName";
-        $result=$this->connection->query($sql,1)->fetch(\PDO::FETCH_ASSOC);
+        $result=$this->connection->query($sql)->fetch(\PDO::FETCH_ASSOC);
         return isset($result['columnName']);
     }
 
@@ -68,7 +68,7 @@ class Schema extends Query\Schema
     public function existsIndex($tableName, $indexName)
     {
         $sql="select count(*) as index_count from sysindexes where id=object_id('{:$tableName:}') and name='$indexName'";
-        $result = $this->connection->query($sql,1)->fetch(\PDO::FETCH_ASSOC);
+        $result = $this->connection->query($sql)->fetch(\PDO::FETCH_ASSOC);
         return isset($result['index_count']);
     }
 

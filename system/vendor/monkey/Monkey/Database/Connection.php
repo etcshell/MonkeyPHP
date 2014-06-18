@@ -2,6 +2,7 @@
 namespace Monkey\Database;
 
 use \PDO;
+use \PDOException;
 use Monkey\App\App;
 
 /**
@@ -9,7 +10,7 @@ use Monkey\App\App;
  * 连接类
  * @package Monkey\Database
  */
-class Connection
+class Connection extends PDO
 {
     /**
      * @var \Monkey\App\App $app
@@ -17,35 +18,35 @@ class Connection
     public $app;
 
     /**
-     * @var bool|\PDO
-     */
-    protected $oPDO;
-
-    /**
      * @var \PDOStatement
      */
-    protected $oStmt;
+    protected $stmt;
 
     /**
      * @var Schema
      */
     protected $oSchema;
 
+    /**
+     * Statement
+     *
+     * @var string
+     */
+    protected $statementClass = '\\Monkey\\Database\\Statement';
 
     protected
         $config,
         $name,
         $transactionSupport = TRUE,//是否支持事务
         $transactionLayers = array(),//事务层级数组
-        $isExecuteTrue,
-        $lastSQL,
-        $error
+        $lastPrepareSQL
     ;
 
     /**
-     * @param string App $app
+     * @param App $app
      * @param string $name
      * @param array $config
+     * @throws PDOException
      */
     public function __construct($app,$name, array $config = array() )
     {
@@ -54,14 +55,73 @@ class Connection
         !isset($config['prefix']) and $config['prefix']='';
         $this->config=$config;
         $this->transactionSupport = isset($config['transactions']) ? (bool)$config['transactions'] : FALSE;
-        $this->oPDO=$this->connecting($config);
+
+        if(isset($config['dsn'])){
+            $dsn = $config['dsn'];
+        }
+        else if (isset($config['unix_socket'])){
+            $dsn = 'mysql:unix_socket=' . $config['unix_socket'];
+        }
+        else{
+            !$config['port'] and $config['port']='3306';
+            $dsn = 'mysql:host=' . $config['host'] . ';port=' .$config['port'];
+            $config['dbname']  and $dsn .= ';dbname=' . $config['dbname'];
+        }
+        $config['charset'] and $dsn = rtrim($dsn,';') . ';charset='.$config['charset'];
+        $options= $config['options'] + array(
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY  => TRUE,
+                PDO::ATTR_EMULATE_PREPARES          => TRUE,
+                PDO::ATTR_ERRMODE                   => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_PERSISTENT                => false
+            );
+
+        try {
+            parent::__construct($dsn, $config['username'], $config['password'], $options);
+        }
+        catch (PDOException $e) {
+            $error=array(
+                'error_title'       =>'连接到PDO时出错。',
+                'code'              =>$e->getCode(),
+                'message'           =>$e->getMessage(),
+                'dsn_true'          =>$dsn,
+            );
+            $this->app->logger()->sql($error+$config);
+            throw new PDOException($e->getMessage(),$e->getCode(),$e->getPrevious());
+        }
+
+        if(isset($config['charset'])){
+            $sql='SET NAMES '.$config['charset'];
+            $config['collation'] and $sql.=' COLLATE '.$config['collation'];
+            $this->exec($sql);
+        }
+        $init_commands=$config['init_commands']?$config['init_commands']:array();
+        $init_commands=$init_commands+array('sql_mode' => "SET sql_mode = 'ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'");
+        $this->exec(implode('; ', $init_commands));
+
+        if (!empty($this->statementClass)) {
+            $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array($this->statementClass, array($app,$this)));
+        }
     }
 
     /**
-     * @param string $conjunction 联合方式 AND | OR | XOR
+     * 销毁连接
      */
+    public function destroy() {
+        $this->__destruct();
+    }
+
     /**
-     * @param string $conjunction
+     * 销毁这个连接对象
+     */
+    public function __destruct() {
+        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('PDOStatement', array()));
+        $this->stmt=null;
+        $this->oSchema = NULL;
+    }
+
+    /**
+     * 新建条件生成器
+     * @param string $conjunction 联合方式 AND | OR | XOR
      * @return Condition
      */
     public function newCondition($conjunction='AND')
@@ -97,108 +157,48 @@ class Connection
     }
 
     /**
-     * 连接数据库
-     * @param $config
-     * @return bool|PDO
-     */
-    public function connecting($config)
-    {
-        if(isset($config['dsn'])){
-            $dsn = $config['dsn'];
-        }
-        else if (isset($config['unix_socket'])){
-            $dsn = 'mysql:unix_socket=' . $config['unix_socket'];
-        }
-        else{
-            !$config['port'] and $config['port']='3306';
-            $dsn = 'mysql:host=' . $config['host'] . ';port=' .$config['port'];
-            $config['dbname']  and $dsn .= ';dbname=' . $config['dbname'];
-        }
-        $config['charset'] and $dsn = rtrim($dsn,';') . ';charset='.$config['charset'];
-        $options= $config['options'] + array(
-            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY  => TRUE,
-            PDO::ATTR_EMULATE_PREPARES          => TRUE,
-            PDO::ATTR_ERRMODE                   => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_PERSISTENT                => false
-        );
-
-        try {
-            $pdo = new PDO($dsn, $config['username'], $config['password'], $options);
-        }
-        catch (\PDOException $e) {
-            $error=array(
-                'error_title'       =>'连接到PDO时出错。',
-                'code'              =>$e->getCode(),
-                'message'           =>$e->getMessage(),
-                'dsn_true'          =>$dsn,
-            );
-            $this->app->logger()->sql($error+$config);
-            return false;
-        }
-
-        if(isset($config['charset'])){
-            $sql='SET NAMES '.$config['charset'];
-            $config['collation'] and $sql.=' COLLATE '.$config['collation'];
-            $pdo->exec($sql);
-        }
-        $init_commands=$config['init_commands']?$config['init_commands']:array();
-        $init_commands=$init_commands+array('sql_mode' => "SET sql_mode = 'ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'");
-        $pdo->exec(implode('; ', $init_commands));
-
-        return $pdo;
-    }
-
-    /**
      * 直接SQL
      * @param string $sql
-     * @param int $returnType
-            0 = \Monkey\Database::RETURN_CONNECTION //返回:Connection对象本身 （默认值）
-            1 = \Monkey\Database::RETURN_STATEMENT  //返回:statement对象
-            2 = \Monkey\Database::RETURN_AFFECTED   //返回:affected数目
-            3 = \Monkey\Database::RETURN_INSERT_ID  //返回:last insert id
      * @param array $args
+     * @throws \Exception
+     * @return Statement
      *
-     * @return Connection|\PDOStatement|int
-     *
-     *   ->query('SELECT id FROM table WHERE id = :id' , 1, array(':id'=>1))
+     *   ->query('SELECT id FROM table WHERE id = :id' ,array(':id'=>1))
      *   ->fetchAll();
      */
-    public function query($sql, $returnType=Database::RETURN_CONNECTION, array $args = array())
+    public function query($sql, array $args = array())
     {
-        $this->isExecuteTrue=false;
-        $this->oStmt=null;
-        $this->error=array();
+        $this->stmt=null;
         if(!$sql){
-            $this->error=array('code'=>1024, 'sql'=>'', 'message'=>'sql语句为空，无法执行query操作！','connectionName'=>$this->name);
-            $this->app->logger()->sql($this->error);
-            $this->app->exception('数据库查询错误。',1024,__FILE__,__LINE__);
+            $error=array('code'=>1024, 'sql'=>'', 'message'=>'sql语句为空，无法执行query操作！','connectionName'=>$this->name);
+            $this->app->logger()->sql($error);
+            throw new \Exception('数据库查询错误。',1024,__FILE__,__LINE__);
         }
         try {
             $sql = preg_replace('/\{:(\S+?):\}/',$this->config['prefix'].'$1',$sql);
             $this->expandArguments($sql, $args);
-            $this->oStmt=$this->oPDO->prepare($sql);
-            $this->lastSQL=$sql;
-            //!is_null($args) and $args=$this->quote($args);dump($sql);dump($args);
-            $this->isExecuteTrue = $this->oStmt->execute($args);
+            $this->lastPrepareSQL=$sql;
+            $this->stmt= parent::prepare($sql);
+            $this->stmt->execute($args);
         }
         catch (\PDOException $e) {
-            $this->error=array('code'=>$e->getCode(),'sql'=>$this->lastSQL, 'message'=>$e->getMessage(),
+            $error=array(
+                'code'=>$e->getCode(),
+                'prepareSQL'=>$this->lastPrepareSQL ,'sql'=>$this->stmt->queryString,
+                'message'=>$e->getMessage(),
                 'file'=>$e->getFile(),'line'=>$e->getLine(),
-                'connectionName'=>$this->name);
+                'connectionName'=>$this->name
+            );
             $args=$args?$args:array();
-            $this->app->logger()->sql($this->error+$args);
-            $this->app->exception('数据库查询错误。',1024,__FILE__,__LINE__);
+            $this->app->logger()->sql($error+$args);
+            throw new \Exception('数据库查询错误。',1024,__FILE__,__LINE__);
         }
-        switch ($returnType) {
-            case Database::RETURN_STATEMENT:
-                return $this->oStmt;
-            case Database::RETURN_AFFECTED:
-                return $this->oStmt->rowCount();
-            case Database::RETURN_INSERT_ID:
-                return $this->oPDO->lastInsertId();
-            default:
-                return $this;
-        }
+        return $this->stmt;
+    }
+
+    public function prepare($sql)
+    {
+        throw new \Exception('数据库预处理查询prepare不可用，请改用直接查询query方法。',1024,__FILE__,__LINE__);
     }
 
     /**
@@ -321,11 +321,10 @@ class Connection
             return FALSE;
         }
         $sql='SHOW COLUMNS FROM {:'.$tableName.':}' ;
-        $this->query($sql);
-        if(!$this->isExecuteTrue){
+        if(!$this->query($sql)->isSuccess()){
             return FALSE;
         }
-        $tableMate=$this->oStmt->fetchAll(\PDO::FETCH_ASSOC);
+        $tableMate=$this->stmt->fetchAll(\PDO::FETCH_ASSOC);
         $mate['pri_name']=null;
         $mate['pri_is_auto']=false;
         foreach($tableMate as $field){
@@ -340,39 +339,21 @@ class Connection
     }
 
     /**
-     * 查询方法判断查询是否成功
-     * @return bool
+     * 获取查询结果生成的Statement对象
+     * @return Statement
      */
-    public function isSuccess()
+    public function lastStmt()
     {
-        return $this->isExecuteTrue;
-    }
-
-    /**
-     * 获取pdo驱动
-     * @return bool|PDO
-     */
-    public function getPDO()
-    {
-        return $this->oPDO;
-    }
-
-    /**
-     * 获取查询结果生成的\PDOStatement对象
-     * @return \PDOStatement
-     */
-    public function getResultStmt()
-    {
-        return $this->oStmt;
+        return $this->stmt;
     }
 
     /**
      * 获取上次查询的真实sql语句
      * @return string
      */
-    public function getLastSql()
+    public function getLastPrepareSQL()
     {
-        return $this->lastSQL;
+        return $this->lastPrepareSQL;
     }
 
     /**
@@ -387,31 +368,7 @@ class Connection
         if (is_bool($data)) return $data ? '1' : '0';
         if (is_int($data)) return (int) $data;
         if (is_float($data)) return (float) $data;
-        return $this->oPDO->quote($data);
-    }
-
-    /**
-     * 读取错误代号
-     * @return integer
-     */
-    public function errorCode()
-    {
-        if(is_null($this->error['code']))
-            return $this->oPDO->errorCode();
-        else
-            return $this->error['code'];
-    }
-
-    /**
-     * 读取错误信息
-     * @return string
-     */
-    public function errorMessage()
-    {
-        if(is_null($this->error['message']))
-            return $this->oPDO->errorCode(). '【sql：】' . $this->lastSQL;
-        else
-            return $this->error['message'];
+        return parent::quote($data);
     }
 
     /**
@@ -421,7 +378,7 @@ class Connection
      */
     public function version()
     {
-        return $this->oPDO->getAttribute(PDO::ATTR_SERVER_VERSION);
+        return $this->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
     /**
@@ -444,11 +401,11 @@ class Connection
             throw new \Exception('当前数据库不支持事务处理！');
         }
         if($type===0 or $type=='begin'){
-            $this->oPDO->beginTransaction();
+            $this->beginTransaction();
         }elseif($type===1 or $type=='commit'){
-            $this->oPDO->commit();
+            $this->commit();
         }elseif($type===-1 or $type=='rollback'){
-            $this->oPDO->rollBack();
+            $this->rollBack();
         }
         return $this;
     }
@@ -465,17 +422,9 @@ class Connection
         if(!$this->transactionSupport){
             throw new \Exception('当前数据库不支持事务处理！');
         }
-        return new Transaction($this->oPDO, $this->name, $transName);
+        return new Transaction($this, $this->name, $transName);
     }
 
-    /**
-     * 销毁这个连接对象
-     */
-    public function __destruct() {
-        $this->oPDO=null;
-        $this->oStmt=null;
-        $this->oSchema = NULL;
-    }
     //扩展参数占位符
     protected function expandArguments(&$sql, &$args)
     {

@@ -8,15 +8,6 @@ namespace Monkey\Database;
  */
 class Database
 {
-    //返回:Connection对象
-    const RETURN_CONNECTION = 0;
-    //返回:statement对象
-    const RETURN_STATEMENT  = 1;
-    //返回:affected数目
-    const RETURN_AFFECTED   = 2;
-    //返回:last insert id
-    const RETURN_INSERT_ID  = 3;
-
     private
         /**
          * @var \Monkey\App\App
@@ -46,26 +37,6 @@ class Database
             $this->default= key($this->pool);
         }
         $this->active=$this->default;
-    }
-
-    /**
-     * 直接SQL
-     * @param string $sql
-     * @param int $returnType
-    0 = \Monkey\Database::RETURN_CONNECTION //返回:Connection对象本身 （默认值）
-    1 = \Monkey\Database::RETURN_STATEMENT  //返回:statement对象
-    2 = \Monkey\Database::RETURN_AFFECTED   //返回:affected数目
-    3 = \Monkey\Database::RETURN_INSERT_ID  //返回:last insert id
-     * @param array $args
-     *
-     * @return Connection|\PDOStatement|int
-     *
-     *   ->query('SELECT id FROM table WHERE id = :id' , 1, array(':id'=>1))
-     *   ->fetchAll();
-     */
-    public function query($sql, $returnType=Database::RETURN_CONNECTION, array $args = array())
-    {
-        return $this->getActiveConnection()->query($sql, $returnType, $args);
     }
 
     /**
@@ -249,7 +220,6 @@ class Database
             $this->app->logger()->sql($error);
             return false;
         }
-        if(!$connect->getPDO()) return false;
         return $connect;
     }
 

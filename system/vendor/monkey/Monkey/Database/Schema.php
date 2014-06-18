@@ -276,7 +276,7 @@ class Schema
         $sqlSchema='SELECT table_name, column_name, column_default, is_nullable, data_type, column_comment ';
         $sqlSchema.="\nFROM information_schema.columns ";
         $sqlSchema.="\nWHERE table_schema = :database ";
-        $info = $this->connection->query( $sqlSchema, 1, array( ':database'=>$databaseName ) )
+        $info = $this->connection->query( $sqlSchema, array( ':database'=>$databaseName ) )
             ->fetchAll(\PDO::FETCH_OBJ);
 
         foreach ($info as $v) {

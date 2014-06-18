@@ -155,13 +155,12 @@ class Update
 
     /**
      * 执行更新
-     * @param int $returnType
-     * @return Connection|\PDOStatement|int
+     * @return Statement
      */
-    public function execute($returnType=Database::RETURN_CONNECTION)
+    public function execute()
     {
         $query=$this->compile();
-        return $this->connection->query( $query['sql'], $returnType, $query['arguments'] );
+        return $this->connection->query( $query['sql'],$query['arguments'] );
     }
 
     protected function compile()

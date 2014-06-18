@@ -532,12 +532,11 @@ class Select
 
     /**
      * 执行查询
-     * @param int $returnType
-     * @return Connection|\PDOStatement|int
+     * @return Statement
      */
-    public function execute($returnType=Database::RETURN_CONNECTION)
+    public function execute()
     {
-        return $this->connection->query($this->getString(), $returnType, $this->getArguments());
+        return $this->connection->query($this->getString(),$this->getArguments());
     }
 
     /**

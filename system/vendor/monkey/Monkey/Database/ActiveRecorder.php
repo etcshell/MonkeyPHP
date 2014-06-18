@@ -89,9 +89,9 @@ class ActiveRecorder{
             $select->where($whereField,$whereValue);
         $this->fields= $select
             ->limit(0,1)
-            ->execute(Database::RETURN_STATEMENT)
+            ->execute()
             ->fetch(\PDO::FETCH_ASSOC);
-        return $this->connection->isSuccess();
+        return $this->connection->lastStmt()->isSuccess();
     }
 
     /**
@@ -127,8 +127,8 @@ class ActiveRecorder{
         $this->fields[$this->priKey]= $this->connection
             ->insert($this->table)
             ->setFields($this->fields)
-            ->execute(Database::RETURN_INSERT_ID);
-        return $this->connection->isSuccess();
+            ->execute()->lastInsertId();
+        return $this->connection->lastStmt()->isSuccess();
     }
 
     /**
@@ -150,9 +150,9 @@ class ActiveRecorder{
             $delete->isNull($whereField);
         else
             $delete->where($whereField,$whereValue);
-        $this->affected= $delete->execute(Database::RETURN_AFFECTED);
+        $this->affected= $delete->execute()->affected();
         $this->affected and $this->fields=array();
-        return $this->connection->isSuccess();
+        return $this->connection->lastStmt()->isSuccess();
     }
 
     /**
@@ -177,8 +177,8 @@ class ActiveRecorder{
             $update->isNull($whereField);
         else
             $update->where($whereField,$whereValue);
-        $this->affected= $update->execute(Database::RETURN_AFFECTED);
-        return $this->connection->isSuccess();
+        $this->affected= $update->execute()->affected();
+        return $this->connection->lastStmt()->isSuccess();
     }
 
     /**

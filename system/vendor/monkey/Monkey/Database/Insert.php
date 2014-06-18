@@ -160,17 +160,16 @@ class Insert
 
     /**
      * 执行插入
-     * @param int $returnType
-     * @return Connection|\PDOStatement|int
+     * @return Statement
      * @throws \Exception
      */
-    public function execute($returnType=Database::RETURN_INSERT_ID)
+    public function execute()
     {
         $query=$this->compile();
         if( !$query['sql'] ){
             throw new \Exception('数据库插入语句为空，插入失败');
         }
-        $return=$this->connection->query( $query['sql'], $returnType, $query['arguments'] );
+        $return=$this->connection->query( $query['sql'],$query['arguments'] );
         $this->rowValues = array();
         return $return;
     }
