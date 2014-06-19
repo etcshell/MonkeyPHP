@@ -94,15 +94,15 @@ class Statement extends PDOStatement
      */
     public function fetch( $fetch_style=PDO::FETCH_ASSOC , $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0)
     {
-        return parent::fetch(PDO::FETCH_ASSOC);
+        return parent::fetch($fetch_style,$cursor_orientation,$cursor_offset);
     }
 
     /**
      * 返回一个包含结果集中所有行的数组
      * 默认返回关联数组
      */
-    public function fetchAll( $fetch_style=PDO::FETCH_ASSOC , $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0)
+    public function fetchAll( $fetch_style=PDO::FETCH_ASSOC , $fetch_argument = null, $ctor_args = array())
     {
-        return parent::fetchAll(PDO::FETCH_ASSOC);
+        return parent::fetchAll($fetch_style,$fetch_argument,$ctor_args);
     }
 }
