@@ -52,7 +52,9 @@ class Pattern {
     {
         $method=strtolower($method);
         $path='/'.trim($path,'/');
-        strtolower(strrchr($path,'.'))=='.html' and $path=substr($path, 0, -5);
+        $_ext=array('.php'=>'.php','.html'=>'.html');
+        $ext=strtolower(strrchr($path,'.'));
+        if(isset($_ext[$ext])) $path=substr($path, 0, 0 - strlen($_ext[$ext]));
         if(isset($this->patterns['static'][$method.$path])){
             return array( 'router_name' =>$this->patterns['static'][$method.$path] );
         }
