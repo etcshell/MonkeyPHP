@@ -34,10 +34,10 @@ class Template
             self::$callbackTag=Tag::getCallbackTag();
             $config= $config+array(
                     'template_root'    =>'/template',
-                    'compiled_root'    =>'/temp/template_compiled'
+                    'compiled_root'    =>'/template_compiled'
                 );
             self::$tplRoot= $app->DIR.$config['template_root'] ;
-            self::$compiledRoot= $app->DIR.$config['compiled_root'] ;
+            self::$compiledRoot= $app->TEMP.$config['compiled_root'] ;
         }
         $this->app=$app;
     }

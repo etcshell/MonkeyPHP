@@ -15,7 +15,7 @@
     array(
         'charset'               =>'UTF-8',//
         'template_root'         =>'/template',//相对于应用目录
-        'compiled_root'         =>'/temp/template_compiled',//相对于应用目录
+        'compiled_root'         =>'/template_compiled',//相对于临时缓存目录
 
         //分页栏配置：
         'page_style_name'       =>'def',

@@ -16,6 +16,7 @@ class App
         $TIME,//请求时间
         $DEBUG=0,//默认关闭调试模式
         $DIR,//应用所在目录
+        $TEMP,//临时缓存目录
         $MONKEY_DIR,//Monkey框架所在目录
         $FRONT_ROOT_DIR,//前端根文件所在目录
         $FRONT_ROOT_URL,//前端根文件网址
@@ -45,6 +46,15 @@ class App
     public function __construct( )
     {
 
+    }
+
+    /**
+     * 清除临时目录
+     */
+    public function clearTempDir()
+    {
+        dir_check($this->TEMP);
+        dir_delete($this->TEMP);
     }
 
     /**

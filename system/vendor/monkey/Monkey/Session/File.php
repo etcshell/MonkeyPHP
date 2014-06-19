@@ -42,7 +42,7 @@ class File extends Session
         $this->app=$app;
         $this->config= $config= $app->config()->getComponentConfig('session','file');
         $this->TIME=$app->TIME;
-        $this->_cache_path=dir_format($app->DIR.($config['dir']?$config['dir']:'/temp/sessionCache'));
+        $this->_cache_path=dir_format($app->TEMP.($config['dir']?$config['dir']:'/sessionCache'));
         $this->_cache_file=$config['filename']?'/'.$config['filename']:'/data';
         $this->_cache_size=$config['filesize']?$config['filesize']:'15M';
         $this->_data_onCheck=$config['check']?$config['check']:false;//是否验证数据

@@ -19,7 +19,7 @@
 \Monkey\App\Config::setComponentConfig('cache','file',
     array(
         'expire'=>3600,//默认缓存时间
-        'dir'           =>'/temp/fileCache',//缓存文件的绝对路径，留空为 temp/filecache
+        'dir'           =>'/fileCache',//缓存文件的相对路径（相对临时缓存目录），留空为/filecache
         'filename'      =>'data',
         'filesize'      =>'15M',
         'check'         =>false,

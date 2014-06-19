@@ -34,6 +34,7 @@ class AppCreator {
         $app->MONKEY_DIR=Monkey\Monkey::$DIR;
         $this->setConfig();
         $this->setEnvironment();
+        $app->TEMP=$app->DIR.$app->config()->get('temp_dir','/temp');
         $app->FRONT_ROOT_DIR= $staticDir;
         $app->FRONT_ROOT_URL= $_SERVER['DOCUMENT_ROOT']==$staticDir?'':substr($staticDir, strlen($_SERVER['DOCUMENT_ROOT']));
         $app->INDEX_ROOT_URL=dirname($_SERVER['PHP_SELF']);
