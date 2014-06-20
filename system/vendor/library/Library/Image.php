@@ -22,7 +22,7 @@ class Image {
         if(empty($font_file) || !file_exists($font_file))
             $font_file= dirname(__FILE__).'/font/Molengo-Regular.ttf';
         //验证码字符全集
-        if(empty($charset)) $charset='abcdefghijklmnopqrstuvwxyz0123456789';
+        if(empty($charset)) $charset='abcdefghijklmnpqrstuvwxyz123456789';
         $chars_array=str_split($charset,1);
         $char_total=  count($chars_array);
         $chars=$char='';//已选出的验证码字符子集 和 当前选择的验证码字符
