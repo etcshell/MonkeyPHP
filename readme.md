@@ -3,7 +3,7 @@
 MonkeyPHP是一个完全面向对象的轻量级 PHP 框架！ 
 
 ###主要特点：
-* 一、目录规范，容易部署。
+* 一、设计规范，容易部署。
 * 二、支持 MVC 和 REST 等web架构。 
 * 三、路由既高效强大，又易于定制。 
 * 四、松耦合设计，易于扩展。 
@@ -77,7 +77,7 @@ system/vendor/monkey/Globe/Configs/内有默认配置供你参考。
 存放文件：base.ini.php
 
     \Monkey\App\Config::set('timezone','PRC');
-    \Monkey\App\Config::set('action_prefix','action_');
+    \Monkey\App\Config::set('action_prefix','action');
 
 读取方法：
 
@@ -173,7 +173,7 @@ system/vendor/monkey/Globe/Configs/内有默认配置供你参考。
 	//其中请求方法get可以省略，其它如post等则不能省略
 	return array(
 	    //静态路由
-	    'get/'       =>'Index:index',  //'Index:index'相当于请求\DefaultApp\Controller\Index类的action_index方法
+	    'get/'       =>'Index:index',  //'Index:index'相当于请求\DefaultApp\Controller\Index类的actionIndex方法
 	    '/'          =>'Index:index', //效果同上 
 	    
 	    'get/hello'  =>'Index:hello',  
@@ -219,7 +219,7 @@ system/vendor/monkey/Globe/Configs/内有默认配置供你参考。
      */
     class Index extends Web
 	{
-	    public function action_index()
+	    public function actionIndex()
 	    {
 		    $param = $this->getRouteParameter();
 
@@ -235,7 +235,7 @@ system/vendor/monkey/Globe/Configs/内有默认配置供你参考。
 		    echo date('Y-m-d H:i:s');
 	    }
 	     
-	    public function action_hello()
+	    public function actionHello()
 	    {
 	    	echo '测试hello!<br/>';
 	    }
@@ -313,7 +313,7 @@ URL 中路由字符串的查找模式
 	     */
 	    class Index extends Web
 		{
-		    public function action_index()
+		    public function actionIndex()
 		    {
 			    $param=$this->getRouteParameter();
 
@@ -329,7 +329,7 @@ URL 中路由字符串的查找模式
 			    echo date('Y-m-d H:i:s');
 		    }
 		     
-		    public function action_hello()
+		    public function actionHello()
 		    {
 		    	echo '测试hello!<br/>';
 		    }
