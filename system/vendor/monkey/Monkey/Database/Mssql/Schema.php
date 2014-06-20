@@ -130,7 +130,7 @@ class Schema extends Query\Schema
      */
     public function dropField($tableName, $fieldName)
     {
-        return $this->connection->query('ALTER TABLE {:'.$tableName.':} DROP COLUMN `'. $fieldName .'`')->isSuccess();
+        return $this->connection->query('ALTER TABLE {:'.$tableName.':} DROP COLUMN ['. $fieldName .']')->isSuccess();
     }
 
     /**

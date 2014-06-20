@@ -103,7 +103,7 @@ class Schema extends Query\Schema
         if (!$this->existsTable($tableName) || $this->existsTable($newTableName)) {
             return false;
         }
-        return $this->connection->query('ALTER TABLE {:' . $tableName . ':} RENAME TO `{:' . $newTableName .':}`')->isSuccess();
+        return $this->connection->query('ALTER TABLE {:' . $tableName . ':} RENAME TO "{:' . $newTableName .':}"')->isSuccess();
     }
 
     /**
@@ -141,7 +141,7 @@ class Schema extends Query\Schema
         if (!$this->existsField($tableName, $fieldName)) {
             return FALSE;
         }
-        return $this->connection->query('ALTER TABLE {:'.$tableName.':} DROP COLUMN `'. $fieldName .'`')->isSuccess();
+        return $this->connection->query('ALTER TABLE {:'.$tableName.':} DROP COLUMN "'. $fieldName .'"')->isSuccess();
     }
 
     /**
@@ -187,7 +187,7 @@ class Schema extends Query\Schema
             return false;
         }
         $defaultValue = !$defaultValue? 'NULL' : (is_string($defaultValue) ? '"'.$defaultValue.'"' : $defaultValue);
-        return $this->connection->query('ALTER TABLE {:'.$tableName.':} ALTER COLUMN `'.$fieldName.'` SET DEFAULT '.$defaultValue)->isSuccess();
+        return $this->connection->query('ALTER TABLE {:'.$tableName.':} ALTER COLUMN "'.$fieldName.'" SET DEFAULT '.$defaultValue)->isSuccess();
     }
 
     /**
@@ -198,7 +198,7 @@ class Schema extends Query\Schema
         if (!$this->existsField($tableName, $fieldName)) {
             return false;
         }
-        return $this->connection->query('ALTER TABLE {:' . $tableName . ':} ALTER COLUMN `' . $fieldName . '` DROP DEFAULT')->isSuccess();
+        return $this->connection->query('ALTER TABLE {:' . $tableName . ':} ALTER COLUMN "' . $fieldName . '" DROP DEFAULT')->isSuccess();
     }
 
     /**
@@ -231,7 +231,7 @@ class Schema extends Query\Schema
         if (!$this->existsTable($tableName) || $this->existsIndex($tableName, $uniqueKeyName)) {
             return false;
         }
-        return $this->connection->query('ALTER TABLE {:'.$tableName.':} ADD UNIQUE KEY `'.$uniqueKeyName.'` ('.$this->createKeySql($fieldName).')')->isSuccess();
+        return $this->connection->query('ALTER TABLE {:'.$tableName.':} ADD UNIQUE KEY "'.$uniqueKeyName.'" ('.$this->createKeySql($fieldName).')')->isSuccess();
     }
 
     /**
@@ -242,7 +242,7 @@ class Schema extends Query\Schema
         if (!$this->existsIndex($tableName, $uniqueKeyName)) {
             return FALSE;
         }
-        return $this->connection->query('ALTER TABLE {:'.$tableName.':} DROP KEY `'.$uniqueKeyName.'`')->isSuccess();
+        return $this->connection->query('ALTER TABLE {:'.$tableName.':} DROP KEY "'.$uniqueKeyName.'"')->isSuccess();
     }
 
     /**
@@ -253,7 +253,7 @@ class Schema extends Query\Schema
         if (!$this->existsTable($tableName) || $this->existsIndex($tableName, $indexName)) {
             return false;
         }
-        return $this->connection->query('ALTER TABLE {:'.$tableName.':} ADD INDEX `'.$indexName.'` ('.$this->createKeySql($fieldName).')')->isSuccess();
+        return $this->connection->query('ALTER TABLE {:'.$tableName.':} ADD INDEX "'.$indexName.'" ('.$this->createKeySql($fieldName).')')->isSuccess();
     }
 
     /**
@@ -264,7 +264,7 @@ class Schema extends Query\Schema
         if (!$this->existsIndex($tableName, $indexName)) {
             return FALSE;
         }
-        return $this->connection->query('ALTER TABLE {:'.$tableName.':} DROP INDEX `'.$indexName.'`')->isSuccess();
+        return $this->connection->query('ALTER TABLE {:'.$tableName.':} DROP INDEX "'.$indexName.'"')->isSuccess();
     }
 
     //拼缀索引SQL
@@ -273,10 +273,10 @@ class Schema extends Query\Schema
         $return = array();
         foreach ((array)$fields as $field) {
             if (is_array($field)) {
-                $return[] = '`' . $field[0] . '`(' . $field[1] . ')';
+                $return[] = '"' . $field[0] . '"(' . $field[1] . ')';
             }
             else {
-                $return[] = '`' . $field . '`';
+                $return[] = '"' . $field . '"';
             }
         }
         return implode(', ', $return);

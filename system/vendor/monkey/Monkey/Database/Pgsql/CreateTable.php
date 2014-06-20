@@ -112,7 +112,7 @@ class CreateTable extends Query\CreateTable
      */
     public function addField($fieldName,$comment,$type,$scale,$size=null,$default='notNull',$autoIncrement=false,$primaryKey=false)
     {
-        $field='`'.$fieldName.'` ';
+        $field='"'.$fieldName.'" ';
 
         if($type!='char' and $type!='serial' and $type!='int' and $type!='binary')
         {
@@ -155,7 +155,7 @@ class CreateTable extends Query\CreateTable
      */
     public function setPrimaryKey($fieldName)
     {
-        !$this->keys['primary'] and $this->keys['primary']='PRIMARY KEY (`'.$fieldName.'`)';
+        !$this->keys['primary'] and $this->keys['primary']='PRIMARY KEY ("'.$fieldName.'")';
         return $this;
     }
 
@@ -167,7 +167,7 @@ class CreateTable extends Query\CreateTable
     public function setUniqueKey($fieldName, $alias=null)
     {
         !$alias and $alias=$fieldName;
-        $this->keys['unique'][$fieldName]='UNIQUE KEY `'.$alias.'` (`'.$fieldName.'`)';
+        $this->keys['unique'][$fieldName]='UNIQUE KEY "'.$alias.'" ("'.$fieldName.'")';
     }
 
     /**
@@ -178,7 +178,7 @@ class CreateTable extends Query\CreateTable
     public function setKey($fieldName, $alias=null)
     {
         !$alias and $alias=$fieldName;
-        $this->keys['key'][$fieldName]='KEY `'.$alias.'` (`'.$fieldName.'`)';
+        $this->keys['key'][$fieldName]='KEY "'.$alias.'" ("'.$fieldName.'")';
     }
 
     /**
