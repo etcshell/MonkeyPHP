@@ -37,6 +37,7 @@ class AppCreator {
         $app->TEMP=$app->DIR.$app->config()->get('temp_dir','/temp');
         $app->FRONT_ROOT_DIR= $staticDir;
         $app->FRONT_ROOT_URL= $_SERVER['DOCUMENT_ROOT']==$staticDir?'':substr($staticDir, strlen($_SERVER['DOCUMENT_ROOT']));
+        $app->INDEX_ROOT_DIR=$_SERVER['DOCUMENT_ROOT'].dirname($_SERVER['PHP_SELF']);
         $app->INDEX_ROOT_URL=dirname($_SERVER['PHP_SELF']);
         $this->setError(); //修正异常接管步骤。异常处理里面用了$app，所以必须在完成$app创建后接管异常。
         $app->container= new Monkey\Container($app);//装载注入容器
