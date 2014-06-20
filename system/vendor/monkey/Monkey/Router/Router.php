@@ -138,7 +138,7 @@ class Router
         $mode= $this->config['search_mode'];
         $pattern[0]!='/' and $pattern= '/'.$pattern;
         //rewrite（需服务器支持）、pathinfo（需服务器支持）、get（传统方式）
-        if($mode=='rewrite') return $this->indexRoot.$pattern;
+        if($mode=='rewrite') return $this->indexRoot.$this->fixToUrl($pattern);
         if($mode=='pathinfo') return $this->indexRoot.'/'.basename($_SERVER['SCRIPT_NAME']).$pattern;
         return $this->indexRoot.'/'.basename($_SERVER['SCRIPT_NAME']).'?'.$this->config['search_get'].'='.$pattern;
     }
@@ -185,6 +185,15 @@ class Router
         $url='/'.trim($url,'/');
         $frontFile=basename($_SERVER['SCRIPT_NAME']);
         strrchr($url,'/') == '/'.$frontFile and $url=substr($url, 0, 0-strlen($frontFile)-1);
+        return $url;
+    }
+
+    private function fixToUrl($url)
+    {
+        if($url[strlen($url)-1]=='/') return $url;
+        $_ext=array('.php'=>'.php','.html'=>'.html');
+        $ext=strtolower(strrchr($url,'.'));
+        if(!$ext or !isset($_ext[$ext]))   $url.='.html';
         return $url;
     }
 }
