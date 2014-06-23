@@ -141,8 +141,9 @@ class Pattern {
     private function addPattern($pattern,$router)
     {
         $pattern[0]=='/' and $pattern='get'.$pattern;
-        $pattern=trim($pattern,'/');
-        $pattern=='get'  and $pattern.='/';
+//        如果路由映射表严格书写则不需要下面这两行
+//        $pattern=trim($pattern,'/');
+//        strpos($pattern,'/')===false  and $pattern.='/';
         if(strpos($pattern, ':')===false){
             $this->patterns['static'][$pattern]=$router;//get/article/list
             return;
