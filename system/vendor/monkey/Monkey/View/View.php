@@ -141,6 +141,15 @@ class View {
     {
         return $this->template;
     }
+
+    /**
+     * 清空前模板的编译缓存
+     */
+    public function clearTemplateCompiled()
+    {
+        $this->template->clearCompiled();
+    }
+
 /*
     public function newTemplate()
     {

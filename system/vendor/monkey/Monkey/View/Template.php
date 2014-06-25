@@ -38,6 +38,7 @@ class Template
                 );
             self::$tplRoot= $app->DIR.$config['template_root'] ;
             self::$compiledRoot= $app->TEMP.$config['compiled_root'] ;
+            dir_check(self::$compiledRoot);
         }
         $this->app=$app;
     }
@@ -98,7 +99,8 @@ class Template
      * 清空当前模板根目录下的编译缓存
      * @return $this
      */
-    public function clearCompiled() {
+    public function clearCompiled()
+    {
         dir_delete( self::$compiledRoot);
         return $this;
     }
