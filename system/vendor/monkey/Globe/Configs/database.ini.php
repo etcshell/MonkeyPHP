@@ -68,9 +68,9 @@
         'sqlite'=>array(
             'protocol'      =>'sqlite', //数据库协议
             //dsn配置是可选的、优先的。以下给出两例
-            'dsn'           =>'sqlite:'. APP_PATH. '/Configs/sqlite.db',
+            'dsn'           =>'',//'sqlite:'. '/Configs/sqlite.db',
             //'dsn'           =>'sqlite::memory:',
-            'file'          => APP_PATH.'/Configs/sqlite.db', //数据文件（绝对路径），也可以是“:memory:”（内存表）
+            'file'          =>'',//'/Configs/sqlite.db', //数据文件（绝对路径），也可以是“:memory:”（内存表）
             'charset'       =>'utf8',//字符集设置，Sqlite只支持utf8，设不设置都UTF8
             'username'      =>'root', //数据库用户名
             'password'      =>'123', //数据库用户密码
