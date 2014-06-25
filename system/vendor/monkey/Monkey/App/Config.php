@@ -128,7 +128,7 @@ class Config {
     /**
      * 删除已经编译的配置
      */
-    public function deleteCompile()
+    public function deleteCompiled()
     {
         if(file_exists(self::$compileFile)) unlink(self::$compileFile);
     }
