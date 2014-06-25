@@ -159,6 +159,14 @@ class Router
         return $uri;
     }
 
+    /**
+     * 清除编译好的路由匹配表
+     */
+    public function clearPatternCompiled()
+    {
+        $this->pattern->clearPatternCompiled();
+    }
+
     private function loadPath()
     {
         $config=$this->config;

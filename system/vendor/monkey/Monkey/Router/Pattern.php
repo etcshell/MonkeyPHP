@@ -111,6 +111,14 @@ class Pattern {
         return $pattern;
     }
 
+    /**
+     * 清除编译好的路由匹配表
+     */
+    public function clearPatternCompiled()
+    {
+        file_exists($this->pattern_file) and unlink($this->pattern_file);
+    }
+
     private function loadPattern()
     {
         if(file_exists($this->pattern_file) and filemtime($this->pattern_file) >= filemtime($this->map_file)){
