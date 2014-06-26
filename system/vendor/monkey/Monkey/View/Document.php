@@ -140,25 +140,28 @@ class Document {
         return '</form>';
     }
     /**
-    * 处理input代码
-    * @param string $type
-    * @param array $options
-    * @return string
-    */
-    public function input($type, $options = array()) {
+     * 处理input代码
+     * @param string $type
+     * @param string $name
+     * @param array $options
+     * @return string
+     */
+    public function input( $type, $name=null, $options = array()) {
         if (!$type) return false;
         $options['type'] = $type;
+        $name and $options['name']=$name;
         return $this->tag('input', $options);
     }
     /**
      * 文本输入框text表单代码
+     * @param string $name
      * @param string $default_value 默认值，这个属性也可以直接在$options设置
      * @param array $options
      * @return string
      */
-    public function inputText($default_value=null, $options = array()) {
-        !$default_value and $options['value']=$default_value;
-        return $this->input('text', $options);
+    public function inputText($name,$default_value=null, $options = array()) {
+        !is_null($default_value) and $options['value']=$default_value;
+        return $this->input('text', $name, $options);
     }
     /**
      * 密码输入框password代码
@@ -168,9 +171,8 @@ class Document {
      * @return string
      */
     public function inputPassword($name, $value='', $options = array()) {
-        $options['name']=$name;
         $options['value']=$value;
-        return $this->input('password', $options);
+        return $this->input('password', $name, $options);
     }
     /**
      * 提交按钮submit代码
@@ -180,7 +182,7 @@ class Document {
      */
     public function inputSubmit($value='重置', $options = array()) {
         $options['value']=$value;
-        return $this->input('submit', $options);
+        return $this->input('submit', '', $options);
     }
     /**
      * 重置按钮reset代码
@@ -190,7 +192,7 @@ class Document {
      */
     public function inputReset($value='重置', $options = array()) {
         $options['value']=$value;
-        return $this->input('reset', $options);
+        return $this->input('reset', '', $options);
     }
     /**
      * 按钮button代码
@@ -200,42 +202,30 @@ class Document {
      */
     public function inputButton($value, $options = array()) {
         $options['value']=$value;
-        return $this->input('button', $options);
+        return $this->input('button', '',  $options);
     }
     /**
      * 复选框HTML代码（单个）
+     * @param string $name
      * @param string $label 标题
      * @param string $value 值
      * @param boolean $selected 是否选中
      * @param array $options 其它属性
      * @return string
      */
-    public function inputCheckbox($label, $value, $selected = false, $options=array()) {
+    public function inputCheckbox($name, $label, $value, $selected = false, $options=array()) {
         $options['value']=$value;
         $selected and $options['checked'] = 'checked';
-        return '<label>'.$this->input('checkbox', $options).$label.'</label>';
-    }
-    /**
-     * 单选框HTML代码（单个）
-     * @param string $label 标题
-     * @param string $value 值
-     * @param boolean $selected 是否选中
-     * @param array $options 其它属性
-     * @return string
-     */
-    public function inputRadio($label,$value,$selected=false, $options = array() ) {
-        $options['value']=$value;
-        $selected and $options['checked'] = 'checked';
-        return '<label>'.$this->input('radio', $options).$label.'</label>';
+        return '<label>'.$this->input('checkbox', $name, $options).$label.'</label>';
     }
     /**
      * 复选框HTML代码
-     * @param array $content_array 二维数组，array( array(item,value,is_checked),array(item,value),...),有is_checked则该项选中
+     * @param string $name
+     * @param array $content_array 二维数组，array( array(label,value,is_checked),array(label,value),...),有is_checked则该项选中
      * @param array $options 设置统一的属性，如一组同名的复选框
-     * @param boolean $selected
      * @return string
      */
-    public function inputCheckboxArray($content_array, $options = array(), $selected = false) {
+    public function inputCheckboxArray($name,$content_array, $options = array()) {
         if (!$content_array || !is_array($content_array))  return false;
         $html = '';
         foreach ($content_array as $item) {
@@ -246,18 +236,33 @@ class Document {
                 if(isset($options['checked']))unset($options['checked']);
             }
             $html .= '<label>'
-                .$this->input('checkbox', $options).$item[0]
+                .$this->input('checkbox', $name, $options).$item[0]
                 .'</label>';
         }
         return $html;
     }
     /**
+     * 单选框HTML代码（单个）
+     * @param string $name
+     * @param string $label 标题
+     * @param string $value 值
+     * @param boolean $selected 是否选中
+     * @param array $options 其它属性
+     * @return string
+     */
+    public function inputRadio($name, $label, $value, $selected=false, $options = array() ) {
+        $options['value']=$value;
+        $selected and $options['checked'] = 'checked';
+        return '<label>'.$this->input('radio', $name,$options).$label.'</label>';
+    }
+    /**
      * 单选框HTML代码
-     * @param array $content_array 二维数组，array( array(item,value,is_checked),array(item,value),...),有is_checked则该项选中
+     * @param string $name
+     * @param array $content_array 二维数组，array( array(label,value,is_checked),array(label,value),...),有is_checked则该项选中
      * @param array $options 设置统一的属性，如一组同名的单选框
      * @return string
      */
-    public function inputRadioArray($content_array, $options = array()) {
+    public function inputRadioArray($name, $content_array, $options = array()) {
         if (!$content_array || !is_array($content_array))  return false;
         $html = '';
         foreach ($content_array as $item) {
@@ -268,18 +273,20 @@ class Document {
                 if(isset($options['checked']))unset($options['checked']);
             }
             $html .= '<label>'
-                .$this->input('radio', $options).$item[0]
+                .$this->input('radio', $name,$options).$item[0]
                 .'</label>';
         }
         return $html;
     }
     /**
      * 多行文字输入区域框TextArea的HTML代码处理
+     * @param string $name
      * @param string $content    默认的文字内容
      * @param array  $options    属性
      * @return string
      */
-    public function textArea($content = null, $options = array()) {
+    public function textArea($name, $content = null, $options = array()) {
+        $name and $options['name']=$name;
         $option_str = '';
         //当$options不为空或类型不为数组时
         if (!empty($options) && is_array($options)) {
@@ -292,22 +299,25 @@ class Document {
     }
     /**
      * 下拉框SELECT开始的HTML代码
+     * @param string $name
      * @param array $options 整个菜单的属性
      * @return string
      */
-    public function selectBegin($options = array()) {
+    public function selectBegin($name,$options = array()) {
+        $name and $options['name']=$name;
         return $this->tag('select', $options, false, false);
     }
     /**
      * 下拉框SELECT一项的HTML代码
-     * @param $name 菜单名
+     * @param $caption 显示的菜单标题
      * @param $value 菜单值
      * @param bool $selected 是否选中
      * @return string
      */
-    public function selectOption($name,$value,$selected=false) {
+    public function selectOption($caption,$value,$selected=false)
+    {
         return '<option value="'. $value. ($selected?'" selected="selected">':'">')
-            . $name
+            . $caption
             . '</option>';
     }
     /**
@@ -318,12 +328,15 @@ class Document {
         return '</select>';
     }
     /**
-    * 下拉框SELECT的HTML代码
-    * @param array $content_array 菜单二维数组，array( array(item,value,is_selected),array(item,value),...),有is_selected则该项选中
-    * @param array $options 整个菜单的属性
-    * @return string
-    */
-    public function select($content_array, $options = array()) {
+     * 下拉框SELECT的HTML代码
+     * @param string $name
+     * @param array $content_array 菜单二维数组，array( array(caption,value,is_selected),array(caption,value),...),有is_selected则该项选中
+     * @param array $options 整个菜单的属性
+     * @return string
+     */
+    public function select($name, $content_array, $options = array())
+    {
+        $name and $options['name']=$name;
         if (!$content_array || !is_array($content_array))  return false;
         $option_str = '';
         foreach ($content_array as $item) {
