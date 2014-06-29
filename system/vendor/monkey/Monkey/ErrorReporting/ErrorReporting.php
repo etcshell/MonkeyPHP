@@ -54,7 +54,7 @@ class ErrorReporting {
      * @param array $errorInfo 错误信息
      * @param bool $exit 是否在显示完毕后退出程序
      */
-    public function showError(array &$errorInfo, $exit=false)
+    public function showError(array $errorInfo, $exit=false)
     {
         if($this->app->DEBUG){//显示所有错误信息
             $this->_show($errorInfo,$this->config['error_tpl_debug']);

@@ -481,7 +481,7 @@ class Header {
             if (isset($_SERVER['CONTENT_LENGTH'])){
                 $headers['Content-Length'] = $_SERVER['CONTENT_LENGTH'];
             }
-            $headers['Content-Type'] = $this->getAcceptContentType();
+            $headers['Content-Type'] = $this->getContentType();
             return $headers;
         }
     }
