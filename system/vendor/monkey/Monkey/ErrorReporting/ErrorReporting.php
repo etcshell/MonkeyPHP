@@ -44,7 +44,7 @@ class ErrorReporting
     {
         $this->app = $app;
         $config = $app->config()->getComponentConfig('errorReporting', 'default');
-        $dir = isset($config['errorTemplate']) ?
+        $dir = (isset($config['errorTemplate']) and empty($config['errorTemplate'])) ?
             $app->DIR . $config['errorTemplate'] :
             strtr(__DIR__, DIRECTORY_SEPARATOR, '/') . '/errorTemplate';
 
@@ -121,7 +121,21 @@ class ErrorReporting
 
         } elseif (isset($_SERVER['REMOTE_ADDR'])) {
             //载入显示模板
-            require $tpl;
+            if (file_exists($tpl)) {
+                require $tpl;
+            }
+            else {
+                echo '<br/>', '程序运行出错：', '<br/>', '糟糕，连错误页显示模板也不存在！';
+
+                foreach ($errorInfo as $key => $value) {
+                    if ($key == 'backtrace') {
+                        $value = str_replace('#', '<br/>#', $value);
+                    }
+                    echo '<br/>', $key, ': ', $value;
+                }
+
+                echo '<br/>', '错误信息结束。';
+            }
 
         } else {
             echo PHP_EOL, '程序运行出错：';
