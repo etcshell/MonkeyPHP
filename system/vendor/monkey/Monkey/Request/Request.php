@@ -419,15 +419,7 @@ class Request
      */
     public function getDomain()
     {
-        if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
-            //IIS
-            $domain = $_SERVER['HTTP_X_FORWARDED_HOST'];
-        } else {
-            //Other
-            $domain = $_SERVER['HTTP_HOST'];
-        }
-
-        return $domain;
+        return $this->getHost();
     }
 
     /**
@@ -441,7 +433,15 @@ class Request
      */
     public function getHost()
     {
-        return $this->getDomain();
+        if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+            //IIS
+            $host = $_SERVER['HTTP_X_FORWARDED_HOST'];
+        } else {
+            //Other
+            $host = $_SERVER['HTTP_HOST'];
+        }
+
+        return $host;
     }
     /**
      * 获取命令行方式请求的文件根目录
