@@ -1,33 +1,35 @@
 <?php
 namespace Test\Controller;
 
-use Monkey\Controller\Web;
+use Monkey\Controller;
 
 /**
  * 控制器示例 Index
  */
 
-class Index extends Web{
+class Index extends Controller
+{
 
     /**
      * index action示例，方面名前面必须加“action_”前缀，以标明这是浏览器路由访问的方法
      */
     public function action_index()
     {
+        $res = $this->response;
         //演示使用响应对象向浏览器发送内容
-        $this->writeLine('测试 response::writeLine');
-        $this->writeLine('');
+        $res->writeLine('测试 response::writeLine');
+        $res->writeLine('');
         $param=$this->getRouteParameter();
         if(empty($param)){
-            $this->writeLine('--你好hello!--');
+            $res->writeLine('--你好hello!--');
         }
         if($param['language']=='zh'){
-            $this->writeLine('--你好!--');
+            $res->writeLine('--你好!--');
         }
         if($param['language']=='en'){
-            $this->writeLine('--hello!--');
+            $res->writeLine('--hello!--');
         }
-        $this->writeLine(date('Y-m-d H:i:s'));
+        $res->writeLine(date('Y-m-d H:i:s'));
     }
 
     /**
@@ -36,7 +38,7 @@ class Index extends Web{
      */
     public function action_hello()
     {
-        $this->writeLine('测试hello!');
+        $this->response->writeLine('测试hello!');
     }
 
 }

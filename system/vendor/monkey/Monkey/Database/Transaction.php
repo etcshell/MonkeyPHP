@@ -1,50 +1,107 @@
 <?php
+/**
+ * Project MonkeyPHP
+ *
+ * PHP Version 5.3.9
+ *
+ * @package   Monkey\Database
+ * @author    黄易 <582836313@qq.com>
+ * @version   GIT:<git_id>
+ */
 namespace Monkey\Database;
 
-use Monkey\Database\Connection;
+use Monkey;
+
 /**
- * Transaction
+ * Class Transaction
+ *
  * 数据库事务对象
+ *
  * @package Monkey\Database
  */
 class Transaction
 {
     /**
-     * @var \Monkey\App\App $app
+     * 应用对象
+     *
+     * @var Monkey\App $app
      */
     public $app;
-    protected static $transactionsTotal;
-    protected
-        $conn,//连接驱动
-        $pdoTrans,//当前驱动的事务清单
-        $name,//当前事务名称
-        $rolledBack //当前事务是否已经回滚了
-    ;
 
-    public function __construct(Connection $connection, $connectionName, $transName=null)
+    /**
+     * 事务层级
+     *
+     * @var array
+     */
+    protected static $transactionsTotal = array();
+
+    /**
+     * 连接对象
+     *
+     * @var Connection
+     */
+    protected $conn;
+
+
+    /**
+     * 事务清单
+     *
+     * @var array
+     */
+    protected $pdoTrans = array();
+
+    /**
+     * 事务名称
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * 事务是否已经回滚了
+     *
+     * @var bool
+     */
+    protected $rolledBack; //当前事务是否已经回滚了
+
+    /**
+     * 构造方法
+     *
+     * @param Connection $connection
+     * @param $connectionName
+     * @param null $transName
+     *
+     * @throws \Exception
+     */
+    public function __construct(Connection $connection, $connectionName, $transName = null)
     {
-        $this->conn=$connection;
-        self::$transactionsTotal += array($connectionName=>array());
-        $this->pdoTrans= &self::$transactionsTotal[$connectionName];
+        $this->conn = $connection;
+        self::$transactionsTotal += array($connectionName => array());
+        $this->pdoTrans = & self::$transactionsTotal[$connectionName];
 
-        $depth = $this->getDepth()+1;
-        if($depth==1 ) {
+        $depth = $this->getDepth() + 1;
+
+        if ($depth == 1) {
             $transName = 'default_transaction';
         }
-        if(!$transName) {
+
+        if (!$transName) {
             $transName = 'savepoint_' . $depth;
         }
-        $this->name=$transName;
+
+        $this->name = $transName;
+
         if ($this->pdoTrans[$this->name]) {
             throw new \Exception($transName . ' 这个事务名称已经被占用了，不能重复开启。');
         }
+
         if ($this->conn->inTransaction()) {
             $this->conn->query('SAVEPOINT ' . $transName);
-        }
-        else {
+        } else {
             $this->conn->beginTransaction();
         }
-        $this->pdoTrans[$this->name]=$transName;
+
+        $this->pdoTrans[$this->name] = $transName;
     }
 
     /**
@@ -55,7 +112,8 @@ class Transaction
         if (!$this->pdoTrans[$this->name]) {
             return;
         }
-        $this->pdoTrans[$this->name]=false;
+
+        $this->pdoTrans[$this->name] = false;
         $this->_pop();
     }
 
@@ -67,30 +125,41 @@ class Transaction
         if (!$this->getDepth() or !$this->conn->inTransaction()) {
             throw new \Exception('不在事务处理中.');
         }
+
         if (!$this->pdoTrans[$this->name]) {
-            throw new \Exception('当前事务 '.$this->name.' 已经不存在了.');
+            throw new \Exception('当前事务 ' . $this->name . ' 已经不存在了.');
         }
+
         $rolled_back_other_active_savepoint = FALSE;
+
         while ($savepoint = array_pop($this->pdoTrans)) {
+
             if ($savepoint == $this->name) {
+
                 if (empty($this->pdoTrans)) {
                     break;
                 }
+
                 $this->conn->query('ROLLBACK TO SAVEPOINT ' . $savepoint);
                 $this->_pop();
+
                 if ($rolled_back_other_active_savepoint) {
                     throw new \Exception(' 存在未处理的子事务');
                 }
+
                 return;
-            }
-            else {
+
+            } else {
                 $rolled_back_other_active_savepoint = TRUE;
             }
         }
+
         $this->conn->rollBack();
+
         if ($rolled_back_other_active_savepoint) {
             throw new \Exception(' 存在未处理的子事务');
         }
+
         $this->rolledBack = TRUE;
     }
 
@@ -100,7 +169,7 @@ class Transaction
      */
     public function getDepth()
     {
-        return count($this->pdoTrans) ;
+        return count($this->pdoTrans);
     }
 
     /**
@@ -125,18 +194,22 @@ class Transaction
     /**
      * 执行事务query
      */
-    protected function _pop() {
+    protected function _pop()
+    {
         foreach (array_reverse($this->pdoTrans) as $name => $active) {
+
             if ($active) {
                 break;
             }
+
             unset($this->pdoTrans[$name]);
+
             if (empty($this->pdoTrans)) {
                 if (!$this->conn->commit()) {
                     throw new \Exception('commit failed.');
                 }
-            }
-            else {
+
+            } else {
                 $this->conn->query('RELEASE SAVEPOINT ' . $name);
             }
         }

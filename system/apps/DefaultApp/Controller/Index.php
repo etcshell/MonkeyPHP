@@ -1,13 +1,14 @@
 <?php
 namespace DefaultApp\Controller;
 
-use Monkey\Controller\Web;
+use Monkey\Controller;
 
 /**
  * 控制器示例 Index
  */
 
-class Index extends Web{
+class Index extends Controller
+{
 
     /**
      * index action示例，方面名前面必须加“action_”前缀，以标明这是浏览器路由访问的方法

@@ -1,19 +1,44 @@
 <?php
+/**
+ * Project MonkeyPHP
+ *
+ * PHP Version 5.3.9
+ *
+ * @package   Monkey\Permission
+ * @author    黄易 <582836313@qq.com>
+ * @version   GIT:<git_id>
+ */
 namespace Monkey\Permission;
 
+use Monkey;
 
+/**
+ * Class Permission
+ *
+ * 权限组件
+ *
+ * @package Monkey\Permission
+ */
 class Permission
 {
-    private
-        $anonymous='anonymous',
-        /**
-         * @var callable
-         */
-        $authFinder
-    ;
+    /**
+     * 匿名名称
+     *
+     * @var string
+     */
+    private $anonymous = 'anonymous';
 
     /**
-     * @param \Monkey\App\App $app
+     * 权限查找器
+     *
+     * @var callable
+     */
+    private   $authFinder;
+
+    /**
+     * 构造方法
+     *
+     * @param Monkey\App $app
      */
     public function __construct($app)
     {
@@ -21,35 +46,48 @@ class Permission
 
     /**
      * 设置查找行为授权的方法
+     *
      * @param callable $finder
+     *
      * $finder方法将获得行为编码参数，见behaviourCoder方法，
      * $finder方法返回值应为allowed、denied、own、others之一，
      * $finder方法返回值分别代表具有该角色的：所有用户允许、所有用户拒绝、仅创建者允许、除开创建者允许
      */
     public function setAuthFinder(callable $finder)
     {
-        $this->authFinder=$finder;
+        $this->authFinder = $finder;
     }
 
     /**
      * 尽可能的获取指定角色的行为授权
+     *
      * @param string $resource
      * @param string $action
      * @param string $role
+     *
      * @return bool|string
      */
-    public function getRoleAuth($resource, $action, $role='')
+    public function getRoleAuth($resource, $action, $role = '')
     {
-        if(empty($role)) return $this->getAnonymousAuth($resource, $action);
-        $auth=$this->findRoleAuth($resource, $action, $role);
-        if(empty($auth)) return $this->getAnonymousAuth($resource, $action);
+        if (empty($role)) {
+            return $this->getAnonymousAuth($resource, $action);
+        }
+
+        $auth = $this->findRoleAuth($resource, $action, $role);
+
+        if (empty($auth)) {
+            return $this->getAnonymousAuth($resource, $action);
+        }
+
         return $auth;
     }
 
     /**
      * 获取匿名角色的行为授权
+     *
      * @param string $resource
      * @param string $action
+     *
      * @return bool|string
      */
     public function getAnonymousAuth($resource, $action)
@@ -59,29 +97,32 @@ class Permission
 
     /**
      * 查找具体角色的行为授权
+     *
      * @param string $resource
      * @param string $action
      * @param string $role
+     *
      * @return bool|string
      */
     private function findRoleAuth($resource, $action, $role)
     {
-        $auth=false;
-        $behaviour=$this->behaviourCoder($resource, $action, $role);
-        $auth=call_user_func($this->authFinder,$behaviour);
+        $behaviour = $this->behaviourCoder($resource, $action, $role);
+        $auth = call_user_func($this->authFinder, $behaviour);
         return $auth;
     }
 
     /**
      * 对行为编码
+     *
      * @param string $resource
      * @param string $action
      * @param string $role
+     *
      * @return string
      */
     public function behaviourCoder($resource, $action, $role)
     {
-        return md5($resource.'#'.$action.'#'.$role);
+        return md5($resource . '#' . $action . '#' . $role);
     }
 }
 

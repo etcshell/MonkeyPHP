@@ -10,4 +10,11 @@ return array(
     'Markdown' => array($vendorDir .DIRECTORY_SEPARATOR. 'markdown'),
     'Library' => array($vendorDir .DIRECTORY_SEPARATOR. 'library'),
 
+
+
+    'Macaca' => array($baseDir .DIRECTORY_SEPARATOR. 'apps'),
+    'Test' => array($baseDir .DIRECTORY_SEPARATOR. 'apps'),
+    'Install' => array($baseDir .DIRECTORY_SEPARATOR. 'apps'),
+    'DefaultApp' => array($baseDir .DIRECTORY_SEPARATOR. 'apps'),
+
 );

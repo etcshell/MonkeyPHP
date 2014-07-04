@@ -51,7 +51,7 @@ defaultForeground目录名是随便起的，里面的入口文件和外面的入
 	//启动自动加载   
 	require(__DIR__.'/../../system/vendor/autoload.php');    
 	//建立应用,参数1：应用命名空间；参数2：前端目录。    
-	$app= \Monkey\Monkey::createApp('DefaultApp',strtr(__DIR__,DIRECTORY_SEPARATOR,'/'));  
+	$app= new DefaultApp\App(__DIR__);
 	//运行应用  
 	$app->run();
 
@@ -61,113 +61,20 @@ defaultForeground目录名是随便起的，里面的入口文件和外面的入
 	//启动自动加载  
 	require(__DIR__.'/../system/vendor/autoload.php');  
 	//建立应用, 参数1：应用命名空间； 参数2：前端目录。  
-	$app= \Monkey\Monkey::createApp('DefaultApp',strtr(__DIR__,DIRECTORY_SEPARATOR,'/').'/defaultForeground');  
+	$app= new DefaultApp\App(__DIR__ . '/defaultForeground');
 	//运行应用  
 	$app->run(); 
  
 ##网站配置
 
 ###1. 配置的存放位置  
-system/apps/网站后端目录/Configs/内。
+system/apps/网站后端目录/data/config.php。
 
 ###2. 配置写法
-system/vendor/monkey/Globe/Configs/内有默认配置供你参考。
+参考：system/vendor/monkey/Globe/data/config.default.php。
 
-###3. 基础配置
-存放文件：base.ini.php
-
-    \Monkey\App\Config::set('timezone','PRC');
-    \Monkey\App\Config::set('action_prefix','action');
-
-读取方法：
-
-    $action_prefix= $app->getConfig('action_prefix','');
-
-###4. 组件配置
-存放文件：组件名.ini.php，如cache.ini.php
-
-	/**
-	 * 缓存组件提供者
-	 */
-	\Monkey\App\Config::setComponentProvider('cache',
-	    array(
-	        'default_provider'=>'file',//默认提供者
-	        'file'            =>'\Monkey\Cache\File', //每个提供者的具体类
-	        'apc'             =>'\Monkey\Cache\Apc',
-	    )
-	);
-	/**
-	 * 文件缓存的专用配置 ， 3个参数， 参数1：组件名， 参数2：提供者名， 参数3：具体配置（一般为数组）
-	 */
-	\Monkey\App\Config::setComponentConfig('cache','file',
-	    array(
-	        'expire'=>3600,//默认缓存时间
-	        'dir'           =>'/temp/fileCache',//缓存文件的绝对路径，留空为 temp目录/filecache
-	        'filename'      =>'data',
-	        'filesize'      =>'15M',
-	        'check'         =>false,
-	    )
-	);
-	/**
-	 * apc缓存的专用配置
-	 */
-	\Monkey\App\Config::setComponentConfig('cache','apc',
-	    array(
-	        'expire'=>3600,//默认缓存时间
-	    )
-	);
-
-读取方法：
-
-    $config=$app->config->getComponentConfig('cache','apc');
-
-
-##路由配置
-
-###1. 路由组件配置
-存放文件名：route.ini.php
-
-    /**
-     * 路由组件提供者
-     */
-    \Monkey\App\Config::setComponentProvider(
-    	'router',
-	    array(
-		    'default_provider'=>'default',
-		    'default' =>'\Monkey\Router\Router',
-	    )
-    );
-    /**
-     * MonkeyPHP提供的默认路由组件的配置
-     */
-    \Monkey\App\Config::setComponentConfig(
-    	'router',
-    	'default',
-	    array(
-		    //路由存贮配置，相对应用目录。
-		    'map_file' => '/data/router.map.php',//路由器到控制器的映射表
-		    'pattern_option'=>array(
-			    //路由匹配时的编译标签，简记名（只能用一对花括号括起来）=>正则表达式（只能用一对括号括起来）
-			    '{i}' =>"(\d+)",
-			    '{s}' =>"([^\/]+)",
-			    '{year}' =>"([1-2]\d{3})",
-			    '{month}' =>"(1[0,1,2]|[1-9])",
-			    '{day}' =>"([1-9]|[1,2][0-9]|3[0,1])",
-			    '{name}' =>"(\w+)",
-			    '{zh|en}' =>"(zh|en)",
-			    '{json}' =>"(\.json)",
-		    ),
-	    	'router_class_auto_prefix'=>true, //自动将router表中类名加上前缀 \应用命名空间\Controller\
-	     
-		    //三个选择：rewrite（需服务器支持）、pathinfo（需服务器支持）、get（传统方式）
-		    'search_mode' =>'rewrite',
-		    //get字段上的显式方法设置，如http://www.xxx.php?r=index
-		    'search_get' =>'r',
-    	)
-    );
-
-###2. 路由映射表配置
-存放文件位置：system/apps/DefaultApp/data/router.map.php
+###3. 路由映射表配置
+存放文件位置：system/apps/网站后端目录/data/router.map.php
 
 	/******** 路由器到控制器的映射表——简称路由映射表（示例） ********/
 	//其中请求方法get可以省略，其它如post等则不能省略
@@ -192,7 +99,6 @@ system/vendor/monkey/Globe/Configs/内有默认配置供你参考。
 
 
 ##Hello World
-
 本节我们一起来做一个输出“Hello World”的程序。
 
 ###1. 下载部署网站
@@ -205,19 +111,18 @@ system/vendor/monkey/Globe/Configs/内有默认配置供你参考。
     '/{zh|en}:language'=>'Index:index',
     '/hello'=>'Index:hello',
 
-
 ###3. 编写控制器
 在system/apps/DefaultApp/Controller目录下新建一个Index.php文件：
 
     <?php
     namespace DefaultApp\Controller;
      
-    use Monkey\Controller\Web;
+    use Monkey\Controller;
      
     /**
      * 控制器示例 Index
      */
-    class Index extends Web
+    class Index extends Controller
 	{
 	    public function actionIndex()
 	    {
@@ -262,7 +167,7 @@ http://web目录/hello
 路由器查询路由并分发给控制器
 
 ###step4、处理请求
-继承Monkey\Controller\Web的控制器处理相应的请求。
+继承Monkey\Controller的控制器处理相应的请求。
 
 ##URL 路由解析
 
@@ -297,21 +202,21 @@ URL 中路由字符串的查找模式
 
 ####使用 MonkeyPHP 的控制器类需要遵以下几点。
 
-1. 命名空间规范  
+ 1. 命名空间规范
 \DefaultApp\Controller\控制器路径
 
-2. 继承规范  
-必须继承 Monkey\Controller\Web 或 Monkey\Controller\Cli 之一，如：
+ 2. 继承规范
+必须继承 Monkey\Controller，如：
 
 	    <?php
 	    namespace DefaultApp\Controller;
 	     
-	    use Monkey\Controller\Web;
+	    use Monkey\Controller;
 	     
 	    /**
 	     * 控制器示例 Index
 	     */
-	    class Index extends Web
+	    class Index extends Controller
 		{
 		    public function actionIndex()
 		    {
@@ -334,6 +239,8 @@ URL 中路由字符串的查找模式
 		    	echo '测试hello!<br/>';
 		    }
 	    }
+
+同时访问方法 必须是以 action 为前缀，如上 actionIndex 、actionHello
 
 ##视图
 

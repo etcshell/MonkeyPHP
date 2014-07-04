@@ -8,7 +8,7 @@
 
 namespace Test\Controller\Blog;
 
-use Monkey\Controller\Web;
+use Monkey\Controller;
 
 /**
  * Blog
@@ -19,7 +19,7 @@ use Monkey\Controller\Web;
  * 因此“Blog\Blog:index”等价于“Test\Controller\Blog\Blog:index”。
  * @package Test\Controller\Blog
  */
-class Blog extends Web
+class Blog extends Controller
 {
     public function action_index()
     {

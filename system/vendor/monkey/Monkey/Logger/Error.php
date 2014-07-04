@@ -1,37 +1,64 @@
 <?php
+/**
+ * Project MonkeyPHP
+ *
+ * PHP Version 5.3.9
+ *
+ * @package   Monkey\Logger
+ * @author    黄易 <582836313@qq.com>
+ * @version   GIT:<git_id>
+ */
 namespace Monkey\Logger;
 
+use Monkey;
+
 /**
- * Error
+ * Class Error
+ *
  * 一般错误日志类
+ *
  * @package Monkey\Logger
  */
 class Error implements ErrorInterface
 {
-    private static
-        $logDir,
-        $logs=array()
-    ;
-    private
-        /**
-         * @var \Monkey\App\App
-         */
-        $app;
+    /**
+     * 应用对象
+     *
+     * @var Monkey\App $app
+     */
+    public $app;
+
+    /**
+     * 日志保存目录
+     *
+     * @var string
+     */
+    private static $logDir;
+
+    /**
+     * 日志信息
+     *
+     * @var array
+     */
+    private static $logs = array();
+
     /**
      * 构造方法
-     * @param \Monkey\App\App $app
+     *
+     * @param Monkey\App $app
      * @param mixed|null $config 配置
      */
-    public function __construct($app,$config)
+    public function __construct($app, $config)
     {
-        $this->app=$app;
-        self::$logDir= dir_format($app->DIR.($config['error_dir'] ? $config['error_dir'] : '/logs/error'));
-        self::$logDir.='/'.date("Y-m-d",$app->TIME).'/'.date("H",$app->TIME);
-        $app->shutdown()->register(array($this,'write'));
+        $this->app = $app;
+        self::$logDir = dir_format($app->DIR . (isset($config['error_dir']) ? $config['error_dir'] : '/logs/error'));
+        self::$logDir .= '/' . date("Y-m-d", $app->TIME) . '/' . date("H", $app->TIME);
+        $app->shutdown()->register(array($this, 'write'));
     }
 
     /**
      * 添加一条日志信息
+     *
      * @param string|array $data 日志信息
      */
     public function put($data)
@@ -42,58 +69,67 @@ class Error implements ErrorInterface
     /**
      * 写入日志文件
      * 不需要手动调用
+     *
      * @return bool
      */
     public function write()
     {
-        $temp=self::$logDir;
-        if(!dir_check($temp)){
-            return ;
+        $temp = self::$logDir;
+
+        if (!dir_check($temp)) {
+            return false;
         }
-        $file =self::$logDir.'/'.date("Y-m-d-H-i",$this->app->TIME).".log.txt";
-        foreach(self::$logs as $log){
-            if(!is_array($log)){
-                $this->_write2($log,$file);
+
+        $file = self::$logDir . '/' . date("Y-m-d-H-i", $this->app->TIME) . ".log.txt";
+
+        foreach (self::$logs as $log) {
+            if (!is_array($log)) {
+                $this->_write2($log, $file);
                 continue;
             }
-            if(isset($log['backtrace']) ){
-                unset($log['backtrace']);
-            }
-            if(isset($log['code']) ){
-                $this->_write2($log,$temp.'/'.$log['code'].".log.txt");
-            }
-            else{
-                $this->_write2($log,$file);
+
+            if (isset($log['code'])) {
+                $this->_write2($log, $temp . '/' . $log['code'] . ".log.txt");
+            } else {
+                $this->_write2($log, $file);
             }
         }
+
+        return true;
     }
 
-    private function _write2($log,$file){
-        $content=PHP_EOL.PHP_EOL.PHP_EOL;
-        if(isset($log['time'])){
-            $content.='----[ '.$log['time'].' ]----';
+    private function _write2($log, $file)
+    {
+        $content = PHP_EOL . PHP_EOL . PHP_EOL;
+
+        if (isset($log['time'])) {
+            $content .= '----[ ' . $log['time'] . ' ]----';
             unset($log['time']);
+        } else {
+            $content .= '----[ ' . date('Y-m-d H:i:s', $this->app->TIME) . ' ]----';
         }
-        else{
-            $content.='----[ '.date('Y-m-d H:i:s',$this->app->TIME).' ]----';
-        }
-        if(is_array($log)){
-            foreach($log as $key=>$value){
-                if(is_array($value)){
-                    $content.=PHP_EOL.'['.$key."] array(";
-                    foreach($value as $k=>$v){
-                        $content.=PHP_EOL."\t\t[".$k."]=>".$v;
+
+        if (is_array($log)) {
+            foreach ($log as $key => $value) {
+
+                if (is_array($value)) {
+                    $content .= PHP_EOL . '[' . $key . "] array(";
+
+                    foreach ($value as $k => $v) {
+                        $content .= PHP_EOL . "\t\t[" . $k . "]=>" . $v;
                     }
-                    $content.=PHP_EOL.')';
-                }
-                else{
-                    $content.=PHP_EOL.'['.$key."] ".$value;
+
+                    $content .= PHP_EOL . ')';
+
+                } else {
+                    $content .= PHP_EOL . '[' . $key . "] " . $value;
                 }
             }
+
+        } else {
+            $content .= PHP_EOL . $log;
         }
-        else{
-            $content.=PHP_EOL.$log;
-        }
+
         error_reporting(0);
         error_log($content, 3, $file);
         error_reporting($this->app->DEBUG);

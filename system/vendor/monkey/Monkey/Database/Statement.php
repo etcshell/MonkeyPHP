@@ -1,49 +1,67 @@
 <?php
+/**
+ * Project MonkeyPHP
+ *
+ * PHP Version 5.3.9
+ *
+ * @package   Monkey\Database
+ * @author    黄易 <582836313@qq.com>
+ * @version   GIT:<git_id>
+ */
 namespace Monkey\Database;
 
-use \PDO;
 use \PDOStatement;
-use Monkey\App\App;
- 
+
+/**
+ * Class Statement
+ *
+ * 预处理类
+ *
+ * @package Monkey\Database
+ */
 class Statement extends PDOStatement
 {
-    public
-        /**
-         * @var \Monkey\App\App $app
-         */
-        $app,
-        /**
-         * @var Connection
-         */
-        $conn
-    ;
-
-    private $isExecuteTrue=false;
 
     /**
-     * @param string App $app
+     * 连接对象
+     *
+     * @var Connection
+     */
+    public $conn;
+
+    /**
+     * 是否执行成功
+     *
+     * @var bool
+     */
+    private $isExecuteTrue = false;
+
+    /**
+     * 构造方法
+     *
      * @param Connection $pdo
      */
-    protected function __construct($app, Connection $pdo)
+    protected function __construct(Connection $pdo)
     {
-        $this->app = $app;
         $this->conn = $pdo;
     }
-    
+
     /**
      * 执行Statement
+     *
      * @param $args
      *
      * @return true|false
      */
     public function execute($args = array())
     {
-        $this->isExecuteTrue=parent::execute($args);
+        $this->isExecuteTrue = parent::execute($args);
         return $this->isExecuteTrue;
     }
 
     /**
      * 获取连接对象
+     *
      * @return Connection
      */
     public function connection()
@@ -53,6 +71,7 @@ class Statement extends PDOStatement
 
     /**
      * 返回最后插入的ID
+     *
      * @return string
      */
     public function lastInsertId()
@@ -62,6 +81,7 @@ class Statement extends PDOStatement
 
     /**
      * 查询执行是否成功
+     *
      * @return bool
      */
     public function isSuccess()
@@ -71,6 +91,7 @@ class Statement extends PDOStatement
 
     /**
      * 查询影响的行数
+     *
      * @return int
      */
     public function affected()

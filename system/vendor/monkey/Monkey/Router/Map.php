@@ -1,39 +1,70 @@
 <?php
+/**
+ * Project MonkeyPHP
+ *
+ * PHP Version 5.3.9
+ *
+ * @package   Monkey\Router
+ * @author    黄易 <582836313@qq.com>
+ * @version   GIT:<git_id>
+ */
 namespace Monkey\Router;
 
+use Monkey;
+
 /**
- * Map
+ * Class Map
+ *
  * 路由映射管理类
+ *
  * @package Monkey\Router
  */
 class Map
 {
-    public
-        /**
-         * @var \Monkey\App\App
-         */
-        $app;
-    private
-        $map=array(),
-        $map_file,
-        $update=false
-    ;
+    /**
+     * 应用对象
+     *
+     * @var Monkey\App
+     */
+    public $app;
+
+    /**
+     * 路由映射表
+     *
+     * @var array
+     */
+    private $map = array();
+
+    /**
+     * 路由映射表的存储文件
+     *
+     * @var string
+     */
+    private $map_file;
+
+    /**
+     * 是否已更新映射表
+     *
+     * @var bool
+     */
+    private $update = false;
 
     /**
      * 构造方法注入
-     * @param \Monkey\App\App $app
+     *
+     * @param Monkey\App $app
      * @param string $config 配置
-     * @return mixed
      */
-    public function __construct($app,$config)
+    public function __construct($app, $config)
     {
-        $this->app=$app;
-        $this->map_file=$app->DIR.($config['map_file'] ? $config['map_file'] : '/data/router.map.php');
-        $this->map=include($this->map_file);
+        $this->app = $app;
+        $this->map_file = $app->DIR . ($config['map_file'] ? $config['map_file'] : '/data/router.map.php');
+        $this->map = include($this->map_file);
     }
 
     /**
      * 获取所有路由映射信息
+     *
      * @return array
      */
     public function getAllMap()
@@ -43,17 +74,22 @@ class Map
 
     /**
      * 获取一条路由映射信息
+     *
      * @param $pattern
+     *
      * @return string
      */
     public function get($pattern)
     {
-        if($pattern=$this->find($pattern)) return $this->map[$pattern];
-        else return '';
+        if ($pattern = $this->find($pattern))
+            return $this->map[$pattern];
+        else
+            return '';
     }
 
     /**
      * 添加一条映射
+     *
      * @param $pattern
      *    空匹配：       get/  或  /   其中get可以省略，其它如post则不能省略，下同
      *    含路径匹配：    get/article/list   或  /article/list
@@ -64,25 +100,26 @@ class Map
      * @param string $controller
      * @param string $action
      */
-    public function add($pattern,$controller,$action)
+    public function add($pattern, $controller, $action)
     {
-        $pattern[0]=='/' and $pattern='get'.$pattern;
-        $pattern=trim($pattern,'/');
-        $pos=strpos($controller,'\\Controller\\');
-        $pos!==false and $controller=substr($controller,$pos+12);
-        $this->map[$pattern]=$controller.':'.$action;
-        $this->update=true;
+        $pattern[0] == '/' and $pattern = 'get' . $pattern;
+        $pattern = trim($pattern, '/');
+        $pos = strpos($controller, '\\Controller\\');
+        $pos !== false and $controller = substr($controller, $pos + 12);
+        $this->map[$pattern] = $controller . ':' . $action;
+        $this->update = true;
     }
 
     /**
      * 删除一条映射
+     *
      * @param $pattern
      */
     public function delete($pattern)
     {
-        if($pattern=$this->find($pattern)){
+        if ($pattern = $this->find($pattern)) {
             unset($this->map[$pattern]);
-            $this->update=true;
+            $this->update = true;
         }
     }
 
@@ -91,9 +128,9 @@ class Map
      */
     public function clear()
     {
-        $this->map=null;
-        $this->map=array();
-        $this->update=true;
+        $this->map = null;
+        $this->map = array();
+        $this->update = true;
     }
 
     /**
@@ -101,22 +138,39 @@ class Map
      */
     public function saveMap()
     {
-        $content='<?php'.PHP_EOL.'return '.var_export($this->map, TRUE).' ;';
-        file_put_contents($this->map_file,$content,LOCK_EX); //echo '<br/>保存扫描结果到缓存文件中...<br/>';
-        $this->update=false;
+        $content = '<?php' . PHP_EOL . 'return ' . var_export($this->map, TRUE) . ' ;';
+        file_put_contents($this->map_file, $content, LOCK_EX); //echo '<br/>保存扫描结果到缓存文件中...<br/>';
+        $this->update = false;
     }
 
+    /**
+     * 销毁方法
+     */
     public function destroy()
     {
         $this->update and $this->saveMap();
     }
 
+    /**
+     * 查找路由
+     *
+     * @param $pattern
+     * @return string
+     */
     private function find($pattern)
     {
-        $pattern[0]=='/' and $pattern='get'.$pattern;
-        if(isset($this->map[$pattern])) return $pattern;
-        $pattern=strstr($pattern,'/');
-        if(isset($this->map[$pattern])) return $pattern;
+        $pattern[0] == '/' and $pattern = 'get' . $pattern;
+
+        if (isset($this->map[$pattern])) {
+            return $pattern;
+        }
+
+        $pattern = strstr($pattern, '/');
+
+        if (isset($this->map[$pattern])) {
+            return $pattern;
+        }
+
         return '';
     }
 }

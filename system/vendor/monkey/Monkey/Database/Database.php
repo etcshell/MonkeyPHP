@@ -1,137 +1,192 @@
 <?php
+/**
+ * Project MonkeyPHP
+ *
+ * PHP Version 5.3.9
+ *
+ * @package   Monkey\Database
+ * @author    黄易 <582836313@qq.com>
+ * @version   GIT:<git_id>
+ */
 namespace Monkey\Database;
 
+use Monkey;
+
 /**
- * Database
+ * Class Database
+ *
  * 数据库组件
+ *
  * @package Monkey\Database
  */
 class Database
 {
-    private
-        /**
-         * @var \Monkey\App\App
-         */
-        $app,
-        $config,
-        $pool,
-        $default,
-        $active,
-        $oConnections
-    ;
+    /**
+     * 应用对象
+     *
+     * @var Monkey\App
+     */
+    private $app;
 
     /**
-     * @param \Monkey\App\App $app
+     * 数据组件配置
+     *
+     * @var array
+     */
+    private $config = array();
+
+    /**
+     * 连接配置池
+     *
+     * @var array
+     */
+    private $pool = array();
+
+    /**
+     * 默认连接名
+     *
+     * @var string
+     */
+    private $default;
+
+    /**
+     * 连接对象池
+     *
+     * @var array
+     */
+    private $oConnections = array();
+
+    /**
+     * @param Monkey\App $app
+     *
+     * @throws \Exception
      */
     public function __construct($app)
     {
-        if( !extension_loaded('pdo') )
-            $app->exception('没有安装pdo驱动扩展,请先在php.ini中配置安装pdo！',1024,__FILE__,__LINE__);
-        $this->app= $app;
-        $config= $app->config()->getComponentConfig('database','default');
-        $this->config=$config;
-        $this->pool= $config['pool'];
-        $this->default= $config['default_connection'];
-        if(!$this->default || !isset($this->pool[$this->default])) {
-            reset($this->pool);
-            $this->default= key($this->pool);
+        //效验pdo组件是否存在
+        if (!extension_loaded('pdo')) {
+            throw new \Exception('没有安装pdo驱动扩展,请先在php.ini中配置安装pdo！', 1024, __FILE__, __LINE__);
         }
-        $this->active=$this->default;
-    }
 
-    /**
-     * 激活某个连接
-     * @param string $name 留空时激活默认连接
-     * @return bool
-     */
-    public function activeConnection($name=null)
-    {
-        if($name===null) $name=$this->default;
-        $name=strtolower($name);
-        if(!isset($this->pool[$name])) return false;
-        $this->active=$name;
-        return true;
+        //载入数据组件配置
+        $this->app = $app;
+        $config = $app->config()->getComponentConfig('database', 'default');
+        $this->config = $config;
+        isset($config['pool']) and $this->pool = $config['pool'];
+        isset($config['default_connection']) and $this->default = $config['default_connection'];
+
+        //设置默认连接
+        if (!$this->default || !isset($this->pool[$this->default])) {
+            reset($this->pool);
+            $this->default = key($this->pool);
+        }
     }
 
     /**
      * 获取指定名称的查询连接
-     * @param string|null $name 连接名称。留空时，使用当前活动连接
+     *
+     * @param string|null $name 连接名称。留空时，使用默认连接
+     *
      * @return \Monkey\Database\Connection|bool|null
+     *
+     * @throws \Exception
      *
      * 1.正确返回\Monkey\Database\Connection；
      * 2.不存在指定的连接（包括默认连接）返回null；
      * 3.连接失败返回false。
      */
-    public function getConnection($name=null)
+    public function getConnection($name = null)
     {
-        if(empty($name)) {
-            $name= $this->active;
+        //验证连接名
+        if (empty($name)) {
+            $name = $this->default;
+        } else {
+            $name = strtolower($name);
+            $name = isset($this->pool[$name]) ? $name : null;
         }
-        else {
-            $name=strtolower($name);
-            $name= isset($this->pool[$name]) ? $name : null;
-        }
-        if(!$name) {
+        if (!$name) {
             return null;
         }
-        if(!isset($this->oConnections[$name])) {
-            $this->oConnections[$name]= $this->tryConnecting($this->config[$name],$name);
+
+        //提取连接对象
+        if (!isset($this->oConnections[$name])) {
+            $this->oConnections[$name] = $this->tryConnecting($this->config[$name], $name);
         }
+
+        if (empty($this->oConnections[$name])) {
+            throw new \Exception('数据库连接失败');
+        }
+
         return $this->oConnections[$name];
     }
 
     /**
-     * 尝试连接
+     * 尝试具体配置的连接
+     *
      * @param array $config 连接配置
      * @param string $name 连接名称，留空表示测试连接
+     *
      * @return \Monkey\Database\Connection|false
      */
-    public function tryConnecting($config, $name='test')
+    public function tryConnecting($config, $name = 'test')
     {
-        $class=ucfirst(strtolower($config['protocol']));
-        $class= $class=='Mysql'? '' : '\\'.$class;//如果是Mysql驱动，直接使用父类，目的是获得更高的效率
-        $class= __NAMESPACE__.$class.'\\Connection';
+        //设置连接类名
+        $class = ucfirst(strtolower($config['protocol']));
+        $class = ($class == 'Mysql' ? '' : '\\' . $class); //如果是Mysql驱动，直接使用父类，目的是获得更高的效率
+        $class = __NAMESPACE__ . $class . '\\Connection';
+
         try {
-            $connect = new $class($this->app,$name,$config);
+            //创建连接对象
+            $connect = new $class($this->app, $name, $config);
+
         } catch (\PDOException $e) {
-            $error=array(
-                'error_title'       =>'连接到PDO时出错。',
-                'message'           =>$e->getMessage(),
-                'code'              =>$e->getCode(),
+            //处理连接错误，记录错误日志
+            $error = array(
+                'error_title' => '连接到PDO时出错。',
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
             );
             $this->app->logger()->sql($error);
+
             return false;
         }
+
         return $connect;
     }
 
     /**
-     * @return \Monkey\Database\Connection
+     * 尝试连接池中的连接
+     *
+     * @param string $name 连接名称，留空表示测试连接
+     *
+     * @return \Monkey\Database\Connection|false
      */
-    private function getActiveConnection()
+    public function tryPool($name)
     {
-        $name=$this->active;
-        if(!isset($this->oConnections[$name])) {
-            $this->oConnections[$name]= $this->tryConnecting($this->config[$name],$name);
+        if (isset($this->pool[$name])) {
+            return $this->tryConnecting($this->pool[$name], $name);
         }
-        if(!isset($this->oConnections[$name])){
-            $this->app->exception('连接数据库出错');
-        }
-        return $this->oConnections[$name];
+
+        return false;
     }
 
+    /**
+     * 注销方法
+     */
     public function __destruct()
     {
-        $this->config=null;
-        $this->pool=null;
-        $this->default=null;
+        //销毁配置
+        $this->config = null;
+        $this->pool = null;
+        $this->default = null;
 
-        if($this->oConnections) {
-            foreach($this->oConnections as $key=>$connection) {
-                $connection=null;
-                $this->oConnections[$key]=null;
+        //逐一销毁连接对象
+        if ($this->oConnections) {
+            foreach ($this->oConnections as $key => $connection) {
+                $connection = null;
+                $this->oConnections[$key] = null;
             }
-            $this->oConnections=null;
+            $this->oConnections = null;
         }
     }
 

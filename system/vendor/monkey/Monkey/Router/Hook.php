@@ -1,78 +1,134 @@
 <?php
+/**
+ * Project MonkeyPHP
+ *
+ * PHP Version 5.3.9
+ *
+ * @package   Monkey\Router
+ * @author    黄易 <582836313@qq.com>
+ * @version   GIT:<git_id>
+ */
 namespace Monkey\Router;
 
+use Monkey;
+
 /**
- * Hook
+ * Class Hook
+ *
  * 路由hook
+ *
  * @package Monkey\Router
  */
-class Hook {
-    public
-        /**
-         * @var \Monkey\App\App
-         */
-        $app,
-        $status=array()
-    ;
-    private
-        $hooks,
-        $select=array(),
-        $called,
-        $started=false
-    ;
+class Hook
+{
+    /**
+     * 应用对象
+     *
+     * @var Monkey\App
+     */
+    public $app;
 
     /**
-     * 构造方法注入
-     * @param \Monkey\App\App $app
-     * @return mixed
+     * 钩子执行状态
+     *
+     * @var array
+     */
+    public $status = array();
+
+    /**
+     * 钩子列表
+     *
+     * @var array
+     */
+    private $hooks;
+
+    /**
+     * 匹配中的钩子
+     *
+     * @var array
+     */
+    private $select = array();
+
+    /**
+     * 已执行了的钩子
+     *
+     * @var array
+     */
+    private $called;
+
+    /**
+     * 是否已启动钩子
+     *
+     * @var bool
+     */
+    private $started = false;
+
+    /**
+     * 构造方法
+     *
+     * @param Monkey\App $app
      */
     public function __construct($app)
     {
-        $this->app=$app;
+        $this->app = $app;
     }
 
     /**
      * 添加路由hook
+     *
      * @param string $subPath 路径片段（匹配路由的头部）
      * @param \Closure $handle hook函数，通常用匿名函数代替
      * @param string $requestMethod 请求方法
+     *
      * 例如：
      * $hook->add('/user', function($app,$hook){ ...; $hook->next(); }, 'get');
      */
-    public function add($subPath, \Closure $handle, $requestMethod='all')
+    public function add($subPath, \Closure $handle, $requestMethod = 'all')
     {
-        $subPath='/'.trim(strtolower($subPath),'/');
-        $requestMethod=strtolower($requestMethod);
-        $this->hooks[$requestMethod][$subPath]=$handle;
+        $subPath = '/' . trim(strtolower($subPath), '/');
+        $requestMethod = strtolower($requestMethod);
+        $this->hooks[$requestMethod][$subPath] = $handle;
     }
 
     /**
      * 启动路由hook
+     *
      * @param string $requestPath 请求路径
      * @param string $requestMethod 请求方法
      */
-    public function start($requestPath,$requestMethod='get')
+    public function start($requestPath, $requestMethod = 'get')
     {
-        if($this->started)return;
-        if(empty($this->hooks))return;
-        $this->started=true;
-        $requestPath='/'.ltrim(strtolower($requestPath),'/');
-        $requestMethod=strtolower($requestMethod);
-        $extension=array('.php'=>1,'.txt'=>1,'.html'=>1,'.json'=>1,'.xml'=>1);
-        $this->matchHook('all',$requestPath,$extension);//匹配通用请求方法的路由hook
-        $this->matchHook($requestMethod,$requestPath,$extension);//匹配指定请求方法的路由hook
+        if ($this->started) {
+            return;
+        }
+
+        if (empty($this->hooks)) {
+            return;
+        }
+
+        $this->started = true;
+        $requestPath = '/' . ltrim(strtolower($requestPath), '/');
+        $requestMethod = strtolower($requestMethod);
+        $extension = array('.php' => 1, '.txt' => 1, '.html' => 1, '.json' => 1, '.xml' => 1);
+        $this->matchHook('all', $requestPath, $extension); //匹配通用请求方法的路由hook
+        $this->matchHook($requestMethod, $requestPath, $extension); //匹配指定请求方法的路由hook
         reset($this->select);
         $this->next();
     }
 
-    private function matchHook($requestMethod,$requestPath,$extension)
+    private function matchHook($requestMethod, $requestPath, $extension)
     {
-        $_='';
-        foreach($this->hooks[$requestMethod] as $subPath => $handle){
-            if(strpos($requestPath,$subPath)!==0)continue;
-            $_=substr($requestPath,strlen($subPath));
-            if(empty($_) or $_[0]=='/' or ( $_[0]=='.' and $extension[$_] ) ){
-                $this->select[$subPath]=$handle;
+        $_ = '';
+        foreach ($this->hooks[$requestMethod] as $subPath => $handle) {
+
+            if (strpos($requestPath, $subPath) !== 0) {
+                continue;
+            }
+
+            $_ = substr($requestPath, strlen($subPath));
+
+            if (empty($_) or $_[0] == '/' or ($_[0] == '.' and $extension[$_])) {
+                $this->select[$subPath] = $handle;
             }
         }
     }
@@ -90,14 +146,18 @@ class Hook {
      */
     public function next()
     {
-        if(empty($this->select))return;
-        $this->called[]=key($this->select);
-        $handle=array_shift($this->select);
-        call_user_func($handle,$this);//$handle($this->app,$this);
+        if (empty($this->select)) {
+            return;
+        }
+
+        $this->called[] = key($this->select);
+        $handle = array_shift($this->select);
+        call_user_func($handle, $this); //$handle($this->app,$this);
     }
 
     /**
      * 获取已经执行了的路由hook
+     *
      * @return mixed
      */
     public function getCalled()

@@ -180,7 +180,7 @@ class Verification {
      *  @return bool
      */
     public function isSafeAll($str) {
-        return !preg_match('/[\"\'<>\?\#\$\*\&;\\\/\[\]\{\}=\(\)\^%,]/i', $str);
+        return !preg_match("/[\"\'<>\?\#\$\*\&;\\/\[\]\{\}=\(\)\^%,]/i", $str);
     }
     /**
      * 	mysql内容安全验证

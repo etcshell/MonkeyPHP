@@ -1,41 +1,103 @@
 <?php
+/**
+ * Project MonkeyPHP
+ *
+ * PHP Version 5.3.9
+ *
+ * @package   Monkey\Database
+ * @author    黄易 <582836313@qq.com>
+ * @version   GIT:<git_id>
+ */
 namespace Monkey\Database;
 
 use \Countable;
+use Monkey;
 
 /**
- * Condition
+ * Class Condition
+ *
  * 条件类
+ *
  * @package Monkey\Database
  */
 class Condition implements Countable
 {
     /**
-     * @var \Monkey\App\App $app
+     * 应用对象
+     *
+     * @var Monkey\App $app
      */
     public $app;
-    protected static
-        $placeholderTotal,
-        $operatorMap
-    ;
-    protected
-        $conditions = array(), //所有条件
-        $arguments = array(), //绑定值
-        $changed = TRUE,//变更标签
-        $string=''
-    ;
+
+    /**
+     * 占位计数器
+     *
+     * @var int
+     */
+    protected static $placeholderTotal;
+
+    /**
+     * 条件连接操作选项
+     *
+     * @var array
+     */
+    protected static $operatorMap = array(
+        'BETWEEN'       => array('delimiter' => ' AND '),
+        'IN'            => array('delimiter' => ', ', 'prefix' => ' (', 'postfix' => ')'),
+        'NOT IN'        => array('delimiter' => ', ', 'prefix' => ' (', 'postfix' => ')'),
+        'EXISTS'        => array('prefix' => ' (', 'postfix' => ')'),
+        'NOT EXISTS'    => array('prefix' => ' (', 'postfix' => ')'),
+        'IS null'       => array('use_value' => false),
+        'IS NOT null'   => array('use_value' => false),
+        'LIKE'          => array('postfix' => " ESCAPE '\\\\'"),
+        'NOT LIKE'      => array('postfix' => " ESCAPE '\\\\'"),
+        '='             => array(),
+        '<'             => array(),
+        '>'             => array(),
+        '>='            => array(),
+        '<='            => array(),
+    );
+
+    /**
+     * 所有条件
+     *
+     * @var array
+     */
+    protected $conditions = array();
+
+    /**
+     * 绑定值
+     *
+     * @var array
+     */
+    protected $arguments = array();
+
+    /**
+     * 变更标签
+     *
+     * @var bool
+     */
+    protected $changed = TRUE;
+
+    /**
+     * 合成的条件子句
+     *
+     * @var string
+     */
+    protected $string = '';
 
     /**
      * 构造函数
-     * @param \Monkey\App\App $app
+     *
+     * @param Monkey\App $app
      * @param string $conjunction 联合方式 AND | OR | XOR
      */
-    public function __construct($app,$conjunction='AND')
+    public function __construct($app, $conjunction = 'AND')
     {
-        $this->app=$app;
-        $format=array('AND'=>1, 'OR'=>2, 'XOR'=>3);
-        $conjunction=strtoupper($conjunction);
-        if(!isset($format[$conjunction])) $app->exception('数据库条件不支持:'.$conjunction, 1024, __FILE__, __LINE__);
+        $this->app = $app;
+        $format = array('AND' => 1, 'OR' => 2, 'XOR' => 3);
+        $conjunction = strtoupper($conjunction);
+        if (!isset($format[$conjunction])) new \Exception('数据库条件不支持:' . $conjunction, 1024, __FILE__, __LINE__);
         $this->conditions['#conjunction'] = $conjunction;
     }
 
@@ -49,9 +111,11 @@ class Condition implements Countable
 
     /**
      * 为字段设置一个条件
+     *
      * @param string $fieldName 字段名
      * @param null|mixed $fieldValue 字段值
      * @param null|string $operator
+     *
      * @return $this
      */
     public function where($fieldName, $fieldValue = NULL, $operator = NULL)
@@ -59,8 +123,7 @@ class Condition implements Countable
         if (!isset($operator)) {
             if (is_array($fieldValue)) {
                 $operator = 'IN';
-            }
-            else {
+            } else {
                 $operator = '=';
             }
         }
@@ -75,14 +138,15 @@ class Condition implements Countable
 
     /**
      * 设置一个条件片段
+     *
      * @param string $snippet 条件片段，其中可以使用占位符':placeholderName'
      * @param array $args 参数值 array(':placeholderName'=>value, ...)
+     *
      * @return $this
      */
     public function condition($snippet, $args = array())
     {
-        $this->conditions[] = array
-        (
+        $this->conditions[] = array(
             'field' => $snippet,
             'value' => $args,
             'operator' => NULL,
@@ -98,10 +162,12 @@ class Condition implements Countable
     {
         return $this->conditions;
     }
-    
+
     /**
      * 获取所有的值
+     *
      * @param string $queryIdentifier 查询标识
+     *
      * @return array
      */
     public function getArguments($queryIdentifier)
@@ -112,7 +178,9 @@ class Condition implements Countable
 
     /**
      * 获取编译后的条件片段
+     *
      * @param string $queryIdentifier 查询标识
+     *
      * @return string
      */
     public function getString($queryIdentifier)
@@ -121,62 +189,71 @@ class Condition implements Countable
         return $this->string;
     }
 
+    /**
+     * 检查条件是否变更
+     *
+     * @param $queryIdentifier
+     */
     protected function checkChang($queryIdentifier)
     {
         $this->changed and $this->compile($queryIdentifier);
     }
+
     /**
      * 组装条件
      * 注意：省略参数的必要条件是类属性“查询标识”正确；
      * 不能省略参数的情况比如克隆后，如果没有setQueryIdentifierAfterClone，此时就必须显示指定查询标识。
+     *
      * @param string $queryIdentifier 查询标识
      */
     protected function compile($queryIdentifier)
     {
-        $qi=$queryIdentifier;
+        $qi = $queryIdentifier;
         $condition_fragments = array();
         $arguments = array();
         $conditions = $this->conditions;
         $conjunction = $conditions['#conjunction'];
         unset($conditions['#conjunction']);
 
-        foreach ($conditions as $condition){
-            if (empty($condition['operator'])){
+        foreach ($conditions as $condition) {
+
+            if (empty($condition['operator'])) {
                 $condition_fragments[] = ' (' . $condition['field'] . ') ';
                 $arguments += $condition['value'];
-            }
-            else{
-                if ($condition['field'] instanceof Condition){
+
+            } else {
+                if ($condition['field'] instanceof Condition) {
                     $condition_fragments[] = '(' . $condition['field']->getString($qi) . ')';
                     $arguments += $condition['field']->getArguments($qi);
-                }
-                else{
+
+                } else {
                     $operator = $this->mapConditionOperator($condition['operator']);
                     $placeholders = array();
 
-                    if ($condition['value'] instanceof Select){
+                    if ($condition['value'] instanceof Select) {
                         $placeholders[] = $condition['value']->getString($qi);
                         $arguments += $condition['value']->getArguments($qi);
                         $operator['use_value'] = FALSE;
                     }
 
-                    if (!$operator['delimiter']){//单值运算
+                    if (!$operator['delimiter']) { //单值运算
                         $condition['value'] = array($condition['value']);
                     }
 
                     if ($operator['use_value']) {
-                        foreach ($condition['value'] as $value){
+                        foreach ($condition['value'] as $value) {
                             $placeholder = ':sql_placeholder_' . self::getNextPlaceholder($qi);
                             $arguments[$placeholder] = $value;
                             $placeholders[] = $placeholder;
                         }
                     }
 
-                    $condition_fragments[] = ' (' .$condition['field'] . ' ' . $operator['operator'] . ' ' .
+                    $condition_fragments[] = ' (' . $condition['field'] . ' ' . $operator['operator'] . ' ' .
                         $operator['prefix'] . implode($operator['delimiter'], $placeholders) . $operator['postfix'] . ') ';
                 }
             }
         }
+
         $this->changed = FALSE;
         $this->string = implode($conjunction, $condition_fragments);
         $this->arguments = $arguments;
@@ -188,17 +265,16 @@ class Condition implements Countable
     protected function mapConditionOperator($operator)
     {
         static
-            $defaultReturn = array(
-                'prefix'    => '',
-                'postfix'   => '',
-                'delimiter' => '',
-                'use_value' => TRUE,
-            );
+        $defaultReturn = array(
+            'prefix' => '',
+            'postfix' => '',
+            'delimiter' => '',
+            'use_value' => TRUE,
+        );
 
-        if (isset(static::$operatorMap[$operator])){
+        if (isset(static::$operatorMap[$operator])) {
             $return = static::$operatorMap[$operator];
-        }
-        else{
+        } else {
             $operator = strtoupper($operator);
             $return = isset(static::$operatorMap[$operator]) ? static::$operatorMap[$operator] : array();
         }
@@ -210,8 +286,8 @@ class Condition implements Countable
      */
     protected static function getNextPlaceholder($identifier)
     {
-        if(!static::$placeholderTotal[$identifier]){
-            static::$placeholderTotal[$identifier]=0;
+        if (!isset(static::$placeholderTotal[$identifier])) {
+            static::$placeholderTotal[$identifier] = 0;
         }
         return static::$placeholderTotal[$identifier]++;
     }
