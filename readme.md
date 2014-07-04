@@ -17,31 +17,32 @@ MonkeyPHP是一个完全面向对象的轻量级 PHP 框架！
 
 ##目录结构
  
->system（后端系统目录）
->>apps（网站集后端目录）
->>>DefaultApp（具体网站的后端总目录、DefaultApp也是这个网站的顶级命名空间）
+>system（后端系统目录）  
+>>apps（网站集后端目录）  
+>>>DefaultApp（具体网站的后端总目录、DefaultApp也是这个网站的顶级命名空间）  
 >>>>Controller（控制器目录）  
->>>>data（配置目录，数据目录，如路由映射表就放在这里）
+>>>>data（配置目录，数据目录，如路由映射表就放在这里）  
 >>>>LabelApi（模板标签API目录）  
->>>>App.php（应用类）
+>>>>App.php（应用类）  
 
->>>Manual（框架手册网站的后端总目录）
+>>>Manual（框架手册网站的后端总目录）  
 
->>vendor（组件集目录）
+>>vendor（组件集目录）  
 >>>composer（自动加载组件）  
 >>>markdown（php markdown lib 组件）  
 >>>monkey（MonkeyPHP框架组件）  
 
 > www（前端虚拟空间目录） 
   
->>defaultForeground（某网站的前端目录）
+>>defaultForeground（某网站的前端目录）  
 >>>mySkinName（皮肤样式目录）  
 >>>public（公共静态资源目录）  
 >>>.htaccess  
->>>index.php（入口文件） 
+>>>index.php（入口文件）  
 
 >>.htaccess  
 >>index.php（入口文件）  
+   
    
 defaultForeground目录名是随便起的，里面的入口文件和外面的入口文件差不多：  
 前端目录内的入口文件 defaultForeground/index.php  
