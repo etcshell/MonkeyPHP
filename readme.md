@@ -20,9 +20,8 @@ MonkeyPHP是一个完全面向对象的轻量级 PHP 框架！
 >system（后端系统目录）
 >>apps（网站集后端目录）
 >>>DefaultApp（具体网站的后端总目录、DefaultApp也是这个网站的顶级命名空间）
->>>>Configs（配置目录）  
 >>>>Controller（控制器目录）  
->>>>data（数据目录，如路由映射表就放在这里）  
+>>>>data（配置目录，数据目录，如路由映射表就放在这里）
 >>>>LabelApi（模板标签API目录）  
 >>>>AppCli.php（控制台类）  
 >>>>AppWeb.php（浏览器类）
