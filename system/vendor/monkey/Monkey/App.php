@@ -147,6 +147,7 @@ class App
      * @var array
      */
     private static $_errorTitle = array(
+        -1 => '致命错误(E_FAILURE)',
         1 => '致命错误(E_ERROR)',
         2 => '警告(E_WARNING)',
         4 => '语法解析错误(E_PARSE)',

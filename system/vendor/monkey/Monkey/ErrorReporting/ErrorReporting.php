@@ -44,7 +44,7 @@ class ErrorReporting
     {
         $this->app = $app;
         $config = $app->config()->getComponentConfig('errorReporting', 'default');
-        $dir = (isset($config['errorTemplate']) and empty($config['errorTemplate'])) ?
+        $dir = (isset($config['errorTemplate']) and !empty($config['errorTemplate'])) ?
             $app->DIR . $config['errorTemplate'] :
             strtr(__DIR__, DIRECTORY_SEPARATOR, '/') . '/errorTemplate';
 
@@ -125,22 +125,31 @@ class ErrorReporting
                 require $tpl;
             }
             else {
-                echo '<br/>', '程序运行出错：', '<br/>', '糟糕，连错误页显示模板也不存在！';
-
-                foreach ($errorInfo as $key => $value) {
-                    if ($key == 'backtrace') {
-                        $value = str_replace('#', '<br/>#', $value);
-                    }
-                    echo '<br/>', $key, ': ', $value;
-                }
-
-                echo '<br/>', '错误信息结束。';
+                $this->printError($errorInfo, '<br/>', '糟糕，连错误页显示模板也不存在！');
             }
 
         } else {
-            echo PHP_EOL, '程序运行出错：';
-            foreach ($errorInfo as $key => $value) echo PHP_EOL, $key, ': ', $value;
-            echo PHP_EOL, '错误信息结束。';
+            $this->printError($errorInfo, PHP_EOL);
         }
+    }
+
+    private function printError($errorInfo, $br, $other = '')
+    {
+        echo $br, '程序运行出错：', $br, '================';
+
+        if ($other != '') {
+            echo $br, $other;
+        }
+
+        foreach ($errorInfo as $key => $value) {
+            if ($key == 'backtrace') {
+                echo $br, $br, '[', $key, '] : ', str_replace('#', $br.'#', $value);
+            }
+            else {
+                echo $br, $br, '[', $key, '] : ', $br, $value;
+            }
+        }
+
+        echo $br, $br, '================', $br, '错误信息结束。';
     }
 }
