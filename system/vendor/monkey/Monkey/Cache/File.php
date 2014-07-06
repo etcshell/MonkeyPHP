@@ -11,7 +11,6 @@
 namespace Monkey\Cache;
 
 use Monkey;
-use Monkey\Cache;
 
 /**
  * Class File
@@ -20,7 +19,7 @@ use Monkey\Cache;
  *
  * @package Monkey\Cache
  */
-final class File implements Cache
+final class File implements CacheInterface
 {
     private $_idx_node_size = 40;
     private $_idx_node_base;

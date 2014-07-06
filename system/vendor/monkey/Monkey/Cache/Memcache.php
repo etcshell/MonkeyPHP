@@ -11,7 +11,6 @@
 namespace Monkey\Cache;
 
 use Monkey;
-use Monkey\Cache;
 
 /**
  * Class Memcache
@@ -20,7 +19,7 @@ use Monkey\Cache;
  *
  * @package Monkey\Cache
  */
-class Memcache implements Cache
+class Memcache implements CacheInterface
 {
     /**
      * 缓存过期时间

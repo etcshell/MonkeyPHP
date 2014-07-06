@@ -11,7 +11,6 @@
 namespace Monkey\Session;
 
 use Monkey;
-use Monkey\Session;
 
 /**
  * Class Apc
@@ -20,7 +19,7 @@ use Monkey\Session;
  *
  * @package Monkey\Session
  */
-class Apc extends Session
+class Apc extends SessionAbstract
 {
     /**
      * 构造方法

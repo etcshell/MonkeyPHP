@@ -11,7 +11,6 @@
 namespace Monkey\Session;
 
 use Monkey;
-use Monkey\Session;
 
 /**
  * Class File
@@ -20,7 +19,7 @@ use Monkey\Session;
  *
  * @package Monkey\Session
  */
-class File extends Session
+class File extends SessionAbstract
 {
     private $_idx_node_size = 40;
     private $_idx_node_base;

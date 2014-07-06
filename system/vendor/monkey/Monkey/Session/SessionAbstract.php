@@ -8,7 +8,7 @@
  * @author    黄易 <582836313@qq.com>
  * @version   GIT:<git_id>
  */
-namespace Monkey;
+namespace Monkey\Session;
 
 /**
  * Abstract Class Session
@@ -17,7 +17,7 @@ namespace Monkey;
  *
  * @package Monkey
  */
-abstract class Session
+abstract class SessionAbstract
 {
     /**
      * 防冲突前缀

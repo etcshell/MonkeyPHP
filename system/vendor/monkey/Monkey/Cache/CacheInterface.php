@@ -8,16 +8,16 @@
  * @author    黄易 <582836313@qq.com>
  * @version   GIT:<git_id>
  */
-namespace Monkey;
+namespace Monkey\Cache;
 
 /**
- * Interface Class App
+ * Interface CacheInterface
  *
  * 缓存接口
  *
  * @package Monkey
  */
-interface Cache
+interface CacheInterface
 {
 
     /**

@@ -92,6 +92,7 @@ class Container
         //获取组件实例
         empty($provider) and $provider = self::$components[$name]['default_provider'];
         $component = self::$components[$name][$provider];
+
         if (is_string($component)) {
             $component = new $component(self::$app);
             self::$components[$name][$provider] = $component;

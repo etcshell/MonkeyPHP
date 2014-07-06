@@ -11,7 +11,6 @@
 namespace Monkey\Session;
 
 use Monkey;
-use Monkey\Session;
 
 /**
  * Class Memcache
@@ -20,7 +19,7 @@ use Monkey\Session;
  *
  * @package Monkey\Session
  */
-class Memcache extends Session
+class Memcache extends SessionAbstract
 {
     /**
      * Memcache对象
