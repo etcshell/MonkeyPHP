@@ -74,7 +74,7 @@ class Connection extends PDO
      *
      * @var bool
      */
-    protected $transactionSupport = FALSE;
+    protected $transactionSupport = false;
 
     /**
      * 事务层级
@@ -101,10 +101,10 @@ class Connection extends PDO
      */
     public function __construct($app, $name, array $config = array())
     {
+        //设置配置
         $this->app = $app;
         $this->name = $name;
         !isset($config['prefix']) and $config['prefix'] = '';
-        $this->config = $config;
         isset($config['transactions']) and $this->transactionSupport = (bool)$config['transactions'];
 
 
@@ -122,44 +122,43 @@ class Connection extends PDO
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
             );
 
+        $this->config = $config;
+
+        //连接数据库
         try {
             parent::__construct($dsn, $config['username'], $config['password'], $options);
 
         } catch (\PDOException $e) {
+            //处理连接错误，并记录日志
             $error = array(
                 'error_title' => '连接到PDO时出错。',
-                'message' => $e->getMessage(),
                 'code' => $e->getCode(),
+                'message' => $e->getMessage(),
                 'dsn_true' => $dsn,
             );
             $this->app->logger()->sql($error + $config);
-
             throw $e;
         }
 
+        //设置连接属性
         if (isset($config['charset'])) {
             $sql = 'SET NAMES ' . $config['charset'];
             $config['collation'] and $sql .= ' COLLATE ' . $config['collation'];
             $this->exec($sql);
         }
 
-        $init_commands = $config['init_commands'] ? $config['init_commands'] : array();
+        $init_commands = isset($config['init_commands']) ? $config['init_commands'] : array();
+
         $init_commands = $init_commands + array('sql_mode' =>
-                "SET sql_mode = 'ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'",
+                "SET sql_mode = 'ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'"
             );
+
         $this->exec(implode('; ', $init_commands));
 
         if (!empty($this->statementClass)) {
-            $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array($this->statementClass, array($app, $this)));
+            $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array($this->statementClass, array($this)));
         }
-    }
 
-    /**
-     * 销毁连接
-     */
-    public function destroy()
-    {
-        $this->__destruct();
     }
 
     /**
@@ -220,51 +219,42 @@ class Connection extends PDO
      * @param string $sql
      * @param array $args
      *
-     * @throws \Exception
-     * @throws Query\SqlEmptyException
+     * @throws \PDOException|Query\SqlEmptyException
      *
      * @return Statement
      *
+     * 例子
      *   ->query('SELECT id FROM table WHERE id = :id' ,array(':id'=>1))
      *   ->fetchAll();
      */
     public function query($sql, array $args = array())
     {
+        //清理上一个预处理对象
         $this->stmt = null;
-        if (!$sql) {
-            $error = array(
-                'code' => 1024,
-                'sql' => '',
-                'message' => 'sql语句为空，无法执行query操作！',
-                'connectionName' => $this->name
-            );
-            $this->app->logger()->sql($error);
-
-            throw new Query\SqlEmptyException('数据库查询错误。', 1024, __FILE__, __LINE__);
-        }
+        $this->expandArguments($sql, $args);
 
         try {
-            $sql = preg_replace('/\{:(\S+?):\}/', $this->config['prefix'] . '$1', $sql);
-            $this->expandArguments($sql, $args);
+            //创建预处理对象
+            $this->stmt = $this->prepareQuery($sql);
 
-            $this->prepareSQL = $sql;
-            $this->stmt = parent::prepare($sql);
-
+            //执行预处理语句
             $this->stmt->execute($args);
 
         } catch (\PDOException $e) {
-
+            //处理错误，并记录日志
             $error = array(
                 'code' => $e->getCode(),
-                'prepareSQL' => $this->prepareSQL, 'sql' => $this->stmt->queryString,
+                'prepareSQL' => $this->prepareSQL,
+                'sql' => $this->stmt->queryString,
                 'message' => $e->getMessage(),
-                'file' => $e->getFile(), 'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'connectionName' => $this->name
             );
             $args = $args ? $args : array();
             $this->app->logger()->sql($error + $args);
 
-            throw new $e;
+            throw $e;
         }
         return $this->stmt;
     }
@@ -273,12 +263,13 @@ class Connection extends PDO
      * 独立预处理
      *
      * @param string $sql
+     * @param array $driver_options
      *
      * @return Statement
      *
      * @throws Query\SqlEmptyException
      */
-    public function prepare($sql)
+    public function prepareQuery($sql, array $driver_options = array())
     {
         //效验sql语句
         if (!$sql) {
@@ -290,10 +281,16 @@ class Connection extends PDO
             );
             $this->app->logger()->sql($error);
 
-            throw new Query\SqlEmptyException('数据库查询错误。', 1024, __FILE__, __LINE__);
+            throw new SqlEmptyException('数据库查询错误。', 1024, __FILE__, __LINE__);
         }
+
+        //处理表前缀
         $sql = preg_replace('/\{:(\S+?):\}/', $this->config['prefix'] . '$1', $sql);
-        return $this->stmt = parent::prepare($sql);
+
+        //保存预处理sql
+        $this->prepareSQL = $sql;
+
+        return  parent::prepare($sql, $driver_options);
     }
 
     /**
@@ -469,14 +466,14 @@ class Connection extends PDO
      *
      * @return string|array
      */
-    public function quote($data)
+    public function quoteParameters($data)
     {
-        if (is_array($data)) return array_map(array($this, 'quote'), $data);
+        if (is_array($data)) return array_map(__METHOD__, $data); //array($this, 'quoteParameters')
         if (is_null($data)) return 'NULL';
         if (is_bool($data)) return $data ? '1' : '0';
         if (is_int($data)) return (int)$data;
         if (is_float($data)) return (float)$data;
-        return parent::quote($data);
+        return $this->quote($data);
     }
 
     /**
@@ -514,8 +511,10 @@ class Connection extends PDO
 
         if ($type === 0 or $type == 'begin') {
             $this->beginTransaction();
+
         } elseif ($type === 1 or $type == 'commit') {
             $this->commit();
+
         } elseif ($type === -1 or $type == 'rollback') {
             $this->rollBack();
         }

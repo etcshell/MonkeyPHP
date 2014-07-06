@@ -25,7 +25,7 @@ class Insert
     /**
      * 应用对象
      *
-     * @var Monkey\App $app
+     * @var Monkey\App
      */
     public $app;
 
