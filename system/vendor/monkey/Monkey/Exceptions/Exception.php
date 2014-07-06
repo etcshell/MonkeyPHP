@@ -55,9 +55,12 @@ class Exception extends \Exception
         2048 => '建议您改变代码，以提高代码的互用性和兼容性(E_STRICT)'
     );
 
-    public function __construct($message = '', $code = 0, $previous = null)
+    public function __construct($message = '', $code = 0, $previous = null, $file = null, $line = null)
     {
         parent::__construct($message, $code, $previous);
+
+        !is_null($file) and $this->file = $file;
+        !is_null($line) and $this->line = $line;
 
         $info = array();
         $app = &self::$app;
@@ -66,14 +69,12 @@ class Exception extends \Exception
         $info['time'] = date('Y-m-d H:i:s', $app->TIME);
         $info['title'] = isset(self::$_errorTitle[$this->getCode()]) ? self::$_errorTitle[$this->getCode()] : '应用程序错误';
         $info['code'] = $this->getCode();
+        $info['file'] = $this->file;
+        $info['line'] = $this->line;
         $info['message'] = $this->getMessage();
         $info['path'] = $app->request()->getUri();
         $info['ip'] = $app->request()->getIP();
         $info['backtrace'] = $this->getTraceAsString();
-
-        $string = strstr($info['backtrace'], ')', true);
-        $info['file'] = substr(strstr($string, '(', true), 3);
-        $info['line'] = substr(strstr($string, '('), 1);
 
         //记录日志
         !$app->DEBUG and $app->logger()->error($info);

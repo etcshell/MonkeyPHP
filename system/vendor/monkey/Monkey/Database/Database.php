@@ -65,7 +65,7 @@ class Database
     {
         //效验pdo组件是否存在
         if (!extension_loaded('pdo')) {
-            throw new \Exception('没有安装pdo驱动扩展,请先在php.ini中配置安装pdo！', 1024, __FILE__, __LINE__);
+            throw new \Exception('没有安装pdo驱动扩展,请先在php.ini中配置安装pdo！', 1024);
         }
 
         //载入数据组件配置
@@ -126,6 +126,8 @@ class Database
      * @param array $config 连接配置
      * @param string $name 连接名称，留空表示测试连接
      *
+     * @throws \PDOException
+     *
      * @return \Monkey\Database\Connection|false
      */
     public function tryConnecting($config, $name = 'test')
@@ -148,7 +150,7 @@ class Database
             );
             $this->app->logger()->sql($error);
 
-            return false;
+            throw $e;
         }
 
         return $connect;

@@ -54,7 +54,7 @@ class File extends SessionAbstract
         $this->app = $app;
         $this->config = $config = $app->config()->getComponentConfig('session', 'file');
         $this->TIME = $app->TIME;
-        $this->_cache_path = dir_format($app->TEMP . ($config['dir'] ? $config['dir'] : '/sessionCache'));
+        $this->_cache_path = dir_format($app->DIR . ($config['dir'] ? $config['dir'] : '/sessionCache'));
         $this->_cache_file = $config['filename'] ? '/' . $config['filename'] : '/data';
         $this->_cache_size = $config['filesize'] ? $config['filesize'] : '15M';
         $this->_data_onCheck = $config['check'] ? $config['check'] : false; //是否验证数据
@@ -511,7 +511,7 @@ class File extends SessionAbstract
         $support_usleep = version_compare(PHP_VERSION, 5, '>=') ? 20 : 1;
         $lockfile = $this->_cache_file . '.lck';
         if (file_exists($lockfile)) {
-            if (TIME - filemtime($lockfile) > 0) {
+            if ($this->TIME - filemtime($lockfile) > 0) {
                 unlink($lockfile);
             } elseif (!$is_block) {
                 return false;

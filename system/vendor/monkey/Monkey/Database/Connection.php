@@ -140,17 +140,18 @@ class Connection extends PDO
                 'dsn_true' => $dsn,
             );
             $this->app->logger()->sql($error + $config);
+
             throw $e;
         }
 
         //设置连接属性
         if (isset($config['charset'])) {
             $sql = 'SET NAMES ' . $config['charset'];
-            isset($config['collation']) and $sql .= ' COLLATE ' . $config['collation'];
+            isset($config['collation']) and !empty($config['collation']) and $sql .= ' COLLATE ' . $config['collation'];
             $this->exec($sql);
         }
 
-        $init_commands = isset($config['init_commands']) ? $config['init_commands'] : array();
+        $init_commands = isset($config['init_commands']) ? (array)$config['init_commands'] : array();
 
         $init_commands = $init_commands + array('sql_mode' =>
                 "SET sql_mode = 'ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'"
@@ -161,7 +162,6 @@ class Connection extends PDO
         if (!empty($this->statementClass)) {
             $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array($this->statementClass, array($this)));
         }
-
     }
 
     /**

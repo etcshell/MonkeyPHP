@@ -127,6 +127,12 @@ final class File implements CacheInterface
         return $this->_delete(md5($key));
     }
 
+    public function deleteCacheFile()
+    {
+        fclose($this->_rs);
+        unlink($this->_cache_file);
+    }
+
     //以下是辅助函数
     private function _all_schemas()
     {
@@ -166,11 +172,7 @@ final class File implements CacheInterface
      */
     private function _create()
     {
-        try {
-            $this->_rs = @fopen($this->_cache_file, 'wb+');
-        } catch (exception $e) {
-            $this->_error(__METHOD__ . ':创建缓存文件失败[ ' . $this->_cache_file . ' ]');
-        }
+        $this->_rs = @fopen($this->_cache_file, 'wb+');
         fseek($this->_rs, 0);
         fputs($this->_rs, '<' . '?php exit()?' . '>');
         return $this->_format();
@@ -442,7 +444,7 @@ final class File implements CacheInterface
         $support_usleep = version_compare(PHP_VERSION, 5, '>=') ? 20 : 1;
         $lockfile = $this->_cache_file . '.lck';
         if (file_exists($lockfile)) {
-            if (TIME - filemtime($lockfile) > 0) {
+            if ($this->TIME - filemtime($lockfile) > 0) {
                 unlink($lockfile);
             } elseif (!$is_block) {
                 return false;

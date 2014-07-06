@@ -10,6 +10,7 @@
  */
 namespace Monkey\Session;
 
+use Monkey;
 /**
  * Abstract Class Session
  *
@@ -36,7 +37,7 @@ abstract class SessionAbstract
     /**
      * 应用实例
      *
-     * @var App
+     * @var Monkey\App
      */
     protected $app;
 

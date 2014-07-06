@@ -143,28 +143,6 @@ class App
     protected $configFile = null;
 
     /**
-     * 错误标题
-     *
-     * @var array
-     */
-    private static $_errorTitle = array(
-        -1 => '致命错误(E_FATAL)',
-        1 => '致命错误(E_ERROR)',
-        2 => '警告(E_WARNING)',
-        4 => '语法解析错误(E_PARSE)',
-        8 => '提示(E_NOTICE)',
-        16 => 'E_CORE_ERROR',
-        32 => 'E_CORE_WARNING',
-        64 => '编译错误(E_COMPILE_ERROR)',
-        128 => '编译警告(E_COMPILE_WARNING)',
-        256 => '致命错误(E_USER_ERROR)',
-        512 => '警告(E_USER_WARNING)',
-        1024 => '提示(E_USER_NOTICE)',
-        2047 => 'E_ALL',
-        2048 => 'E_STRICT'
-    );
-
-    /**
      * 构造方法
      *
      * @param string $staticDir 静态资源目录
@@ -232,14 +210,16 @@ class App
         //注册系统默认异常处理函数
         //set_exception_handler(array($this, 'exceptionHandler'));
         set_exception_handler(function (\Exception $e) {
-            throw new Exceptions\Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
+            throw new Exceptions\Exception($e->getMessage(), $e->getCode(), $e->getPrevious(), $e->getFile(), $e->getLine());
         });
 
         //注册系统默认错误处理函数
         //set_error_handler(array($this, 'errorHandler'), $this->DEBUG);
         set_error_handler(function ($code = 0, $message = '', $file = null, $line = null) {
-            throw new Exceptions\Exception($message, $code);
-        });
+                throw new Exceptions\Exception($message, $code, null, $file, $line);
+            },
+            $this->DEBUG
+        );
     }
 
     /**
@@ -275,7 +255,10 @@ class App
      */
     public function clearTempDir()
     {
-        dir_check($this->TEMP);
+        $o = $this->cache();
+        if (method_exists($o, 'deleteCacheFile')) {
+            $o->deleteCacheFile();
+        }
         dir_delete($this->TEMP);
     }
 
@@ -388,11 +371,11 @@ class App
      * @param null|string $file
      * @param null|int $line
      *
-     * @throws BreakException
+     * @throws Exceptions\BreakException
      */
     public function stop($message, $code = 0, $file = null, $line = null)
     {
-        throw new BreakException($message, $code, $file, $line);
+        throw new Exceptions\BreakException($message, $code, $file, $line);
     }
 
 
@@ -434,7 +417,7 @@ class App
             if (Autoload\Initializer::getLoader()->findFile($route['controller']) == false) {
                 throw new Exceptions\Http\NotFound('访问的控制器[' . $route['controller'] . ']的类文件丢失！');
             }
-            
+
             $controller = $route['controller'];
             $controller = new $controller($this);            
             $action = 'action' . ucfirst($route['action']);
@@ -452,10 +435,6 @@ class App
 
         } catch (Exceptions\BreakException $e) {
             //正常中断
-
-        } catch (\Exception $e) {
-            //异常中断
-            throw new Exceptions\Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
 
         }
     }

@@ -38,7 +38,7 @@ class Memcache extends SessionAbstract
     public function __construct($app)
     {
         if (!extension_loaded('apc')) {
-            new \Exception('会话出错:没有安装APC扩展。', 2048, __FILE__, __LINE__);
+            new \Exception('会话出错:没有安装Memcache扩展。', 2048);
         }
 
         $this->app = $app;
@@ -46,7 +46,7 @@ class Memcache extends SessionAbstract
         $this->handler = new \Memcache();
 
         if (!$this->handler->connect($this->config['host'], $this->config['port'])) {
-            new \Exception('会话出错:Memcache连接失败。', 2048, __FILE__, __LINE__);
+            new \Exception('会话出错:Memcache连接失败。', 2048);
         }
 
         $this->start();

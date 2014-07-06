@@ -144,7 +144,7 @@ return array(
         //Session键名前缀，保证每个应用的Session不会碰撞（尤其是使用Memcache作为存储介质时）。
         'prefix'=>'Monkey',
         'expire'=>1440,//默认缓存时间
-        'dir'           =>'/sessionCache',//表示当前应用临时缓存目录下的 '/sessionCache' 子目录中
+        'dir'           =>'/sessionCache',//表示当前应用目录下的 '/sessionCache' 子目录中
         'filename'      =>'session',
         'filesize'      =>'15M',
         'check'         =>false,

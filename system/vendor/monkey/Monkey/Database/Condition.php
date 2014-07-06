@@ -97,7 +97,7 @@ class Condition implements Countable
         $this->app = $app;
         $format = array('AND' => 1, 'OR' => 2, 'XOR' => 3);
         $conjunction = strtoupper($conjunction);
-        if (!isset($format[$conjunction])) new \Exception('数据库条件不支持:' . $conjunction, 1024, __FILE__, __LINE__);
+        if (!isset($format[$conjunction])) new \Exception('数据库条件不支持:' . $conjunction, 1024);
         $this->conditions['#conjunction'] = $conjunction;
     }
 
