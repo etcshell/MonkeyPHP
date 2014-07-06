@@ -19,10 +19,10 @@ class Index extends Controller
         if(empty($param)){
             echo '--你好hello!--<br/>';
         }
-        if($param['language']=='zh'){
+        if(isset($param['language']) and $param['language']=='zh'){
             echo '--你好!--<br/>';
         }
-        if($param['language']=='en'){
+        if(isset($param['language']) and $param['language']=='en'){
             echo '--hello!--<br/>';
         }
         echo date('Y-m-d H:i:s');

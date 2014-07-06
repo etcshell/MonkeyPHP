@@ -77,7 +77,9 @@ class Request
             $_COOKIE = stripslashes_deep($_COOKIE);
         }
 
-        $this->parameters = (array)$_SERVER["argv"] + (array)$_POST + (array)$_GET;
+        isset($_SERVER["argv"]) and $this->parameters = (array)$_SERVER["argv"];
+
+        $this->parameters += (array)$_POST + (array)$_GET;
     }
 
     /**

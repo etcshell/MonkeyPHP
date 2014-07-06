@@ -254,40 +254,42 @@ function dir_check($targetDir)
 {
     //$targetDir=dir_format($targetDir);
     if (is_dir($targetDir)) {
-        return TRUE;
+        return true;
     }
+//
+//    if ($targetDir[0] == '.') {
+//        return false;
+//    }
 
-    if ($targetDir[0] == '.') {
-        return false;
-    }
+    return @mkdir($targetDir, 0777, true);
 
-    $tempDir = explode('/', $targetDir);
-    $subDir = $tempDir[0];
-    array_shift($tempDir);
-
-    foreach ($tempDir as $value) {
-
-        if ($value == '') {
-            continue;
-        }
-
-        if ($value == '.' || $value == '..') {
-            return false;
-        }
-
-        $subDir = $subDir . '/' . $value;
-
-        if (is_dir($subDir)) {
-            continue;
-        }
-
-        //创建目录
-        if (!@mkdir($subDir, 0777)) {
-            return false;
-        }
-    }
-
-    return true;
+//    $tempDir = explode('/', $targetDir);
+//    $subDir = $tempDir[0];
+//    array_shift($tempDir);
+//
+//    foreach ($tempDir as $value) {
+//
+//        if ($value == '') {
+//            continue;
+//        }
+//
+//        if ($value == '.' || $value == '..') {
+//            return false;
+//        }
+//
+//        $subDir = $subDir . '/' . $value;
+//
+//        if (is_dir($subDir)) {
+//            continue;
+//        }
+//
+//        //创建目录
+//        if (!@mkdir($subDir, 0777)) {
+//            return false;
+//        }
+//    }
+//
+//    return true;
 }
 
 /**
@@ -300,7 +302,7 @@ function dir_check($targetDir)
 function dir_delete($targetDir)
 {
     if (!is_dir($targetDir)) {
-        return TRUE;
+        return true;
     }
 
     $handle = opendir($targetDir);
@@ -326,7 +328,7 @@ function dir_delete($targetDir)
         rmdir($targetDir);
     }
 
-    return TRUE;
+    return true;
 }
 
 /**
@@ -338,13 +340,13 @@ function dir_delete($targetDir)
  *
  * @return boolean
  */
-function dir_copy($source, $target, $delete_source = FALSE)
+function dir_copy($source, $target, $delete_source = false)
 {
     $source = dir_format($source);
     $target = dir_format($target);
 
     if ($source == $target) {
-        return TRUE;
+        return true;
     }
 
     if (!is_dir($source)) {
@@ -398,7 +400,7 @@ function dir_copy($source, $target, $delete_source = FALSE)
  */
 function file_save_variable($file, $variable)
 {
-    $variable = '<?php' . PHP_EOL . 'return ' . var_export($variable, TRUE) . ' ;';
+    $variable = '<?php' . PHP_EOL . 'return ' . var_export($variable, true) . ' ;';
     file_put_contents($file, $variable, LOCK_EX); //echo '<br/>保存扫描结果到缓存文件中...<br/>';
 }
 
@@ -644,7 +646,7 @@ function isAnd()
  */
 function gz_start()
 {
-    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== FALSE
+    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== false
         && !ini_get('zlib.output_compression')
         && extension_loaded("zlib")
         && function_exists('gzencode')
@@ -652,7 +654,7 @@ function gz_start()
         ob_start("ob_gzhandler");
     }
     /*方案二
-    if(strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== FALSE && extension_loaded('zlib') && !ini_get('zlib.output_compression')) {
+    if(strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== false && extension_loaded('zlib') && !ini_get('zlib.output_compression')) {
         ini_set('zlib.output_compression', 'On');
         ini_set('zlib.output_compression_level', $this->getConfig('gzip_level', 6));
     }
