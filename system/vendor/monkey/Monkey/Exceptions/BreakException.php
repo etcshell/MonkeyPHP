@@ -8,15 +8,15 @@
  * @author    黄易 <582836313@qq.com>
  * @version   GIT:<git_id>
  */
-namespace Monkey;
+namespace Monkey\Exceptions;
 
 /**
- * Class Exception
+ * Class BreakException
  *
- * 异常接管类
+ * 中断异常类
  *
- * @package Monkey
+ * @package Monkey\Exceptions
  */
-class Exception extends \Exception
+class BreakException extends \Exception
 {
 }

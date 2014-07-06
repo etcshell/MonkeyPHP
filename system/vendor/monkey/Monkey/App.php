@@ -13,6 +13,7 @@ namespace Monkey;
 use Monkey\Request\Request;
 use Monkey\Response\Response;
 use Composer\Autoload;
+use Monkey\Exceptions;
 
 /**
  * Class App
@@ -147,7 +148,7 @@ class App
      * @var array
      */
     private static $_errorTitle = array(
-        -1 => '致命错误(E_FAILURE)',
+        -1 => '致命错误(E_FATAL)',
         1 => '致命错误(E_ERROR)',
         2 => '警告(E_WARNING)',
         4 => '语法解析错误(E_PARSE)',
@@ -222,14 +223,73 @@ class App
      */
     protected function setError()
     {
+        Exceptions\Exception::$app = $this;
+        Exceptions\Exception::$errorReporting = $this->errorReporting();
+
         //接管错误和异常处理
         error_reporting($this->DEBUG);
-        //注册系统默认异常处理函数
-        set_exception_handler(array($this, 'exceptionHandler'));
-        //注册系统默认错误处理函数
-        set_error_handler(array($this, 'errorHandler'), $this->DEBUG);
-    }
 
+        //注册系统默认异常处理函数
+        //set_exception_handler(array($this, 'exceptionHandler'));
+        set_exception_handler(function (\Exception $e) {
+            throw new Exceptions\Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
+        });
+
+        //注册系统默认错误处理函数
+        //set_error_handler(array($this, 'errorHandler'), $this->DEBUG);
+        set_error_handler(function ($code = 0, $message = '', $file = null, $line = null) {
+            throw new Exceptions\Exception($message, $code);
+        });
+    }
+//
+//    /**
+//     * 拦截异常处理
+//     *
+//     * @param \Exception $e
+//     */
+//    public function exceptionHandler(\Exception $e)
+//    {
+//        $this->errorReporting()->showError($this->_buildErrorInfo($e), true);
+//    }
+//
+//    /**
+//     * 拦截错误处理
+//     *
+//     * @param $code
+//     * @param $message
+//     * @param $file
+//     * @param $line
+//     */
+//    public function errorHandler($code = 0, $message = '', $file = null, $line = null)
+//    {
+//        $this->exceptionHandler(new \Exception($message, $code));
+//    }
+//
+//    /**
+//     * 创建提示信息，并记录日志
+//     *
+//     * @param \Exception $e
+//     *
+//     * @return array
+//     */
+//    private function _buildErrorInfo(\Exception $e)
+//    {
+//        $info = array();
+//
+//        //设置错误信息
+//        $info['time'] = date('Y-m-d H:i:s', $this->TIME);
+//        $info['title'] = isset(self::$_errorTitle[$e->getCode()]) ? self::$_errorTitle[$e->getCode()] : '应用程序错误';
+//        $info['code'] = $e->getCode();
+//        $info['path'] = $this->request->getUri();
+//        $info['ip'] = $this->request()->getIP();
+//        $info['message'] = $e->getMessage();
+//        $info['backtrace'] = $e->getTraceAsString();
+//
+//        //记录日志
+//        !$this->DEBUG and $this->logger()->error($info);
+//
+//        return $info;
+//    }
     /**
      * 启动Session
      */
@@ -290,7 +350,7 @@ class App
      *
      * @param string $provider 缓存提供者
      *
-     * @return \Monkey\Cache
+     * @return \Monkey\Cache\CacheInterface
      */
     public function cache($provider = null)
     {
@@ -383,54 +443,6 @@ class App
         throw new BreakException($message, $code, $file, $line);
     }
 
-    /**
-     * 拦截异常处理
-     *
-     * @param \Exception $e
-     */
-    public function exceptionHandler(\Exception $e)
-    {
-        $this->errorReporting()->showError($this->_buildErrorInfo($e), true);
-    }
-
-    /**
-     * 拦截错误处理
-     *
-     * @param $code
-     * @param $message
-     * @param $file
-     * @param $line
-     */
-    public function errorHandler($code = 0, $message = '', $file = null, $line = null)
-    {
-        $this->exceptionHandler(new \Exception($message, $code));
-    }
-
-    /**
-     * 创建提示信息，并记录日志
-     *
-     * @param \Exception $e
-     *
-     * @return array
-     */
-    private function _buildErrorInfo(\Exception $e)
-    {
-        $info = array();
-
-        //设置错误信息
-        $info['time'] = date('Y-m-d H:i:s', $this->TIME);
-        $info['title'] = isset(self::$_errorTitle[$e->getCode()]) ? self::$_errorTitle[$e->getCode()] : '应用程序错误';
-        $info['code'] = $e->getCode();
-        $info['path'] = $this->request->getUri();
-        $info['ip'] = $this->request()->getIP();
-        $info['message'] = $e->getMessage();
-        $info['backtrace'] = $e->getTraceAsString();
-
-        //记录日志
-        !$this->DEBUG and $this->logger()->error($info);
-
-        return $info;
-    }
 
     /**
      * 分发路由
@@ -461,83 +473,48 @@ class App
             //获取路由
             $route = $router->getRoute();
 
-            /**
-             * 路由结构为数组：
-             *      array(
-             *         'controller'=>'Example',//要运行的控制器名。
-             *         'action'=>'hello',//要激活的方法
-             *      ),
-             */
-            if (!$route) {
+            if (!$route or !isset($route['controller']) or !isset($route['action'])) {
                 //路由不存在
-                new \Exception('无法找到你访问的网页！', 404);
+                throw new Exceptions\Http\NotFound('无法找到你访问的网页！');
             }
-
-            //验证路由合法性
-            $controller = $route['controller'];
-            $action = 'action' . ucfirst($route['action']);
-            $controllerFile = strtr($controller, '\\', '/') . '.php'; //这句注意与自动加载规则保持一致！
-
-            if (!file_exists(dirname($this->DIR) . $controllerFile)) {
-                //控制器文件丢失
-                new \Exception('访问的控制器[' . $route['controller'] . ']的类文件[' . $controllerFile . ']丢失！', 404);
-            }
-
-            //反射控制器类
-            $controller = new \ReflectionClass($controller);
-
-            if (!$controller->hasMethod($action)) {
-                //请求方法不存在
-                new \Exception('访问的方法[' . $route['action'] . ']不存在！', 404);
-            }
-
-            //反射请求方法
-            $action = $controller->getMethod($action);
-
-            if (!$action->isPublic() or $action->isAbstract() or $action->isStatic()) {
-                //请求方法不可访问
-                new \Exception('访问的方法[' . $route['action'] . ']不存在（不公有 或 未实现——为抽象的 或为静态方法）！', 404);
-            }
-
-            /*
-             * 验证控制器是否规范，严格遵守控制器的命名空间写法，可以注释掉这里的代码。
-            $class=$controller;
-            while ($parent = $class->getParentClass()) {
-                if($parent->getName()=='Monkey\Controller\Controller'){
-                    $find=true;
-                    break;
-                };
-                $class = $parent;
-            }
-            if(!$find){
-                $this->exception('访问的控制器['.$router['controller'].']不规范！', 404);
-            }
-            */
-
+            
             //实例化控制器
-            $controller = $controller->newInstance($this);
+            if (Autoload\Initializer::getLoader()->findFile($$route['controller']) == false) {
+                throw new Exceptions\Http\NotFound('访问的控制器[' . $route['controller'] . ']的类文件丢失！');
+            }
+            
+            $controller = $route['controller'];
+            $controller = new $controller($this);            
+            $action = 'action' . ucfirst($route['action']);
+            
+            if (!method_exists($controller, $action)) {
+                //请求方法不存在
+                throw new Exceptions\Http\NotFound('访问的方法[' . $route['action'] . ']不存在！');
+            }
 
             //执行请求方法
             $controller->actionName = $route['action'];
             $controller->before($route['action']);
-            $action->invoke($controller);
+            $controller->$action();
             $controller->after($route['action']);
 
-        } catch (BreakException $e) {
+        } catch (Exceptions\BreakException $e) {
             //正常中断
+
         } catch (\Exception $e) {
             //异常中断
 
+            throw new Exceptions\Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
             //生成报告
-            $report = $this->errorReporting();
-
-            if (!$this->DEBUG and $e->getCode() == 403) {
-                $report->show403();
-            } elseif (!$this->DEBUG and $e->getCode() == 404) {
-                $report->show404();
-            } else {
-                $report->showError($this->_buildErrorInfo($e));
-            }
+//            $report = $this->errorReporting();
+//
+//            if (!$this->DEBUG and $e->getCode() == 403) {
+//                $report->show403();
+//            } elseif (!$this->DEBUG and $e->getCode() == 404) {
+//                $report->show404();
+//            } else {
+//                $report->showError($this->_buildErrorInfo($e));
+//            }
         }
     }
 }
