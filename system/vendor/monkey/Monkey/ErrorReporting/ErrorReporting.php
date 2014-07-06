@@ -87,6 +87,8 @@ class ErrorReporting
         if (empty($errorInfo)) {
             $errorInfo['title'] = '未知错误';
             $errorInfo['code'] = '未知';
+            $errorInfo['file'] = '未知';
+            $errorInfo['line'] = '未知';
             $errorInfo['message'] = '未知';
             $errorInfo['time'] = $this->app->TIME;
             $errorInfo['path'] = $this->app->request()->getUri();

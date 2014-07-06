@@ -52,13 +52,19 @@
         错误代号：<b><?php echo $errorInfo['code'] ?></b>
     </div>
     <div class="m_line">
-        访问路径：<b><?php echo $errorInfo['path'] ?></b>
+        错误文件：<b><?php echo $errorInfo['file'] ?></b>
     </div>
     <div class="m_line">
-        错误发生在IP：<b><?php echo $errorInfo['ip'] ?></b>
+        错误行号：<b><?php echo $errorInfo['line'] ?></b>
     </div>
     <div class="m_line">
         错误消息：<b><?php echo $errorInfo['message'] ?></b>
+    </div>
+    <div class="m_line">
+        访问路径：<b><?php echo $errorInfo['path'] ?></b>
+    </div>
+    <div class="m_line">
+        访问IP：<b><?php echo $errorInfo['ip'] ?></b>
     </div>
     <div class="m_line">
         调用信息如下：

@@ -66,10 +66,14 @@ class Exception extends \Exception
         $info['time'] = date('Y-m-d H:i:s', $app->TIME);
         $info['title'] = isset(self::$_errorTitle[$this->getCode()]) ? self::$_errorTitle[$this->getCode()] : '应用程序错误';
         $info['code'] = $this->getCode();
+        $info['message'] = $this->getMessage();
         $info['path'] = $app->request()->getUri();
         $info['ip'] = $app->request()->getIP();
-        $info['message'] = $this->getMessage();
         $info['backtrace'] = $this->getTraceAsString();
+
+        $string = strstr($info['backtrace'], ')', true);
+        $info['file'] = substr(strstr($string, '(', true), 3);
+        $info['line'] = substr(strstr($string, '('), 1);
 
         //记录日志
         !$app->DEBUG and $app->logger()->error($info);
