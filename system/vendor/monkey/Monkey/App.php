@@ -241,55 +241,7 @@ class App
             throw new Exceptions\Exception($message, $code);
         });
     }
-//
-//    /**
-//     * 拦截异常处理
-//     *
-//     * @param \Exception $e
-//     */
-//    public function exceptionHandler(\Exception $e)
-//    {
-//        $this->errorReporting()->showError($this->_buildErrorInfo($e), true);
-//    }
-//
-//    /**
-//     * 拦截错误处理
-//     *
-//     * @param $code
-//     * @param $message
-//     * @param $file
-//     * @param $line
-//     */
-//    public function errorHandler($code = 0, $message = '', $file = null, $line = null)
-//    {
-//        $this->exceptionHandler(new \Exception($message, $code));
-//    }
-//
-//    /**
-//     * 创建提示信息，并记录日志
-//     *
-//     * @param \Exception $e
-//     *
-//     * @return array
-//     */
-//    private function _buildErrorInfo(\Exception $e)
-//    {
-//        $info = array();
-//
-//        //设置错误信息
-//        $info['time'] = date('Y-m-d H:i:s', $this->TIME);
-//        $info['title'] = isset(self::$_errorTitle[$e->getCode()]) ? self::$_errorTitle[$e->getCode()] : '应用程序错误';
-//        $info['code'] = $e->getCode();
-//        $info['path'] = $this->request->getUri();
-//        $info['ip'] = $this->request()->getIP();
-//        $info['message'] = $e->getMessage();
-//        $info['backtrace'] = $e->getTraceAsString();
-//
-//        //记录日志
-//        !$this->DEBUG and $this->logger()->error($info);
-//
-//        return $info;
-//    }
+
     /**
      * 启动Session
      */
@@ -479,7 +431,7 @@ class App
             }
             
             //实例化控制器
-            if (Autoload\Initializer::getLoader()->findFile($$route['controller']) == false) {
+            if (Autoload\Initializer::getLoader()->findFile($route['controller']) == false) {
                 throw new Exceptions\Http\NotFound('访问的控制器[' . $route['controller'] . ']的类文件丢失！');
             }
             
@@ -503,18 +455,8 @@ class App
 
         } catch (\Exception $e) {
             //异常中断
-
             throw new Exceptions\Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
-            //生成报告
-//            $report = $this->errorReporting();
-//
-//            if (!$this->DEBUG and $e->getCode() == 403) {
-//                $report->show403();
-//            } elseif (!$this->DEBUG and $e->getCode() == 404) {
-//                $report->show404();
-//            } else {
-//                $report->showError($this->_buildErrorInfo($e));
-//            }
+
         }
     }
 }
