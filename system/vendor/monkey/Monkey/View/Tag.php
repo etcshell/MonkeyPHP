@@ -47,10 +47,6 @@ class Tag
             /*{t:string}替换成 <?php echo t("string"); ?>*/
             /*array('/\{t\/\s*(.*?)\}/i', '<?php echo t("$1"); ?>'),*/
 
-            //添加数组解析标签：
-            /*{$arr[key]...}替换成<?php echo $array[key]...;?> */
-            array('/\{(\$[a-z_][a-z0-9_]*)((\[.*?\])+)\s*\}/i', '<?php echo $1$2 ?>'),
-
             //添加判断解析标签：
             /*<!--if/$name==1-->替换成<?php if ($name==1){ ?>*/
             array('/<!--if\/\s*(.+?)-->/i', '<?php if($1) { ?>'),
@@ -91,9 +87,10 @@ class Tag
             /*<!--myapi::method pname1=pvalue1 pname2=pvalue2 ...-->替换成 <?php $myapi_method=call_user_func(array('appName\\LabelApi\\myapi', 'method'),array("pname1"=>pvalue1,"pname2"=>pvalue2, ... )); if(is_array($myapi_method)) foreach($myapi_method as $apikey => $apival){ ?>*/
             array('/\<!--([a-z_][a-z0-9_]*)::([a-z_][a-z0-9_]*)((\s+[a-z_][a-z0-9_]*=\S+)*)\s*-->/i', array(__CLASS__, 'apiArray')),
 
-            //修正数组标签：
-            /* $array[key] 替换成 $array["key"] */
-            array('/(\$[a-z_][a-z0-9_]*)((\[.*?\])+)/i', array(__CLASS__, 'arrayKeyFix')),
+            //数组标签解析
+            /*{$arr.key}替换成<?php echo $array["key"]...;?> */
+            array('/\{(\$[a-z_][a-z0-9_]*)((\\\\{0,1}\.[\$a-z_][a-z0-9_]*)+)*\}/i', array(__CLASS__, 'arrayKeyEcho')),
+            array('/(<\?\s*php\s.*)(\$[a-z_][a-z0-9_]*)((\\\\{0,1}\.[\$a-z_][a-z0-9_]*)+)(.*\?>)/i', array(__CLASS__, 'arrayKey')),
         );
     }
 
@@ -109,41 +106,71 @@ class Tag
         return '<?php ' . $arr . '=call_user_func(array(\'' . self::$appName . '\\\\LabelApi\\\\' . $matches[1] . '\', \'' . $matches[2] . '\'),' . self::regParam($matches[3]) . ' ); if(is_array(' . $arr . ')) foreach(' . $arr . ' as $apikey => $apival){?>';
     }
 
-    public static function arrayKeyFix($matches)
+    public static function arrayKeyEcho($matches)
     {
         $var_name = $matches[1];
         $keys = $matches[2];
 
-        while ($key = self::getOneKey($keys)) {
+        while ($key = self::getKey($keys)) {
             $var_name .= $key;
         }
 
+        return '<?php echo ' . $var_name . '; ?>';
+    }
+
+    public static function arrayKey($matches)
+    {
+        $search = '/(\$[a-z_][a-z0-9_]*)((\\\\{0,1}\.[\$a-z_][a-z0-9_]*)+)/i';
+        return preg_replace_callback($search, array(__CLASS__, 'arrayKey_'), $matches[0]);
+    }
+
+    public static function arrayKey_($matches)
+    {
+        $var_name = $matches[1];
+        $keys = $matches[2];
+
+        while ($key = self::getKey($keys)) {
+            $var_name .= $key;
+        }
         return $var_name;
     }
 
     ////////////////////////////////////
-    private static function getOneKey(&$keys)
+    private static function getKey(&$keys)
     {
         if (empty($keys)) {
             return null;
         }
 
-        $offset = strpos($keys, ']');
-        $key = trim(substr($keys, 1, $offset - 1));
-        $keys = substr($keys, $offset + 1);
+        dump($keys);
+        $keys = trim($keys, ' .');
+        $offset = 0;
 
-        if ($key[0] == '\\' && substr($key, -2, 1) == '\\') {
-            $_key = substr($key, 1, -2) . substr($key, -1);
-            $key = $_key;
+        do {
+            $offset = strpos($keys, '.', $offset + 1);
+        } while ($offset and $keys[$offset-1] == '\\');
+
+        if ($offset) {
+            $key = substr($keys, 0, $offset - 1);
+            $keys = substr($keys, $offset + 1);
+        }
+        else {
+            $key = $keys;
+            $keys = null;
         }
 
-        if ($key[0] == '"' || $key[0] == '\'' || $key[0] == '$') {
+        if (strpos($key, '\\') !== false) {
+            return preg_replace('/\s*\\\.\s*/', ' . ', $key);
+
+        }
+        elseif ($key[0] == '"' || $key[0] == '\'' || $key[0] == '$') {
             return '[' . $key . ']';
 
         } elseif (is_numeric($key)) {
             return '[' . $key . ']';
 
-        } else {
+        }
+        else {
             return '["' . $key . '"]';
         }
     }
