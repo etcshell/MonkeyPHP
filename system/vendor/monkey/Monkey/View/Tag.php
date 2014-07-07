@@ -89,8 +89,8 @@ class Tag
 
             //数组标签解析
             /*{$arr.key}替换成<?php echo $array["key"]...;?> */
-            array('/\{(\$[a-z_][a-z0-9_]*)((\\\\{0,1}\.[\$a-z_][a-z0-9_]*)+)*\}/i', array(__CLASS__, 'arrayKeyEcho')),
-            array('/(<\?\s*php\s.*)(\$[a-z_][a-z0-9_]*)((\\\\{0,1}\.[\$a-z_][a-z0-9_]*)+)(.*\?>)/i', array(__CLASS__, 'arrayKey')),
+            array('/\{(\$[a-z_][a-z0-9_]*)((\.[\$a-z_][a-z0-9_]*)+)*\}/i', array(__CLASS__, 'arrayKeyEcho')),
+            array('/(<\?\s*php\s.*)(\$[a-z_][a-z0-9_]*)((\.[\$a-z_][a-z0-9_]*)+)(.*\?>)/i', array(__CLASS__, 'arrayKey')),
         );
     }
 
@@ -120,7 +120,7 @@ class Tag
 
     public static function arrayKey($matches)
     {
-        $search = '/(\$[a-z_][a-z0-9_]*)((\\\\{0,1}\.[\$a-z_][a-z0-9_]*)+)/i';
+        $search = '/(\$[a-z_][a-z0-9_]*)((\.[\$a-z_][a-z0-9_]*)+)/i';
         return preg_replace_callback($search, array(__CLASS__, 'arrayKey_'), $matches[0]);
     }
 
@@ -142,13 +142,8 @@ class Tag
             return null;
         }
 
-        dump($keys);
         $keys = trim($keys, ' .');
-        $offset = 0;
-
-        do {
-            $offset = strpos($keys, '.', $offset + 1);
-        } while ($offset and $keys[$offset-1] == '\\');
+        $offset = strpos($keys, '.');
 
         if ($offset) {
             $key = substr($keys, 0, $offset - 1);
@@ -159,11 +154,7 @@ class Tag
             $keys = null;
         }
 
-        if (strpos($key, '\\') !== false) {
-            return preg_replace('/\s*\\\.\s*/', ' . ', $key);
-
-        }
-        elseif ($key[0] == '"' || $key[0] == '\'' || $key[0] == '$') {
+        if ($key[0] == '"' || $key[0] == '\'' || $key[0] == '$') {
             return '[' . $key . ']';
 
         } elseif (is_numeric($key)) {
