@@ -197,20 +197,22 @@ class Router
      * @param string $pattern 路径模式  get/test/abc-{zh|en}/blog/{year}-([1-9]\d*):language:year:id
      * 其中请求方法get是可选的 如 /test/abc-{zh|en}/blog/{year}-([1-9]\d*):language:year:id
      * @param string $parameters 参数  array('language'=>'en','year'=>'2014','id'=4025
+     * @param bool $fixExtend
      *
      * @return string  /.../test/abc-en/blog/2014-4025
      */
-    public function toURL($pattern, $parameters = null)
+    public function toURL($pattern, $parameters = null, $fixExtend = true)
     {
         if ($parameters or strpos($pattern, ':') !== false) {
-            return $pattern = $this->pattern->packagePath($pattern, $parameters);
+            $pattern = $this->pattern->packagePath($pattern, $parameters);
         }
 
         $mode = $this->config['search_mode'];
         $pattern[0] != '/' and $pattern = '/' . $pattern;
         //rewrite（需服务器支持）、pathinfo（需服务器支持）、get（传统方式）
         if ($mode == 'rewrite') {
-            return $this->indexRoot . $this->fixToUrl($pattern);
+            $fixExtend and $pattern = $this->fixToUrl($pattern);
+            return $this->indexRoot . $pattern;
         }
 
         if ($mode == 'pathinfo') {
@@ -279,7 +281,7 @@ class Router
 
     private function fixToUrl($url)
     {
-        if ($url[strlen($url) - 1] == '/') {
+        if (substr($url,-1) == '/') {
             return $url;
         }
 
