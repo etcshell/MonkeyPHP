@@ -60,6 +60,10 @@ class Tag
             array('/<!--as\/\s*(\S+)\s+(\S+)\s*-->/i', '<?php if(is_array($1)) foreach($1 AS $2) { ?>'),
             /*<!--as/$arr $key $vo-->替换成 <?php if (is_array($array) foreach($arr as $key => $vo){ ?>*/
             array('/<!--as\/\s*(\S+)\s+(\S+)\s+(\S+)\s*-->/i', '<?php if(is_array($1)) foreach($1 AS $2 => $3) { ?>'),
+            /*<!--foreach/$arr $vo-->替换成 <?php if (is_array($arr)) foreach($arr as $vo){ ?>*/
+            array('/<!--foreach\/\s*(\S+)\s+(\S+)\s*-->/i', '<?php if(is_array($1)) foreach($1 AS $2) { ?>'),
+            /*<!--foreach/$arr $key $vo-->替换成 <?php if (is_array($array) foreach($arr as $key => $vo){ ?>*/
+            array('/<!--foreach\/\s*(\S+)\s+(\S+)\s+(\S+)\s*-->/i', '<?php if(is_array($1)) foreach($1 AS $2 => $3) { ?>'),
             /*<!--for/$i=0;$i<10;$i++ -->替换成 <?php for($i=0;$i<10;$i++) { ?>*/
             array('/<!--for\/\s*(.+?)-->/i', '<?php for($1) { ?> '),
             /*<!--while/condition-->替换成 <?php while(condition){ ?>*/
