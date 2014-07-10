@@ -10,6 +10,7 @@
  */
 namespace Monkey\Database;
 
+use Monkey\Exceptions\Sql\SqlEmptyException;
 use \PDO;
 use \PDOException;
 use Monkey\App;
@@ -284,7 +285,7 @@ class Connection extends PDO
             );
             $this->app->logger()->sql($error);
 
-            throw new SqlEmptyException('数据库查询错误。', 1024, __FILE__, __LINE__);
+            throw new SqlEmptyException('数据库查询错误。', 1024);
         }
 
         //处理表前缀

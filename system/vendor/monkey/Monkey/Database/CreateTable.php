@@ -294,12 +294,12 @@ class CreateTable
      *
      * @return Statement
      *
-     * @throws \Exception
+     * @throws Monkey\Exceptions\Sql\SqlEmptyException
      */
     public function execute()
     {
         $sql = $this->getSql();
-        if (!$sql) new SqlEmptyException('sql语句为空，创建数据库表失败', 1024, __FILE__, __LINE__);
+        if (!$sql) new Monkey\Exceptions\Sql\SqlEmptyException('sql语句为空，创建数据库表失败', 1024);
         return $this->connection->query($sql);
     }
 }

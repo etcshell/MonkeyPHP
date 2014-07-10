@@ -12,6 +12,7 @@ namespace Monkey\Database\Sqlite;
 
 use Monkey\Database as Query;
 use Monkey\Database\Statement;
+use Monkey\Exceptions\Sql\SqlEmptyException;
 use \PDO;
 use \PDOException;
 use Monkey\App;
@@ -219,7 +220,7 @@ class Connection extends PDO
      * @param string $sql
      * @param array $args
      *
-     * @throws \PDOException|Query\SqlEmptyException
+     * @throws \PDOException
      *
      * @return Statement
      *
@@ -267,7 +268,7 @@ class Connection extends PDO
      *
      * @return Statement
      *
-     * @throws Query\SqlEmptyException
+     * @throws SqlEmptyException
      */
     public function prepareQuery($sql, array $driver_options = array())
     {
@@ -281,7 +282,7 @@ class Connection extends PDO
             );
             $this->app->logger()->sql($error);
 
-            throw new SqlEmptyException('数据库查询错误。', 1024, __FILE__, __LINE__);
+            throw new SqlEmptyException('数据库查询错误。', 1024);
         }
 
         //处理表前缀
