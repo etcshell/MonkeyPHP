@@ -169,12 +169,21 @@ class Router
 
     /**
      * 获取请求路径中的参数
+     * @param string $name
      *
      * @return array
      */
-    public function getParameters()
+    public function getParameter($name = null)
     {
-        return $this->params;
+        if (is_null($name)) {
+            return $this->params;
+        }
+        elseif (is_string($name) and isset($this->params[$name])){
+            return $this->params[$name];
+        }
+        else {
+            return null;
+        }
     }
 
     /**
