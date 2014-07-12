@@ -111,12 +111,12 @@ class Memcache implements CacheInterface
     /**
      * 清除缓存
      *
-     * @return $this
+     * @return bool
      */
     public function clear()
     {
         $this->_connection->flush();
-        return;
+        return true;
     }
 
     /**
@@ -124,12 +124,12 @@ class Memcache implements CacheInterface
      *
      * @param string $key
      *
-     * @return $this
+     * @return bool
      */
     public function delete($key)
     {
         $this->_connection->delete($key);
-        return;
+        return true;
     }
 
     /**

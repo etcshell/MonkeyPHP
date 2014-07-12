@@ -85,11 +85,12 @@ class Apc implements CacheInterface
     /**
      * 清除缓存
      *
-     * @return $this
+     * @return bool
      */
     public function clear()
     {
-        return apc_clear_cache();
+        apc_clear_cache();
+        return apc_clear_cache('user');
     }
 
     /**
@@ -97,7 +98,7 @@ class Apc implements CacheInterface
      *
      * @param string $key
      *
-     * @return $this
+     * @return bool
      */
     public function delete($key)
     {

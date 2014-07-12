@@ -255,10 +255,6 @@ class App
      */
     public function clearTempDir()
     {
-        $o = $this->cache();
-        if (method_exists($o, 'deleteCacheFile')) {
-            $o->deleteCacheFile();
-        }
         dir_delete($this->TEMP);
     }
 

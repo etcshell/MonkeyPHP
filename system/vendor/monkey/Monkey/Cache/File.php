@@ -114,7 +114,9 @@ final class File implements CacheInterface
      */
     public function clear()
     {
-        return $this->_format(true);
+        $this->_format(true);
+        fclose($this->_rs);
+        return unlink($this->_cache_file);
     }
 
     /**
@@ -127,11 +129,6 @@ final class File implements CacheInterface
         return $this->_delete(md5($key));
     }
 
-    public function deleteCacheFile()
-    {
-        fclose($this->_rs);
-        unlink($this->_cache_file);
-    }
 
     //以下是辅助函数
     private function _all_schemas()

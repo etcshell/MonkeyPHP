@@ -44,7 +44,7 @@ interface CacheInterface
     /**
      * 清除缓存
      *
-     * @return $this
+     * @return bool
      */
     public function clear();
 
@@ -53,7 +53,7 @@ interface CacheInterface
      *
      * @param string $key
      *
-     * @return $this
+     * @return bool
      */
     public function delete($key);
 }
