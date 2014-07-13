@@ -457,8 +457,8 @@ class Document
     /**
      * 下拉框SELECT一项的HTML代码
      *
-     * @param $caption 显示的菜单标题
-     * @param $value 菜单值
+     * @param string $caption 显示的菜单标题
+     * @param string $value 菜单值
      * @param bool $selected 是否选中
      *
      * @return string
