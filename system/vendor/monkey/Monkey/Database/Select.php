@@ -43,6 +43,13 @@ class Select
     protected $queryIdentifier;
 
     /**
+     * 查询主表别名
+     *
+     * @var string
+     */
+    protected $tableAlias;
+
+    /**
      * 选择表名
      *
      * @var array
@@ -98,7 +105,6 @@ class Select
      */
     protected $distinct = FALSE;
 
-
     /**
      * 查询范围
      *
@@ -125,6 +131,10 @@ class Select
     {
         $this->app = $connection->app;
         $this->queryIdentifier = uniqid('', TRUE);
+        if (empty($alias)) {
+            $alias = $table instanceof Select ? 'subquery' : '{:' . $table . ':}';
+        }
+        $this->tableAlias = $alias;
         $conjunction = isset($options['conjunction']) ? $options['conjunction'] : 'AND';
         $this->where = new Condition($this->app, $conjunction);
         $this->having = new Condition($this->app, $conjunction);
@@ -143,6 +153,40 @@ class Select
     {
         $this->distinct = (bool)$distinct;
         return $this;
+    }
+
+    /**
+     * 添加 主表 出现在结果集中的 字段
+     * 不使用相当于添加了主表的所有字段
+     *
+     * @param string|array $fields 字符串参数可以多个
+     *
+     * @return $this
+     *
+     * 例子：
+     * 添加 主表中的所有字段：
+     * field()
+     *
+     * 添加 主表中的 'aF1' 字段：
+     * field('f1')
+     *
+     * 添加 主表中的 3 个字段：
+     * field('f1', 'f2', 'f3')
+     *
+     * 添加 主表中的 'f1' 字段，并且设置为别名 'aliasF1'：
+     * field(array('aliasF1'=>'f1'))
+     *
+     * 添加 主表中的 3 个字段，并且将字段 'f2' 的别名设置为 'aliasF2'
+     * field(array('f1', 'aliasF2'=>'aF2', 'f3')) //即，第二个参数中，可以用字符串键名来设置别名
+     *
+     */
+    public function fields($fields = array())
+    {
+        if (func_num_args()>1) {
+            $fields = func_get_args();
+        }
+
+        return $this->addField($this->tableAlias, $fields);
     }
 
     /**
@@ -171,8 +215,9 @@ class Select
      */
     public function addField($table_alias, $fields = array())
     {
-        if (empty($field)) {
+        if (empty($fields)) {
             $this->tables[$table_alias]['all_fields'] = TRUE;
+            return $this;
         }
 
         is_string($fields) and $fields = array($fields);
@@ -180,6 +225,37 @@ class Select
         foreach ($fields as $key => $field) {
             $this->_addField($table_alias, $field, (is_numeric($key) ? null : $key));
         }
+
+        return $this;
+    }
+
+    /**
+     * 添加一个字段到结果集中
+     *
+     * @param string $table_alias 表名或表别名
+     * @param string $field 字段名
+     * @param null $alias 设置字段的别名
+     *
+     * @return $this
+     */
+    protected function _addField($table_alias, $field, $alias = NULL)
+    {
+        empty($alias) and $alias = $field;
+        !empty($this->fields[$alias]) and $alias = $table_alias . '_' . $field;
+        $alias_candidate = $alias;
+        $count = 2;
+
+        while (!empty($this->fields[$alias_candidate])) {
+            $alias_candidate = $alias . '_' . $count++;
+        }
+
+        $alias = $alias_candidate;
+
+        $this->fields[$alias] = array(
+            'field' => $field,
+            'table' => $table_alias,
+            'alias' => $alias,
+        );
 
         return $this;
     }
@@ -220,17 +296,14 @@ class Select
     }
 
     /**
-     * 添加一个指定 Type 的 JOIN 连接条件
+     * 生成表别名
      *
-     * @param $type
      * @param $table
      * @param null $alias
-     * @param null $condition
-     * @param array $arguments
      *
-     * @return $this
+     * @return null|string
      */
-    public function addJoin($type, $table, $alias = NULL, $condition = NULL, $arguments = array())
+    protected function aliasTable($table, $alias = NULL)
     {
         if (empty($alias)) {
             $alias = $table instanceof Select ? 'subquery' : '{:' . $table . ':}';
@@ -243,7 +316,23 @@ class Select
             $alias_candidate = $alias . '_' . $count++;
         }
 
-        $alias = $alias_candidate;
+        return $alias_candidate;
+    }
+
+    /**
+     * 添加一个指定 Type 的 JOIN 连接条件
+     *
+     * @param $type
+     * @param $table
+     * @param null $alias
+     * @param null $condition
+     * @param array $arguments
+     *
+     * @return $this
+     */
+    public function addJoin($type, $table, $alias = NULL, $condition = NULL, $arguments = array())
+    {
+        $alias = $this->aliasTable($table, $alias);
 
         if (is_string($condition)) {
             $condition = str_replace('%alias', $alias, $condition);
@@ -646,7 +735,7 @@ class Select
             $query .= "\n";
             isset($table['join type']) and $query .= $table['join type'] . ' JOIN ';
 
-            if ($table['table'] instanceof Select) {
+            if (isset($table['table']) and $table['table'] instanceof Select) {
                 $table_string = '(' . $table['table']->getString($qi) . ')';
 
             } else {
@@ -751,36 +840,4 @@ class Select
 
         return $count;
     }
-
-    /**
-     * 添加一个字段到结果集中
-     *
-     * @param string $table_alias 表名或表别名
-     * @param string $field 字段名
-     * @param null $alias 设置字段的别名
-     *
-     * @return $this
-     */
-    protected function _addField($table_alias, $field, $alias = NULL)
-    {
-        empty($alias) and $alias = $field;
-        !empty($this->fields[$alias]) and $alias = $table_alias . '_' . $field;
-        $alias_candidate = $alias;
-        $count = 2;
-
-        while (!empty($this->fields[$alias_candidate])) {
-            $alias_candidate = $alias . '_' . $count++;
-        }
-
-        $alias = $alias_candidate;
-
-        $this->fields[$alias] = array(
-            'field' => $field,
-            'table' => $table_alias,
-            'alias' => $alias,
-        );
-
-        return $this;
-    }
-
 }
