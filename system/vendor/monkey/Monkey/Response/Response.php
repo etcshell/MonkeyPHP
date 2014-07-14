@@ -82,7 +82,7 @@ class Response
      *
      * @var bool
      */
-    private $isAjax = false;
+    private $isJson = false;
 
     /**
      * json数据
@@ -196,8 +196,10 @@ class Response
 
         $app->shutdown()->register(array($this, 'send'));
 
-        if ($this->app->request()->isAjax()) {
-            $this->setAjax();
+        $contentType = $this->app->request()->header()->getContentType();
+        $this->setContentType($contentType);
+        if (substr($contentType, -4) == 'json') {
+            $this->isJson = true;
         }
 
         if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== FALSE
@@ -318,7 +320,7 @@ class Response
         $httpHeaderOnly = ($this->httpHeaderOnly or ($this->statusCode > 399));
 
         if (!$httpHeaderOnly) {
-            echo $this->isAjax ? json_encode($this->jsonBody) : $this->getBody();
+            echo $this->isJson ? json_encode($this->jsonBody) : $this->getBody();
         }
 
         if (function_exists('fastcgi_finish_request')) {
@@ -432,10 +434,10 @@ class Response
      *
      * @return $this
      */
-    public function setAjax()
+    public function setJson()
     {
         $this->setContentType('application/json');
-        $this->isAjax = true;
+        $this->isJson = true;
         return $this;
     }
 

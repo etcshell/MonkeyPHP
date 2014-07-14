@@ -165,94 +165,15 @@ class Controller
     }
 
     /**
-     * 向浏览器返回ajax数据
+     * 向浏览器返回json数据
      *
-     * @param int $statusCode
-     * @param string $message
-     * @param array $data
+     * @param array $notice
      */
-    public function ajaxReturn($statusCode, $message, $data = array())
+    public function returnJson($notice)
     {
-        $this->app->response()->setAjax()->setJsonNotice($statusCode, $data, $message);
+        $this->app->response()->setJson($notice);
         exit;
     }
-
-    /**
-     * 模板赋值
-     *
-     * @param string $name 变量名
-     * @param mixed $value 变量值
-     *
-     * @return $this
-     */
-//    public function assign($name, $value)
-//    {
-//        $this->getView()->assign($name,$value);
-//        return $this;
-//    }
-
-    /**
-     * 渲染
-     *
-     * @param string $tplFilename 模板文件名，相对于模板根目录。
-     *
-     * @return string 直接输出后返回空字符串
-     */
-//    public function render($tplFilename)
-//    {
-//        $this->write($this->getView()->render($tplFilename, false));
-//    }
-
-    /**
-     * 渲染
-     *
-     * @param string $tplFilename 模板文件名，相对于模板根目录。
-     * @param int $expire 缓存时间，默认保存时间为0（永久保存），24小时为86400*1
-     *
-     * @return string 始终返回渲染结果
-     */
-//    public function renderWithCache($tplFilename,$expire=0)
-//    {
-//        $this->write($this->view->renderWithCache($tplFilename, $expire));
-//    }
-
-    /**
-     * 添加Html正文Body文档正文
-     *
-     * @param string $content 内容
-     */
-//    public function write($content)
-//    {
-//        $this->response->write($content);
-//    }
-
-    /**
-     * 添加Html正文Body文档正文
-     *
-     * @param string $content 内容
-     */
-//    public function writeLine($content)
-//    {
-//        $this->response->writeLine($content);
-//    }
-
-    /**
-     * 获取Html正文Body文档正文
-     *
-     * @return string
-     */
-//    public function getBody()
-//    {
-//        return $this->response->getBody();
-//    }
-
-    /**
-     * 清除写入响应对象中的响应体
-     */
-//    public function clearBody()
-//    {
-//        $this->response->clearBody();
-//    }
 
     /**
      * 设置立即重定向地址
@@ -260,9 +181,9 @@ class Controller
      * @param string $url 重定向的地址
      * @param bool $exitNow 立即退出，默认为否
      */
-//    public function redirect( $url , $exitNow=false )
-//    {
-//        $this->response->redirect($url, $exitNow);
-//    }
+    public function redirect( $url , $exitNow=false )
+    {
+        $this->response->redirect($url, $exitNow);
+    }
 
 } 
