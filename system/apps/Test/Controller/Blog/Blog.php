@@ -23,7 +23,11 @@ class Blog extends Controller
 {
     public function action_index()
     {
-        $response=$this->getResponse();
-        $response->writeLine('博客首页');
+        $this->writeLine('博客首页');
+    }
+
+    public function writeLine($string)
+    {
+        $this->response->addBody($string . '<br/>');
     }
 } 

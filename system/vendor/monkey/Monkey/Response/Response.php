@@ -73,7 +73,7 @@ class Response
     /**
      * 内容
      *
-     * @var string
+     * @var string|array
      */
     private $body;
 
@@ -83,13 +83,6 @@ class Response
      * @var bool
      */
     private $isJson = false;
-
-    /**
-     * json数据
-     *
-     * @var array
-     */
-    private $jsonBody = array();
 
     /**
      * 是否仅仅输出头部
@@ -196,10 +189,8 @@ class Response
 
         $app->shutdown()->register(array($this, 'send'));
 
-        $contentType = $this->app->request()->header()->getContentType();
-        $this->setContentType($contentType);
-        if (substr($contentType, -4) == 'json') {
-            $this->isJson = true;
+        if (substr($this->app->request()->header()->getContentType(), -4) == 'json') {
+            $this->setJson();
         }
 
         if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== FALSE
@@ -217,27 +208,22 @@ class Response
     /**
      * 添加Html正文Body文档正文
      *
-     * @param string $content 内容
+     * @param string|array $content 内容
      */
-    public function write($content)
+    public function addBody($content)
     {
-        $this->body .= $content;
-    }
-
-    /**
-     * 输出一行Html正文
-     *
-     * @param string $content 内容
-     */
-    public function writeLine($content)
-    {
-        $this->body .= $content . "<br/>";
+        if (is_array($content)) {
+            $this->body = array_merge((array)$this->body, $content);
+        }
+        else {
+            $this->body .= $content;
+        }
     }
 
     /**
      * 设置响应正文
      *
-     * @param string $content 内容
+     * @param string|array $content 内容
      */
     public function setBody($content)
     {
@@ -245,35 +231,24 @@ class Response
     }
 
     /**
-     * 设置响应json的数据
+     * 设置响应数据为ajax的json数据
      *
-     * @param array $data
-     */
-    public function setJsonData(array $data)
-    {
-        $this->jsonBody = $data;
-    }
-
-    /**
-     * 设置响应json的通知
+     * @param array $data 响应的数据 array格式，系统自动转换为json格式
      *
-     * @param bool $status 状态
-     * @param mixed $data 通知的数据
-     * @param string $msg 附加信息
+     * @return $this
      */
-    public function setJsonNotice($status, $data, $msg = '')
+    public function setJson(array $data = array())
     {
-        $this->jsonBody = array(
-            'status' => (bool)$status,
-            'msg' => $msg,
-            'data' => $data
-        );
+        $this->setContentType('application/json');
+        $this->isJson = true;
+        $data and $this->body = $data;
+        return $this;
     }
 
     /**
      * 获取Html正文Body文档正文
      *
-     * @return string
+     * @return mixed
      */
     public function getBody()
     {
@@ -320,7 +295,7 @@ class Response
         $httpHeaderOnly = ($this->httpHeaderOnly or ($this->statusCode > 399));
 
         if (!$httpHeaderOnly) {
-            echo $this->isJson ? json_encode($this->jsonBody) : $this->getBody();
+            echo $this->isJson ? json_encode((array)$this->getBody()) : implode("\n", (array)$this->getBody());
         }
 
         if (function_exists('fastcgi_finish_request')) {
@@ -427,18 +402,6 @@ class Response
     public function isHttpHeaderOnly()
     {
         return $this->httpHeaderOnly;
-    }
-
-    /**
-     * 设置响应数据为ajax的json数据
-     *
-     * @return $this
-     */
-    public function setJson()
-    {
-        $this->setContentType('application/json');
-        $this->isJson = true;
-        return $this;
     }
 
     /**
