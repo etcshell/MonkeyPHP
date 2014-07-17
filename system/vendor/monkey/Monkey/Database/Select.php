@@ -186,7 +186,7 @@ class Select
             $fields = func_get_args();
         }
 
-        return $this->addField($this->tableAlias, $fields);
+        return $this->addFields($this->tableAlias, $fields);
     }
 
     /**
@@ -213,20 +213,48 @@ class Select
      * 添加 a 表中的 3 个字段，并且将字段 'aF2' 的别名设置为 'aliasF2'
      * field('a', array('aF1', 'aliasF2'=>'aF2', 'aF3')) //即，第二个参数中，可以用字符串键名来设置别名
      */
-    public function addField($table_alias, $fields = array())
+    public function addFields($table_alias, $fields = array())
     {
+        //修复表别名
+        $table_alias = $this->checkTableAlias($table_alias);
+
         if (empty($fields)) {
             $this->tables[$table_alias]['all_fields'] = TRUE;
             return $this;
         }
-
         is_string($fields) and $fields = array($fields);
 
         foreach ($fields as $key => $field) {
-            $this->_addField($table_alias, $field, (is_numeric($key) ? null : $key));
+            $this->_addFields($table_alias, $field, (is_numeric($key) ? null : $key));
         }
 
         return $this;
+    }
+
+    /**
+     * 验证表别名
+     *
+     * @param mixed $test
+     *
+     * @return string
+     */
+    protected function checkTableAlias($test)
+    {
+        //检查存在的已定义的别名
+        foreach ($this->tables as $alias => $item) {
+            if ($test == $alias or $test == $item['table'] or $test == $item['alias']) {
+                return $item['alias'];
+            }
+        }
+
+        //没有定义过别名，$test就是表名或子查询了
+        if (is_string($test)) {
+            return strpos($test,':') ? $test : '{:' . $test . ':}';
+        }
+        else {
+            return 'subquery';
+        }
+
     }
 
     /**
@@ -238,7 +266,7 @@ class Select
      *
      * @return $this
      */
-    protected function _addField($table_alias, $field, $alias = NULL)
+    protected function _addFields($table_alias, $field, $alias = NULL)
     {
         empty($alias) and $alias = $field;
         !empty($this->fields[$alias]) and $alias = $table_alias . '_' . $field;
@@ -296,30 +324,6 @@ class Select
     }
 
     /**
-     * 生成表别名
-     *
-     * @param $table
-     * @param null $alias
-     *
-     * @return null|string
-     */
-    protected function aliasTable($table, $alias = NULL)
-    {
-        if (empty($alias)) {
-            $alias = $table instanceof Select ? 'subquery' : '{:' . $table . ':}';
-        }
-
-        $alias_candidate = $alias;
-        $count = 2;
-
-        while (!empty($this->tables[$alias_candidate])) {
-            $alias_candidate = $alias . '_' . $count++;
-        }
-
-        return $alias_candidate;
-    }
-
-    /**
      * 添加一个指定 Type 的 JOIN 连接条件
      *
      * @param $type
@@ -332,7 +336,18 @@ class Select
      */
     public function addJoin($type, $table, $alias = NULL, $condition = NULL, $arguments = array())
     {
-        $alias = $this->aliasTable($table, $alias);
+        if (empty($alias)) {
+            $alias = $table instanceof Select ? 'subquery' : '{:' . $table . ':}';
+        }
+
+        $alias_candidate = $alias;
+        $count = 2;
+
+        while (!empty($this->tables[$alias_candidate])) {
+            $alias_candidate = $alias . '_' . $count++;
+        }
+
+        $alias = $alias_candidate;
 
         if (is_string($condition)) {
             $condition = str_replace('%alias', $alias, $condition);
@@ -733,7 +748,7 @@ class Select
 
         foreach ($this->tables as $table) {
             $query .= "\n";
-            isset($table['join type']) and $query .= $table['join type'] . ' JOIN ';
+            !empty($table['join type']) and $query .= $table['join type'] . ' JOIN ';
 
             if (isset($table['table']) and $table['table'] instanceof Select) {
                 $table_string = '(' . $table['table']->getString($qi) . ')';
