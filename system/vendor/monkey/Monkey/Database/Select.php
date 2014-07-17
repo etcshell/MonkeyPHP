@@ -47,7 +47,7 @@ class Select
      *
      * @var string
      */
-    protected $tableAlias;
+    protected $mainTableAlias;
 
     /**
      * 选择表名
@@ -134,7 +134,7 @@ class Select
         if (empty($alias)) {
             $alias = $table instanceof Select ? 'subquery' : '{:' . $table . ':}';
         }
-        $this->tableAlias = $alias;
+        $this->mainTableAlias = $alias;
         $conjunction = isset($options['conjunction']) ? $options['conjunction'] : 'AND';
         $this->where = new Condition($this->app, $conjunction);
         $this->having = new Condition($this->app, $conjunction);
@@ -186,7 +186,7 @@ class Select
             $fields = func_get_args();
         }
 
-        return $this->addFields($this->tableAlias, $fields);
+        return $this->addFields($this->mainTableAlias, $fields);
     }
 
     /**
@@ -225,7 +225,7 @@ class Select
         is_string($fields) and $fields = array($fields);
 
         foreach ($fields as $key => $field) {
-            $this->_addFields($table_alias, $field, (is_numeric($key) ? null : $key));
+            $this->_addField($table_alias, $field, (is_numeric($key) ? null : $key));
         }
 
         return $this;
@@ -234,7 +234,7 @@ class Select
     /**
      * 验证表别名
      *
-     * @param mixed $test
+     * @param string $test
      *
      * @return string
      */
@@ -248,13 +248,7 @@ class Select
         }
 
         //没有定义过别名，$test就是表名或子查询了
-        if (is_string($test)) {
-            return strpos($test,':') ? $test : '{:' . $test . ':}';
-        }
-        else {
-            return 'subquery';
-        }
-
+        return strpos($test,':') ? $test : '{:' . $test . ':}';
     }
 
     /**
@@ -266,7 +260,7 @@ class Select
      *
      * @return $this
      */
-    protected function _addFields($table_alias, $field, $alias = NULL)
+    protected function _addField($table_alias, $field, $alias = NULL)
     {
         empty($alias) and $alias = $field;
         !empty($this->fields[$alias]) and $alias = $table_alias . '_' . $field;

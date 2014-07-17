@@ -37,7 +37,7 @@ class Select extends Query\Select
         if (empty($alias)) {
             $alias = $table instanceof Select ? 'subquery' : '{:' . $table . ':}';
         }
-        $this->tableAlias = $alias;
+        $this->mainTableAlias = $alias;
         $conjunction = isset($options['conjunction']) ? $options['conjunction'] : 'AND';
         $this->where = new Condition($this->app, $conjunction);
         $this->having = new Condition($this->app, $conjunction);
