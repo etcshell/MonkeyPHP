@@ -25,6 +25,7 @@ class NotFound extends Base
         }
         else {
             self::$app->errorReporting()->show404();
+            exit;
         }
     }
 } 
