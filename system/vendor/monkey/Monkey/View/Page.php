@@ -15,11 +15,11 @@ use Monkey;
 /*
  * 分页栏配置在view.ini.php中：
     'page_style_name'       =>'def',
-    'def_link'              =>'<a href="http://urlPre{number}">{text}</a>',
-    'def_link_ajax'         =>'<a href="javascript:ajaxActionName(\'http://urlPre{number}\')">{text}</a>',
+    'def_link'              =>'<a href="{urlPre}{number}">{text}</a>',
+    'def_link_ajax'         =>'<a href="javascript:ajaxActionName(\'{urlPre}{number}\')">{text}</a>',
     'def_span_current'      =>'<span class="current_style">{number}</span>',
     'def_span_total'        =>'<span class="total_style">共{number}页</span>',
-    'def_input_jump'        =>'转到<input type="text" class="jump_style" size="2" title="输入页码，按回车快速跳转" value="1" onkeydown="if(event.keyCode==13) {window.location=\'http://urlPre\'+this.value; doane(event);}" />',
+    'def_input_jump'        =>'转到<input type="text" class="jump_style" size="2" title="输入页码，按回车快速跳转" value="1" onkeydown="if(event.keyCode==13) {window.location=\'{urlPre}\'+this.value; doane(event);}" />',
     'def_text_first'        =>'首页',//另外，图片可以设置为：'<img src="..." width="16" height="11" />'，下同
     'def_text_pre'          =>'上一页',
     'def_text_next'         =>'下一页',
@@ -61,6 +61,13 @@ class Page
      * @var array
      */
     private $config;
+
+    /**
+     * 链接前缀标签
+     *
+     * @var string
+     */
+    private $tagUrlPre = '{urlPre}';
 
     /**
      * 数字标签
@@ -161,9 +168,16 @@ class Page
     private $layout = '_layout';
 
     /**
-     * 当前页码
+     * 链接前缀
      *
      * @var string
+     */
+    private $urlPre;
+
+    /**
+     * 当前页码
+     *
+     * @var int
      */
     private $currentPage;
 
@@ -209,6 +223,19 @@ class Page
     }
 
     /**
+     * 设置链接前缀
+     *
+     * @param $urlPre
+     *
+     * @return $this
+     */
+    public function setUrlPre($urlPre)
+    {
+        $this->urlPre = $urlPre;
+        return $this;
+    }
+
+    /**
      * 设置AJAX模式’
      * @param bool $isAjax 默认ajax触发的动作。
      *
@@ -249,13 +276,13 @@ class Page
      * 通过列表条目来获取分页栏
      * @param int $currentPage 当前页码
      * @param int $totalItem 条目总数
-     * @param int $listItem 每页列表中的条目容量
+     * @param int $listLimit 每页列表中的条目容量
      * @param int $barLimit 分页栏上显示的页码数量
      * @return string
      */
-    public function getByList($currentPage, $totalItem, $listItem, $barLimit = 10)
+    public function getByList($currentPage, $totalItem, $listLimit, $barLimit = 10)
     {
-        $totalPage = ceil($totalItem / $listItem);
+        $totalPage = ceil($totalItem / $listLimit);
         return $this->getByPage($currentPage, $totalPage, $barLimit);
     }
 
@@ -268,11 +295,14 @@ class Page
      */
     public function getByPage($currentPage, $totalPage, $barLimit = 10)
     {
+        $currentPage == 0 and $currentPage = 1;
+        $totalPage == 0 and $totalPage =1;
         if ($currentPage > $totalPage or $currentPage < 1 or $barLimit < 1) return '';
         $this->currentPage = $currentPage;
         $this->barLimit = $barLimit;
         $this->totalPage = $totalPage;
         $this->_link = $this->config[$this->style . ($this->isAjax ? $this->linkAjax : $this->link)];
+        $this->_link = str_replace($this->tagUrlPre, $this->urlPre, $this->_link);
         $result = '';
         $layout = $this->currentLayout ? $this->currentLayout : $this->config[$this->style . $this->layout];
         $layout = explode('-', $layout);
@@ -324,7 +354,7 @@ class Page
 
     private function get_jump()
     {
-        return $this->config[$this->style . $this->inputJump];
+        return str_replace($this->tagUrlPre, $this->urlPre, $this->config[$this->style . $this->inputJump]);
     }
 
     private function get_list()
@@ -339,11 +369,14 @@ class Page
         $end++;
         $result = '';
         for ($i = $begin; $i < $end; $i++) {
-            if ($i == $this->currentPage)
+            if ($i == $this->currentPage) {
                 $result .= str_replace($this->tagNumber, $this->currentPage, $this->config[$this->style . $this->spanCurrent]);
-            else
+            }
+            else {
                 $result .= str_replace(array($this->tagNumber, $this->tagText), $i, $this->_link);
+            }
         }
+
         return $result;
     }
 }

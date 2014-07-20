@@ -117,7 +117,7 @@ return array(
         'map_file'           => '/data/router.map.php',//路由器到控制器的映射表
         'pattern_option'=>array(
             //路由匹配时的编译标签，简记名（只能用一对花括号括起来）=>正则表达式（只能用一对括号括起来）
-            '{i}'       =>"(\d+)",
+            '{i}'       =>"([0-9]|[1-9]\d+)",
             '{s}'       =>"([^\/]+)",
             '{year}'    =>"([1-2]\d{3})",
             '{month}'   =>"(1[0,1,2]|[1-9])",
@@ -182,11 +182,11 @@ return array(
 
         //分页栏配置：
         'page_style_name'       =>'def',
-        'def_link'              =>'<a href="http://urlPre{number}">{text}</a>',
-        'def_link_ajax'         =>'<a href="javascript:ajaxActionName(\'http://urlPre{number}\')">{text}</a>',
+        'def_link'              =>'<a href="{urlPre}{number}">{text}</a>',
+        'def_link_ajax'         =>'<a href="javascript:ajaxActionName(\'{urlPre}{number}\')">{text}</a>',
         'def_span_current'      =>'<span class="current_style">{number}</span>',
         'def_span_total'        =>'<span class="total_style">共{number}页</span>',
-        'def_input_jump'        =>'转到<input type="text" class="jump_style" size="2" title="输入页码，按回车快速跳转" value="1" onkeydown="if(event.keyCode==13) {window.location=\'http://urlPre\'+this.value; doane(event);}" />',
+        'def_input_jump'        =>'转到<input type="text" class="jump_style" size="2" title="输入页码，按回车快速跳转" value="1" onkeydown="if(event.keyCode==13) {window.location=\'{urlPre}\'+this.value; doane(event);}" />',
         'def_text_first'        =>'首页',//另外，图片可以设置为：'<img src="..." width="16" height="11" />'，下同
         'def_text_pre'          =>'上一页',
         'def_text_next'         =>'下一页',
