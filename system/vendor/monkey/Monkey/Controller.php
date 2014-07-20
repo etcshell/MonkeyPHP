@@ -122,14 +122,15 @@ class Controller
     }
 
     /**
-     * 获取路由匹配中的参数
+     * 获取请求路径中的参数
      * @param string $name
+     * @param string $default
      *
      * @return array
      */
-    public function getRouteParameter($name = null)
+    public function getRouteParameter($name, $default = null)
     {
-        return $this->app->router()->getParameter($name);
+        return $this->app->router()->getParameter($name, $default);
     }
 
     /**

@@ -170,20 +170,28 @@ class Router
     /**
      * 获取请求路径中的参数
      * @param string $name
+     * @param string $default
      *
-     * @return array
+     * @return string|null
      */
-    public function getParameter($name = null)
+    public function getParameter($name, $default = null)
     {
-        if (is_null($name)) {
-            return $this->params;
-        }
-        elseif (is_string($name) and isset($this->params[$name])){
+        if (is_string($name) and isset($this->params[$name])){
             return $this->params[$name];
         }
         else {
-            return null;
+            return $default;
         }
+    }
+
+    /**
+     * 获取请求路径中的所有参数
+     *
+     * @return array|null
+     */
+    public function getParameterAll()
+    {
+        return $this->params;
     }
 
     /**
@@ -233,7 +241,7 @@ class Router
     }
 
     /**
-     * 组装相对网址链接
+     * 组装绝对网址链接
      *
      * @param string $pattern 路径模式  get/test/abc-{zh|en}/blog/{year}-([1-9]\d*):language:year:id
      * 其中请求方法get是可选的 如 /test/abc-{zh|en}/blog/{year}-([1-9]\d*):language:year:id
