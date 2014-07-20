@@ -174,10 +174,10 @@ class Select
      * field('f1', 'f2', 'f3')
      *
      * 添加 主表中的 'f1' 字段，并且设置为别名 'aliasF1'：
-     * field(array('aliasF1'=>'f1'))
+     * field(array('f1'=>'aliasF1'))
      *
      * 添加 主表中的 3 个字段，并且将字段 'f2' 的别名设置为 'aliasF2'
-     * field(array('f1', 'aliasF2'=>'aF2', 'f3')) //即，第二个参数中，可以用字符串键名来设置别名
+     * field(array('f1', 'aF2'=>'aliasF2', 'f3')) //即，第二个参数中，可以用字符串键名来设置别名
      *
      */
     public function fields($fields = array())
@@ -186,7 +186,25 @@ class Select
             $fields = func_get_args();
         }
 
-        return $this->addFields($this->mainTableAlias, $fields);
+        return $this->_addFields($this->mainTableAlias, $fields);
+    }
+
+    /**
+     * 添加一个字段到结果集中
+     *
+     * @param string $table_alias 表名或表别名
+     * @param string $field 字段名
+     * @param null $alias 设置字段的别名
+     *
+     * @return $this
+     */
+    public function addField($table_alias, $field, $alias = NULL)
+    {
+        //修复表别名
+        $table_alias = $this->checkTableAlias($table_alias);
+        $this->_addField($table_alias, $field, $alias);
+
+        return $this;
     }
 
     /**
@@ -205,28 +223,19 @@ class Select
      * field('a', 'aF1' )
      *
      * 添加 a 表中的 'aF1' 字段，并且设置为别名 'aliasF1'：
-     * field('a', array('aliasF1'=>'aF1'))
+     * field('a', array('f1'=>'aliasF1'))
      *
      * 添加 a 表中的 3 个字段：
      * field('a', array('aF1', 'aF2', 'aF3'))
      *
      * 添加 a 表中的 3 个字段，并且将字段 'aF2' 的别名设置为 'aliasF2'
-     * field('a', array('aF1', 'aliasF2'=>'aF2', 'aF3')) //即，第二个参数中，可以用字符串键名来设置别名
+     * field('a', array('aF1', 'aF2'=>'aliasF2', 'aF3')) //即，第二个参数中，可以用字符串键名来设置别名
      */
     public function addFields($table_alias, $fields = array())
     {
         //修复表别名
         $table_alias = $this->checkTableAlias($table_alias);
-
-        if (empty($fields)) {
-            $this->tables[$table_alias]['all_fields'] = TRUE;
-            return $this;
-        }
-        is_string($fields) and $fields = array($fields);
-
-        foreach ($fields as $key => $field) {
-            $this->_addField($table_alias, $field, (is_numeric($key) ? null : $key));
-        }
+        $this->_addFields($table_alias, $fields);
 
         return $this;
     }
@@ -251,15 +260,6 @@ class Select
         return strpos($test,':') ? $test : '{:' . $test . ':}';
     }
 
-    /**
-     * 添加一个字段到结果集中
-     *
-     * @param string $table_alias 表名或表别名
-     * @param string $field 字段名
-     * @param null $alias 设置字段的别名
-     *
-     * @return $this
-     */
     protected function _addField($table_alias, $field, $alias = NULL)
     {
         empty($alias) and $alias = $field;
@@ -278,10 +278,27 @@ class Select
             'table' => $table_alias,
             'alias' => $alias,
         );
+    }
+
+    protected function _addFields($table_alias, $fields = array())
+    {
+        if (empty($fields)) {
+            $this->tables[$table_alias]['all_fields'] = TRUE;
+            return $this;
+        }
+        is_string($fields) and $fields = array($fields);
+
+        foreach ($fields as $key => $field) {
+            if (is_numeric($key)) {
+                $this->_addField($table_alias, $field);
+            }
+            else {
+                $this->_addField($table_alias, $key, $field);
+            }
+        }
 
         return $this;
     }
-
     /**
      * 添加一个表达式到结果集中
      *
