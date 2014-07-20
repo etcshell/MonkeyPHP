@@ -84,16 +84,16 @@ class Request
         //当你确定你的 .htaccess 文件有这句时 RewriteRule ^(.*)$ index.php?/$1&%{QUERY_STRING} [L]
         //可以删除下面这个代码块
         //begin
-        if (empty($_GET)) {
-            $get = strstr($this->getUrl(), '?');
-            if (!empty($get)) {
-                $get = explode('&', substr($get,1));
-                foreach ($get as $v){
-                    $v = explode('=', $v);
-                    $this->parameters[trim($v[0])] = trim($v[1]);
-                }
-            }
-        }
+//        if (empty($_GET)) {
+//            $get = strstr($this->getUrl(), '?');
+//            if (!empty($get)) {
+//                $get = explode('&', substr($get,1));
+//                foreach ($get as $v){
+//                    $v = explode('=', $v);
+//                    $this->parameters[trim($v[0])] = trim($v[1]);
+//                }
+//            }
+//        }
         //end
     }
 
