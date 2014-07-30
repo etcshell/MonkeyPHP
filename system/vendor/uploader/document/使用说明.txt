@@ -1,0 +1,218 @@
+qqFileUploader
+
+[重要提示]
+与原版不尽相同，主要是增加了“删除”已上传文件，真正限定单文件上传，不限定时仍然可以上传多文件。
+
+======================================
+
+授权
+这个插件是开源GNU GPL和GNU LGPL 2或更高。如果这些牌照不适合你，安德鲁（在）valums.com“邮寄我。
+请捐赠，如果你愿意支持文件上传插件的进一步发展。
+
+已知问题
+在Opera下按钮功能失效。
+
+入门
+fileuploader.js包含两个类，是为了直接使用。如果你需要一个完整的上传部件（演示）快速下降到当前的设计，使用qq.FileUploader。
+如果你想定制上载，通过使用不同的文件列表或更改的行为或功能使用qq.FileUploaderBasic。
+它们之间的区别是：qq.FileUploader提供文件列表展示、拖动上传；qq.FileUploaderBasic只创建按钮和处理验证，但是很容易扩展的哦，不能小看它。
+qq.FileUploader延伸qq.FileUploaderBasic，使所有的选项中存在的基本上传完整的部件也存在。
+qq.FileUploader - 设置全载部件
+首先在页面包含 fileuploader.js 和 fileuploader.css。 Create container element.
+其次在页面上建立一个用于显示上传按钮（位置）的元素，例如：
+<div id="file-uploader">
+    <noscript>
+        <p>Please enable JavaScript to use file uploader.</p>
+        <!-- or put a simple form for upload here -->
+    </noscript>
+</div>
+第三，在document载入完成后初始化时，用js脚本包装这个元素：
+var uploader = new qq.FileUploader({
+    // pass the dom node (ex. $(selector)[0] for jQuery users)
+    element: document.getElementById('file-uploader'),
+    // path to server-side upload script
+    action: '/receiverUploader（接收上传文件的网址，不支持跨域上传！）'
+});
+注意，启动这段包装代码的方法很多，如window.onload = createUploader;但是如果你用了jquery，这句会失效，这是就要用jquery的方法启动
+
+进阶用法：
+1、发送到服务端时可以附加发送参数json格式：
+params: {},
+2、指定上传文件类型['jpg', 'jpeg', 'png', 'gif'] or []：
+allowedExtensions: [],
+3、设置上传大小限制（会发送到服务端判断）：
+sizeLimit: 0, // max size
+minSizeLimit: 0, // min size
+4、是否在浏览器的控制台显示调试信息（这个碉堡了去！）
+debug: false,
+5、预设事件（如果事件返回False将终止上传）：
+onSubmit: function(id, fileName){},
+onProgress: function(id, fileName, loaded, total){},
+onComplete: function(id, fileName, responseJSON){},
+onCancel: function(id, fileName){},
+6、使用服务端返回的消息：
+成功时为：{success:true}
+失败时为：{error:'错误原因'}
+也可以自定义：
+messages: {
+    // error messages, see qq.FileUploaderBasic for content
+},
+还可以自定义如何显示消息：
+showMessage: function(message){ alert(message); }
+7、运行时可用方法：
+setParams(newParams)
+例如动态改变上面的showMessage事件可以定义更为友好的提示信息，尤其是浏览者不是专业技术员时更有用。
+又如使用uploader.setParams({anotherParam: 'value'});改变参数的效果相当于如下初始化（注意其中params部分）：
+var uploader = new qq.FileUploader({
+    element: document.getElementById('file-uploader'),
+    action: '/server-side.upload',
+    // additional data to send, name-value pairs
+    params: {
+        anotherParam: 'value'
+    }
+});
+8、调试方法：
+如果上传文件的行为没有如预期进行，请先查看文档，再使用页面调试工具（如firebug）查看请求与回复信息。
+当服务器回复{success:true}时表示文件上传成功，当然这个还要看你的服务端脚本如何写了。
+
+感谢大家的贡献，通过发送错误报告或捐赠。
+
+
+File Uploader的前身是Ajax Upload。按照官方的说法，升级到FileUploader主要是添加了一些新的特性，修正了一些比较严重的错误。但在我这个使用者看来，二者最大的不同在于：File Uploader不在基于jQuery。另外，File Uploader也更加严格，例如返回值只能是JSON格式，等。Ajax Upload中一些需要写到后台服务器上的代码（如上传文件的格式筛选），或者对前端DOM的操作（如onSubmit、onComplete事件中自定义的代码等），都直接集成到了File Uploader的JS脚本中。总的说来，File Uploader是一款功能强大的JS文件上传插件，支持显示上传进度、文件拖拽到浏览器中上传、多文件上传、页面无刷新、无序多余插件、跨浏览器、跨后台语言等等特性。
+
+官方网站如下：
+
+http://valums.com/ajax-upload/
+
+
+
+下载的文件目录结构如下图所示：
+
+
+其中可供使用的是client目录和server目录下的若干文件：
+client目录
+
+fileuploader.js：主要JS脚本文件，前端的所有功能都在该脚本中实现。必需。使用时需要通过<script>标签导入到HTML文件中；
+
+fileuploader.css：提供JS脚本中所需的CSS样式，主要包括按钮的样式、进度显示的样式以及上传结果的样式。必需。需要通过<link>标签导入HTML文件中；
+
+loading.gif：进度显示所需的动态图片文件。必需。在fileuploader.css文件中被调用。
+server目录
+
+该目录提供的是服务器端代码的示例程序，包括：
+
+基于Servlet实现的Java代码：OctetStreamReader.java
+
+基于PHP的实现：php.php
+
+基于Perl的实现：perl.cgi
+
+三者择其一即可。
+
+
+
+下面这段代码是前端对File Uploader最简单的调用：
+
+[html] view plaincopy
+
+    <!DOCTYPE html PUBLIC "-//W3C//DTDXHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    <meta http-equiv="Content-Type"content="text/html; charset=utf-8" />
+    <title>file uploader</title>
+    <script type="text/javascript"src="fileuploader.js"></script>
+    <link rel="stylesheet"type="text/css" href="fileuploader.css"/>
+    <script type="text/javascript">
+    window.onload = function() {
+        new qq.FileUploader({
+                element:document.getElementById("uploader"),
+                action:"http://localhost/fileUpload/save.php",
+            });
+    }
+    </script>
+    </head>
+
+    <body>
+    <div id="uploader"></div>
+    </body>
+    </html>
+
+前端的一般的步骤是：
+
+1.      导入fileuploader.js、fileuploader.css脚本；
+
+2.      实例化qq.FileUploader对象
+
+
+
+qq.FileUploader的参数数组中包含如下属性：
+
+element：加载FileUploader插件的DOM元素，通过DOM操作获取，通常是<div>，也可以是任何块级元素标签，如<span>、<p>等，必需；
+
+action：服务器端接受并保存文件的程序路径，与<form>标签中的action属性类似，必需；
+
+params：需要发送给服务器端的额外数据，key-value格式的数组，通过POST方法发送，格式如下：
+
+params:  {
+
+         param1: “value1”,
+
+         param2: “value2”
+
+}
+
+allowedExtensions：允许上传的文件的后缀名数组，格式如下：
+
+allowedExtensions:  [‘jpg’,  ‘gif’,  ‘bmp’,  ‘png’]
+
+sizeLimit：上传文件大小的上限，单位为byte的数值（浏览器不一定支持本设置）；
+
+minSizeLimit：上传文件大小的下限，单位为byte的数值（浏览器同样不一定支持）；
+
+debug：是否使用浏览器的控制台打印File Uploader的调试信息，默认为false；
+
+
+
+另外，参数数组中还包含了4个事件处理函数可供实现（非必需）：
+
+文件提交：onSubmit:  function(id,  fileName)  {}
+
+正在上传：onProgress:  function(id,  fileName,  loaded,  total)  {}
+
+上传完成：onComplete:  function(id,  fileName,  responseJSON)  {}
+
+取消上传：onCancel:  function(id,  fileName)  {}
+
+其中的参数：
+
+id，表示是第几个上传的文件，从0开始计数；
+
+fileName，表示上传的文件名称；
+
+loaded，表示已经上传了的数据大小；
+
+total，表示总共的文件大小；
+
+responseJSON，表示返回的JSON数据。
+
+
+
+参数数组中还包含了消息处理函数以及params的其它设置方法，不太常用，详情页参见官方文档。
+
+
+
+后台服务器端如果想省事，可以直接使用server目录下的相应代码，或按照官方给的示例改写代码。
+
+
+
+需要特别说明的是：
+
+1.      加载FileUploader插件的DOM元素element，其样式在脚本中已经固定了，就算是在给element设置了新的样式也会被覆盖掉。如果想修改element的样式，需要在fileuploader.js的487行到491行（template处）以及对应的fileuploader.css样式中修改。
+
+2.      同理，如果想修改进度显示的样式，需要在fileuploader.js的494行到500行（fileTemplate处）以及对应的fileuploader.css样式中修改。
+
+3.      如果出现“increase post_max_size and upload_max_filesize to 10M”错误，需要在php.ini文件中把post_max_size和upload_max_filesize两项的值改到10M以上，然后重启Apache。
+
+4.      FileUploader上传的文件数据信息，Java通过HttpServletRequest对象获取，并能直接从中抽取数据流，不用管索引值；而PHP则通过$_FILES数组获取，默认的索引值为“qqfile”，该索引值在fileuploader.js文件的964行与1197行指定，也可以在这些地方修改（虽然没有必要）。
+
+5.      服务器端代码中设置文件保存路径的位置：PHP：php.php文件的第160行；Java：OctetStreamReader.java文件的第102行。

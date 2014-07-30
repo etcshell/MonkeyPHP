@@ -442,6 +442,36 @@ function file_basename($filename)
     return substr($pathinfo['basename'], 0, 0 - $extLen);
 }
 
+
+/**
+ * 获取文件的真实类型
+ * @param string $filename 文件名
+ * @return string  失败为''（空字符串）
+ */
+function file_real_type($filename){
+    static $typeMap=array(
+        '-48-49'=>'doc|xls',
+        '7790'=>'exe',
+        '7784'=>'midi',
+        '8075'=>'zip',
+        '8297'=>'rar',
+        '7173'=>'gif',
+        '255216'=>'jpg',
+        '6677'=>'bmp',
+        '13780'=>'png',
+        '104116'=>'txt',
+    );
+    if(!file_exists($filename)) return '';
+    $file=  fopen($filename, 'rb');
+    $bin = fread($file,2);
+    fclose($file);
+    $strInfo = @unpack("C2chars", $bin);
+    $code = $strInfo['chars1'].''.$strInfo['chars2'];
+    $code == '-1-40' and $code='255216';
+    $code == '-11980' and $code='13780';
+    return (string)$typeMap[$code];
+}
+
 /**
  * 字节数转换成MB格式等
  *
@@ -523,6 +553,23 @@ function file_to_url($real_path)
     }
 
     return '/' . substr($real_path, $wwwLen);
+}
+
+/**
+ * 生成服务端可访问的路径（后端绝对路径）
+ *
+ * @param string $url 本站文件链接地址
+ *
+ * @return string 实际路径
+ */
+function url_to_file($url)
+{
+    if ($url[0] = '/') {
+        return $_SERVER['DOCUMENT_ROOT'] . $url;
+    }
+    else {
+        return $_SERVER['DOCUMENT_ROOT'] . '/' . $url;
+    }
 }
 
 /**

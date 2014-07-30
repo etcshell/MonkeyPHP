@@ -206,14 +206,14 @@ class Upload
         return $this->status;
     }
 
-    private function upload($i, &$file, &$o)
+    private function upload($i, &$f, &$o)
     {
         $this->_upload(
             $i,
-            is_array($file['name']) ? $file['name'][$i] : $file['name'],
-            is_array($file['size']) ? $file['size'][$i] : $file['size'],
-            is_array($file['tmp_name']) ? $file['tmp_name'][$i] : $file['tmp_name'],
-            is_array($file['error']) ? $file['error'][$i] : $file['error'],
+            is_array($f['name']) ? $f['name'][$i] : $f['name'],
+            is_array($f['size']) ? $f['size'][$i] : $f['size'],
+            is_array($f['tmp_name']) ? $f['tmp_name'][$i] : $f['tmp_name'],
+            is_array($f['error']) ? $f['error'][$i] : $f['error'],
             is_array($o['saveDir']) ? $o['saveDir'][$i] : $o['saveDir'],
             is_array($o['saveName']) ? $o['saveName'][$i] : $o['saveName'],
             is_array($o['filterType']) ? $o['filterType'][$i] : $o['filterType'],
@@ -352,7 +352,7 @@ class Upload
         if(!file_exists($file_name)) return '';
         $file=  fopen($file_name, 'rb');
         $bin = fread($file,2);
-        $strInfo = @unpack("c2chars", $bin);
+        $strInfo = @unpack("C2chars", $bin);
         $typeCode = $strInfo['chars1'].''.$strInfo['chars2'];
         if($typeCode == '-1-40' ) $typeCode='255216';
         if($typeCode == '-11980' ) $typeCode='13780';
