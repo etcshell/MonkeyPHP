@@ -373,8 +373,7 @@ qq.FileUploaderBasic.prototype = {
     },
     _onInputChange: function(input){
 
-
-        if (this._handler instanceof qq.UploadHandlerXhr){                
+        if (this._handler instanceof qq.UploadHandlerXhr){
             this._uploadFileList(input.files);                   
         } else {             
             if (this._validateFile(input)){                
@@ -502,7 +501,6 @@ qq.FileUploader = function(o){
                 '<span class="qq-upload-spinner"></span>' +
                 '<span class="qq-upload-size"></span>' +
                 '<a class="qq-upload-cancel" href="#">取消上传</a>' +
-                '<a class="qq-upload-delete" href="#">删除</a>' +
                 '<span class="qq-upload-failed-text">上传失败</span>' +
             '</li>',        
         
@@ -636,6 +634,8 @@ qq.extend(qq.FileUploader.prototype, {
         
         if (result.success){
             qq.addClass(item, this._classes.success);
+            var deleteE = qq.toElement('<a class="qq-upload-delete" href="#">删除</a>');
+            item.appendChild(deleteE);
             this._bindDeleteEvent(id,fileName);
         } else {
             qq.addClass(item, this._classes.fail);
