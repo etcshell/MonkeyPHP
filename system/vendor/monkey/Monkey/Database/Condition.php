@@ -179,7 +179,7 @@ class Condition implements Countable {
      */
     protected function compile($queryIdentifier) {
         $qi = $queryIdentifier;
-        $condition_fragments = array();
+        $conditionFragments = array();
         $arguments = array();
         $conditions = $this->conditions;
         $conjunction = $conditions['#conjunction'];
@@ -188,13 +188,13 @@ class Condition implements Countable {
         foreach ($conditions as $condition) {
 
             if (empty($condition['operator'])) {
-                $condition_fragments[] = ' (' . $condition['field'] . ') ';
+                $conditionFragments[] = ' (' . $condition['field'] . ') ';
                 $arguments += $condition['value'];
 
             }
             else {
                 if ($condition['field'] instanceof Condition) {
-                    $condition_fragments[] = '(' . $condition['field']->getString($qi) . ')';
+                    $conditionFragments[] = '(' . $condition['field']->getString($qi) . ')';
                     $arguments += $condition['field']->getArguments($qi);
 
                 }
@@ -220,13 +220,13 @@ class Condition implements Countable {
                         }
                     }
 
-                    $condition_fragments[] = ' (' . $condition['field'] . ' ' . $operator['operator'] . ' ' . $operator['prefix'] . implode($operator['delimiter'], $placeholders) . $operator['postfix'] . ') ';
+                    $conditionFragments[] = ' (' . $condition['field'] . ' ' . $operator['operator'] . ' ' . $operator['prefix'] . implode($operator['delimiter'], $placeholders) . $operator['postfix'] . ') ';
                 }
             }
         }
 
         $this->changed = FALSE;
-        $this->string = implode($conjunction, $condition_fragments);
+        $this->string = implode($conjunction, $conditionFragments);
         $this->arguments = $arguments;
     }
 

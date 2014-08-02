@@ -93,14 +93,14 @@ class Tag {
     }
 
     public static function arrayKeyEcho($matches) {
-        $var_name = $matches[1];
+        $varName = $matches[1];
         $keys = $matches[2];
 
         while ($key = self::getKey($keys)) {
-            $var_name .= $key;
+            $varName .= $key;
         }
 
-        return '<?php echo ' . $var_name . '; ?>';
+        return '<?php echo ' . $varName . '; ?>';
     }
 
     public static function arrayKey($matches) {
@@ -109,13 +109,13 @@ class Tag {
     }
 
     public static function arrayKey_($matches) {
-        $var_name = $matches[1];
+        $varName = $matches[1];
         $keys = $matches[2];
 
         while ($key = self::getKey($keys)) {
-            $var_name .= $key;
+            $varName .= $key;
         }
-        return $var_name;
+        return $varName;
     }
 
     ////////////////////////////////////
@@ -149,16 +149,16 @@ class Tag {
         }
     }
 
-    private static function regParam($param_str = '') {
-        $param_str = trim($param_str);
+    private static function regParam($paramStr = '') {
+        $paramStr = trim($paramStr);
 
-        if (empty($param_str)) {
+        if (empty($paramStr)) {
             return 'null';
         }
 
         $params = '';
 
-        while ($p = self::getOneParam($param_str)) {
+        while ($p = self::getOneParam($paramStr)) {
             $params .= '\'' . $p['name'] . '\'=>' . $p['value'] . ', ';
         }
 

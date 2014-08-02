@@ -215,7 +215,7 @@ class Insert {
         }
 
         $query['sql'] = 'INSERT INTO {:' . $this->table . ':} (' . implode(', ', $fields) . ') VALUES ';
-        $placeholder_total = $placeholder = 0;
+        $placeholderTotal = $placeholder = 0;
         $rowsPlaceholder = array();
 
         foreach ($this->insertRow as $rowValue) {
@@ -223,7 +223,7 @@ class Insert {
             $rowArgument = array();
 
             foreach ($rowValue as $value) {
-                $placeholder = ':mk_insert_placeholder_' . $placeholder_total++;
+                $placeholder = ':mk_insert_placeholder_' . $placeholderTotal++;
                 $placeholders[] = $placeholder;
                 $rowArgument[$placeholder] = $value;
             }

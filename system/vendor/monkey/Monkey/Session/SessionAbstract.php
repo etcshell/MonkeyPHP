@@ -138,7 +138,7 @@ abstract class SessionAbstract {
      *
      * @return string
      */
-    protected function _storageKey($sessionId) {
+    protected function storageKey($sessionId) {
         return $this->prefix . $sessionId;
     }
 }

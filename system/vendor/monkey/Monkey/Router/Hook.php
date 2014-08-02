@@ -113,16 +113,16 @@ class Hook {
     }
 
     private function matchHook($requestMethod, $requestPath, $extension) {
-        $_ = '';
+        $temp = '';
         foreach ($this->hooks[$requestMethod] as $subPath => $handle) {
 
             if (strpos($requestPath, $subPath) !== 0) {
                 continue;
             }
 
-            $_ = substr($requestPath, strlen($subPath));
+            $temp = substr($requestPath, strlen($subPath));
 
-            if (empty($_) or $_[0] == '/' or ($_[0] == '.' and $extension[$_])) {
+            if (empty($temp) or $temp[0] == '/' or ($temp[0] == '.' and $extension[$temp])) {
                 $this->select[$subPath] = $handle;
             }
         }

@@ -188,16 +188,16 @@ class Select {
     /**
      * 添加一个字段到结果集中
      *
-     * @param string $table_alias 表名或表别名
+     * @param string $tableAlias 表名或表别名
      * @param string $field 字段名
      * @param null $alias 设置字段的别名
      *
      * @return $this
      */
-    public function addField($table_alias, $field, $alias = NULL) {
+    public function addField($tableAlias, $field, $alias = NULL) {
         //修复表别名
-        $table_alias = $this->checkTableAlias($table_alias);
-        $this->_addField($table_alias, $field, $alias);
+        $tableAlias = $this->checkTableAlias($tableAlias);
+        $this->_addField($tableAlias, $field, $alias);
 
         return $this;
     }
@@ -205,7 +205,7 @@ class Select {
     /**
      * 添加结果集中的字段
      *
-     * @param string $table_alias 表名或表别名
+     * @param string $tableAlias 表名或表别名
      * @param string|array $fields 默认为该表的所有字段 array('f1','f2','f3')  或 'f3'
      *
      * @return $this
@@ -226,10 +226,10 @@ class Select {
      * 添加 a 表中的 3 个字段，并且将字段 'aF2' 的别名设置为 'aliasF2'
      * field('a', array('aF1', 'aF2'=>'aliasF2', 'aF3')) //即，第二个参数中，可以用字符串键名来设置别名
      */
-    public function addFields($table_alias, $fields = array()) {
+    public function addFields($tableAlias, $fields = array()) {
         //修复表别名
-        $table_alias = $this->checkTableAlias($table_alias);
-        $this->_addFields($table_alias, $fields);
+        $tableAlias = $this->checkTableAlias($tableAlias);
+        $this->_addFields($tableAlias, $fields);
 
         return $this;
     }
@@ -253,34 +253,34 @@ class Select {
         return strpos($test, ':') ? $test : '{:' . $test . ':}';
     }
 
-    protected function _addField($table_alias, $field, $alias = NULL) {
+    protected function _addField($tableAlias, $field, $alias = NULL) {
         empty($alias) and $alias = $field;
-        !empty($this->fields[$alias]) and $alias = $table_alias . '_' . $field;
-        $alias_candidate = $alias;
+        !empty($this->fields[$alias]) and $alias = $tableAlias . '_' . $field;
+        $aliasCandidate = $alias;
         $count = 2;
 
-        while (!empty($this->fields[$alias_candidate])) {
-            $alias_candidate = $alias . '_' . $count++;
+        while (!empty($this->fields[$aliasCandidate])) {
+            $aliasCandidate = $alias . '_' . $count++;
         }
 
-        $alias = $alias_candidate;
+        $alias = $aliasCandidate;
 
-        $this->fields[$alias] = array('field' => $field, 'table' => $table_alias, 'alias' => $alias,);
+        $this->fields[$alias] = array('field' => $field, 'table' => $tableAlias, 'alias' => $alias,);
     }
 
-    protected function _addFields($table_alias, $fields = array()) {
+    protected function _addFields($tableAlias, $fields = array()) {
         if (empty($fields)) {
-            $this->tables[$table_alias]['all_fields'] = TRUE;
+            $this->tables[$tableAlias]['all_fields'] = TRUE;
             return $this;
         }
         is_string($fields) and $fields = array($fields);
 
         foreach ($fields as $key => $field) {
             if (is_numeric($key)) {
-                $this->_addField($table_alias, $field);
+                $this->_addField($tableAlias, $field);
             }
             else {
-                $this->_addField($table_alias, $key, $field);
+                $this->_addField($tableAlias, $key, $field);
             }
         }
 
@@ -304,14 +304,14 @@ class Select {
             $alias = 'expression';
         }
 
-        $alias_candidate = $alias;
+        $aliasCandidate = $alias;
         $count = 2;
 
-        while (!empty($this->expressions[$alias_candidate])) {
-            $alias_candidate = $alias . '_' . $count++;
+        while (!empty($this->expressions[$aliasCandidate])) {
+            $aliasCandidate = $alias . '_' . $count++;
         }
 
-        $alias = $alias_candidate;
+        $alias = $aliasCandidate;
         $this->expressions[$alias] = array('expression' => $expression, 'alias' => $alias, 'arguments' => $arguments,);
 
         return $this;
@@ -333,14 +333,14 @@ class Select {
             $alias = $table instanceof Select ? 'subquery' : '{:' . $table . ':}';
         }
 
-        $alias_candidate = $alias;
+        $aliasCandidate = $alias;
         $count = 2;
 
-        while (!empty($this->tables[$alias_candidate])) {
-            $alias_candidate = $alias . '_' . $count++;
+        while (!empty($this->tables[$aliasCandidate])) {
+            $aliasCandidate = $alias . '_' . $count++;
         }
 
-        $alias = $alias_candidate;
+        $alias = $aliasCandidate;
 
         if (is_string($condition)) {
             $condition = str_replace('%alias', $alias, $condition);
@@ -711,14 +711,14 @@ class Select {
             !empty($table['join type']) and $query .= $table['join type'] . ' JOIN ';
 
             if (isset($table['table']) and $table['table'] instanceof Select) {
-                $table_string = '(' . $table['table']->getString($qi) . ')';
+                $tableString = '(' . $table['table']->getString($qi) . ')';
 
             }
             else {
-                $table_string = '{:' . $table['table'] . ':}';
+                $tableString = '{:' . $table['table'] . ':}';
             }
 
-            $query .= $table_string . ' as ' . $table['alias'];
+            $query .= $tableString . ' as ' . $table['alias'];
             !empty($table['condition']) and $query .= ' ON ' . $table['condition'];
         }
 
@@ -776,7 +776,7 @@ class Select {
      */
     protected function prepareCountQuery() {
         $count = clone($this);
-        $group_by = $count->getGroupBy();
+        $groupBy = $count->getGroupBy();
         $having = $count->getHavingConditions();
 
         if (!$count->distinct && !isset($having[0])) {
@@ -784,7 +784,7 @@ class Select {
             $fields = & $count->getFields();
 
             foreach (array_keys($fields) as $field) {
-                if (empty($group_by[$field])) {
+                if (empty($groupBy[$field])) {
                     unset($fields[$field]);
                 }
             }
@@ -792,7 +792,7 @@ class Select {
             //去掉所有expressions字段
             $expressions = & $count->getFieldOfExpressions();
             foreach (array_keys($expressions) as $field) {
-                if (empty($group_by[$field])) {
+                if (empty($groupBy[$field])) {
                     unset($expressions[$field]);
                 }
             }
@@ -807,7 +807,7 @@ class Select {
         $orders = & $count->getOrderBy();
         $orders = array();
 
-        if ($count->distinct && !empty($group_by)) {
+        if ($count->distinct && !empty($groupBy)) {
             $count->distinct = FALSE;
         }
 

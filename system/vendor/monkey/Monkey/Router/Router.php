@@ -263,7 +263,7 @@ class Router {
         }
         else {
             if ($config['search_mode'] === 'rewrite' or $config['search_mode'] === 'pathinfo') {
-                $this->path = $_SERVER['REQUEST_URI'] ? $this->_getParams($_SERVER['REQUEST_URI']) : '';
+                $this->path = $_SERVER['REQUEST_URI'] ? $this->getParams($_SERVER['REQUEST_URI']) : '';
 
             }
             else {
@@ -278,7 +278,7 @@ class Router {
         }
     }
 
-    private function _getParams($url) {
+    private function getParams($url) {
         $temp = strstr($url, '?', true);
         $temp !== false and $url = $temp;
         //默认认为REQUEST_URI包含了子目录，那么就要去除网址偏移量
@@ -294,10 +294,10 @@ class Router {
             return $url;
         }
 
-        $_ext = array('.php' => '.php', '.html' => '.html');
+        $extArray = array('.php' => '.php', '.html' => '.html');
         $ext = strtolower(strrchr($url, '.'));
 
-        if (!$ext or !isset($_ext[$ext])) {
+        if (!$ext or !isset($extArray[$ext])) {
             $url .= '.html';
         }
 

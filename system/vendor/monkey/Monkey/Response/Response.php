@@ -240,12 +240,12 @@ class Response {
         }
 
         if (function_exists('fastcgi_finish_request')) {
-            $httpHeaderOnly and $this->ob_end_flush(false);
+            $httpHeaderOnly and $this->obEndFlush(false);
             fastcgi_finish_request();
 
         }
         elseif ('cli' !== PHP_SAPI) {
-            $this->ob_end_flush(!$httpHeaderOnly);
+            $this->obEndFlush(!$httpHeaderOnly);
 
         }
     }
@@ -285,7 +285,7 @@ class Response {
         return true;
     }
 
-    private function ob_end_flush($flush = true) {
+    private function obEndFlush($flush = true) {
         // ob_get_level() never returns 0 on some Windows configurations, so if
         // the level is the same two times in a row, the loop should be stopped.
         $previous = null;
@@ -373,13 +373,13 @@ class Response {
     /**
      * 设置文件下载
      *
-     * @param string $mime_type 文件的mime类型，请查表设置
+     * @param string $mimeType 文件的mime类型，请查表设置
      * @param string $filename 文件名，含扩展名
      * @param string $charset 文件字符集，一般在Response里配置了，这里就不再配置了。
      */
-    public function setDownload($mime_type, $filename, $charset = '') {
+    public function setDownload($mimeType, $filename, $charset = '') {
         ob_clean();
-        $this->setContentType($mime_type);
+        $this->setContentType($mimeType);
         $charset and $charset = '; charset=' . $charset;
         $this->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '" ' . $charset);
         //header('Content-Disposition: attachment; filename="' . $filename . '.xls"; charset=utf-8');

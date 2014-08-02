@@ -112,7 +112,7 @@ class Transaction {
         }
 
         $this->pdoTrans[$this->name] = false;
-        $this->_pop();
+        $this->pop();
     }
 
     /**
@@ -127,7 +127,7 @@ class Transaction {
             throw new \Exception('当前事务 ' . $this->name . ' 已经不存在了.');
         }
 
-        $rolled_back_other_active_savepoint = FALSE;
+        $rolledBackOtherActiveSavepoint = FALSE;
 
         while ($savepoint = array_pop($this->pdoTrans)) {
 
@@ -138,9 +138,9 @@ class Transaction {
                 }
 
                 $this->conn->query('ROLLBACK TO SAVEPOINT ' . $savepoint);
-                $this->_pop();
+                $this->pop();
 
-                if ($rolled_back_other_active_savepoint) {
+                if ($rolledBackOtherActiveSavepoint) {
                     throw new \Exception(' 存在未处理的子事务');
                 }
 
@@ -148,13 +148,13 @@ class Transaction {
 
             }
             else {
-                $rolled_back_other_active_savepoint = TRUE;
+                $rolledBackOtherActiveSavepoint = TRUE;
             }
         }
 
         $this->conn->rollBack();
 
-        if ($rolled_back_other_active_savepoint) {
+        if ($rolledBackOtherActiveSavepoint) {
             throw new \Exception(' 存在未处理的子事务');
         }
 
@@ -182,14 +182,14 @@ class Transaction {
      */
     public function __destruct() {
         if (!$this->rolledBack) {
-            $this->_pop($this->name);
+            $this->pop($this->name);
         }
     }
 
     /**
      * 执行事务query
      */
-    protected function _pop() {
+    protected function pop() {
         foreach (array_reverse($this->pdoTrans) as $name => $active) {
 
             if ($active) {

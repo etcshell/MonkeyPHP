@@ -59,7 +59,7 @@ class Shutdown {
     /**
      * 注册结束后的回调函数
      *
-     * @param string|array $Callback
+     * @param string|array $callback
      *
      * 用法：
      * 1. $shutdown->register( 'myfunction' );
@@ -67,8 +67,8 @@ class Shutdown {
      * 3. $shutdown->register( array('myclass', 'method') );
      * 4. $shutdown->register( array( $myObject, 'method') );
      */
-    public function register($Callback) {
-        $this->callbacks[] = $Callback;
+    public function register($callback) {
+        $this->callbacks[] = $callback;
     }
 
     /**

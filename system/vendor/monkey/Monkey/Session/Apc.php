@@ -68,7 +68,7 @@ class Apc extends SessionAbstract {
      * @return    mixed    返回session中对应的数据
      */
     public function read($sessionId) {
-        $out = apc_fetch($this->_storageKey($sessionId));
+        $out = apc_fetch($this->storageKey($sessionId));
         if ($out === FALSE) {
             return '';
         }
@@ -86,7 +86,7 @@ class Apc extends SessionAbstract {
      * @return boolean
      */
     public function write($sessionId, $data) {
-        return apc_store($this->_storageKey($sessionId), $data, $this->expire);
+        return apc_store($this->storageKey($sessionId), $data, $this->expire);
     }
 
     /**
@@ -97,7 +97,7 @@ class Apc extends SessionAbstract {
      * @return boolean
      */
     public function destroy($sessionId) {
-        return apc_delete($this->_storageKey($sessionId));
+        return apc_delete($this->storageKey($sessionId));
     }
 
     /**

@@ -81,7 +81,7 @@ class Memcache extends SessionAbstract {
      * @return    mixed    返回session中对应的数据
      */
     public function read($sessionId) {
-        $out = $this->handler->get($this->_storageKey($sessionId));
+        $out = $this->handler->get($this->storageKey($sessionId));
 
         if ($out === false || $out == null) {
             return '';
@@ -102,7 +102,7 @@ class Memcache extends SessionAbstract {
      */
     public function write($sessionId, $data) {
         $method = $data ? 'set' : 'replace';
-        return $this->handler->$method($this->_storageKey($sessionId), $data, MEMCACHE_COMPRESSED, $this->expire);
+        return $this->handler->$method($this->storageKey($sessionId), $data, MEMCACHE_COMPRESSED, $this->expire);
     }
 
     /**
@@ -113,7 +113,7 @@ class Memcache extends SessionAbstract {
      * @return boolean
      */
     public function destroy($sessionId) {
-        $this->handler->delete($this->_storageKey($sessionId));
+        $this->handler->delete($this->storageKey($sessionId));
         return;
     }
 

@@ -222,36 +222,36 @@ class Update {
      */
     protected function compile() {
         $fields = $this->fields;
-        $update_fields = array();
-        $update_values = array();
+        $updateFields = array();
+        $updateValues = array();
 
         foreach ($this->expressionFields as $field => $data) {
-            !empty($data['arguments']) and $update_values += $data['arguments'];
+            !empty($data['arguments']) and $updateValues += $data['arguments'];
 
             if ($data['expression'] instanceof Select) {
-                $update_values += $data['expression']->getArguments($this->queryIdentifier);
+                $updateValues += $data['expression']->getArguments($this->queryIdentifier);
                 $data['expression'] = ' (' . $data['expression']->getString($this->queryIdentifier) . ')';
             }
 
-            $update_fields[] = $field . '=' . $data['expression'];
+            $updateFields[] = $field . '=' . $data['expression'];
             unset($fields[$field]);
         }
-        $max_placeholder = $placeholder = 0;
+        $maxPlaceholder = $placeholder = 0;
 
         foreach ($fields as $field => $value) {
-            $placeholder = ':mk_update_placeholder_' . ($max_placeholder++);
-            $update_fields[] = $field . '=' . $placeholder;
-            $update_values[$placeholder] = $value;
+            $placeholder = ':mk_update_placeholder_' . ($maxPlaceholder++);
+            $updateFields[] = $field . '=' . $placeholder;
+            $updateValues[$placeholder] = $value;
         }
 
-        $query = 'UPDATE {:' . $this->table . ':} SET ' . implode(', ', $update_fields);
+        $query = 'UPDATE {:' . $this->table . ':} SET ' . implode(', ', $updateFields);
 
         if (count($this->condition)) {
             $query .= "\nWHERE " . $this->condition->getString($this->queryIdentifier);
-            $update_values = array_merge($update_values, $this->condition->getArguments($this->queryIdentifier));
+            $updateValues = array_merge($updateValues, $this->condition->getArguments($this->queryIdentifier));
         }
 
-        return array('sql' => $query, 'arguments' => $update_values);
+        return array('sql' => $query, 'arguments' => $updateValues);
     }
 
 }

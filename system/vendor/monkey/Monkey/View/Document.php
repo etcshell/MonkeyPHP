@@ -176,11 +176,11 @@ class Document {
      * @param string $action 提交的目的网址
      * @param array $options 属性设置
      * @param string $method 提交的方式，默认为post
-     * @param boolean $enctype_item 是否直接提交数据，如文件上传（TRUE），其它情况为FALSE
+     * @param boolean $enctypeItem 是否直接提交数据，如文件上传（TRUE），其它情况为FALSE
      *
      * @return string
      */
-    public function begin($action, $options = array(), $method = null, $enctype_item = false) {
+    public function begin($action, $options = array(), $method = null, $enctypeItem = false) {
         if (!$action) {
             return false;
         }
@@ -188,7 +188,7 @@ class Document {
         $options['action'] = $action;
         $options['method'] = empty($method) ? 'post' : $method;
 
-        if ($enctype_item === true) {
+        if ($enctypeItem === true) {
             $options['enctype'] = 'multipart/form-data';
         }
 
@@ -228,13 +228,13 @@ class Document {
      * 文本输入框text表单代码
      *
      * @param string $name
-     * @param string $default_value 默认值，这个属性也可以直接在$options设置
+     * @param string $defaultValue 默认值，这个属性也可以直接在$options设置
      * @param array $options
      *
      * @return string
      */
-    public function inputText($name, $default_value = null, $options = array()) {
-        !is_null($default_value) and $options['value'] = $default_value;
+    public function inputText($name, $defaultValue = null, $options = array()) {
+        !is_null($defaultValue) and $options['value'] = $defaultValue;
         return $this->input('text', $name, $options);
     }
 
@@ -312,19 +312,19 @@ class Document {
      * 复选框HTML代码
      *
      * @param string $name
-     * @param array $content_array 二维数组，array( array(label,value,is_checked),array(label,value),...),有is_checked则该项选中
+     * @param array $contentArray 二维数组，array( array(label,value,is_checked),array(label,value),...),有is_checked则该项选中
      * @param array $options 设置统一的属性，如一组同名的复选框
      *
      * @return string
      */
-    public function inputCheckboxArray($name, $content_array, $options = array()) {
-        if (!$content_array || !is_array($content_array)) {
+    public function inputCheckboxArray($name, $contentArray, $options = array()) {
+        if (!$contentArray || !is_array($contentArray)) {
             return false;
         }
 
         $html = '';
 
-        foreach ($content_array as $item) {
+        foreach ($contentArray as $item) {
             $options['value'] = $item[1];
 
             if (isset($item[2])) {
@@ -364,18 +364,18 @@ class Document {
      * 单选框HTML代码
      *
      * @param string $name
-     * @param array $content_array 二维数组，array( array(label,value,is_checked),array(label,value),...),有is_checked则该项选中
+     * @param array $contentArray 二维数组，array( array(label,value,is_checked),array(label,value),...),有is_checked则该项选中
      * @param array $options 设置统一的属性，如一组同名的单选框
      *
      * @return string
      */
-    public function inputRadioArray($name, $content_array, $options = array()) {
-        if (!$content_array || !is_array($content_array)) {
+    public function inputRadioArray($name, $contentArray, $options = array()) {
+        if (!$contentArray || !is_array($contentArray)) {
             return false;
         }
 
         $html = '';
-        foreach ($content_array as $item) {
+        foreach ($contentArray as $item) {
             $options['value'] = $item[1];
 
             if (isset($item[2])) {
@@ -401,16 +401,16 @@ class Document {
      */
     public function textArea($name, $content = null, $options = array()) {
         $name and $options['name'] = $name;
-        $option_str = '';
+        $optionStr = '';
 
         //当$options不为空或类型不为数组时
         if (!empty($options) && is_array($options)) {
             foreach ($options as $name => $value) {
-                $option_str .= ' ' . $name . '="' . $value . '"';
+                $optionStr .= ' ' . $name . '="' . $value . '"';
             }
         }
 
-        $html = '<textarea' . $option_str . '>';
+        $html = '<textarea' . $optionStr . '>';
         return ($content == true) ? $html . $content . '</textarea>' : $html . '</textarea>';
     }
 
@@ -453,25 +453,25 @@ class Document {
      * 下拉框SELECT的HTML代码
      *
      * @param string $name
-     * @param array $content_array 菜单二维数组，array( array(caption,value,is_selected),array(caption,value),...),有is_selected则该项选中
+     * @param array $contentArray 菜单二维数组，array( array(caption,value,is_selected),array(caption,value),...),有is_selected则该项选中
      * @param array $options 整个菜单的属性
      *
      * @return string
      */
-    public function select($name, $content_array, $options = array()) {
+    public function select($name, $contentArray, $options = array()) {
         $name and $options['name'] = $name;
 
-        if (!$content_array || !is_array($content_array)) {
+        if (!$contentArray || !is_array($contentArray)) {
             return false;
         }
 
-        $option_str = '';
+        $optionStr = '';
 
-        foreach ($content_array as $item) {
-            $option_str .= '<option value="' . $item[1] . (isset($item[2]) ? '" selected="selected">' : '">') . $item[0] . '</option>';
+        foreach ($contentArray as $item) {
+            $optionStr .= '<option value="' . $item[1] . (isset($item[2]) ? '" selected="selected">' : '">') . $item[0] . '</option>';
         }
 
-        return $this->tag('select', $options, $option_str);
+        return $this->tag('select', $options, $optionStr);
     }
 
     /**
@@ -480,28 +480,28 @@ class Document {
      * @param string $tag
      * @param array $options
      * @param  string $content
-     * @param boolean $close_tag
+     * @param boolean $closeTag
      *
      * @return string
      */
-    public function tag($tag, $options = array(), $content = null, $close_tag = true) {
-        $option_str = '';
+    public function tag($tag, $options = array(), $content = null, $closeTag = true) {
+        $optionStr = '';
 
         //当$options不为空或类型不为数组时
         if (!empty($options) && is_array($options)) {
             foreach ($options as $name => $value) {
-                $option_str .= ' ' . $name . '="' . $value . '"';
+                $optionStr .= ' ' . $name . '="' . $value . '"';
             }
         }
 
-        $html = '<' . $tag . $option_str;
+        $html = '<' . $tag . $optionStr;
 
         if (!is_null($content)) {
-            return $close_tag ? $html . '>' . $content . '</' . $tag . '>' : $html . '>' . $content;
+            return $closeTag ? $html . '>' . $content . '</' . $tag . '>' : $html . '>' . $content;
 
         }
         else {
-            return $close_tag ? $html . '/>' : $html . '>';
+            return $closeTag ? $html . '/>' : $html . '>';
         }
     }
 

@@ -142,11 +142,11 @@ class Connection extends PDO {
             $this->exec($sql);
         }
 
-        $init_commands = isset($config['init_commands']) ? (array)$config['init_commands'] : array();
+        $initCommands = isset($config['init_commands']) ? (array)$config['init_commands'] : array();
 
-        $init_commands = $init_commands + array('sql_mode' => "SET sql_mode = 'ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'");
+        $initCommands = $initCommands + array('sql_mode' => "SET sql_mode = 'ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'");
 
-        $this->exec(implode('; ', $init_commands));
+        $this->exec(implode('; ', $initCommands));
 
         if (!empty($this->statementClass)) {
             $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array($this->statementClass, array($this)));
@@ -242,13 +242,13 @@ class Connection extends PDO {
      * 独立预处理
      *
      * @param string $sql
-     * @param array $driver_options
+     * @param array $driverOptions
      *
      * @return Statement
      *
      * @throws SqlEmptyException
      */
-    public function prepareQuery($sql, array $driver_options = array()) {
+    public function prepareQuery($sql, array $driverOptions = array()) {
         //效验sql语句
         if (!$sql) {
             $error = array('code' => 1024, 'sql' => '', 'message' => 'sql语句为空，无法执行query操作！', 'connectionName' => $this->name);
@@ -263,7 +263,7 @@ class Connection extends PDO {
         //保存预处理sql
         $this->prepareSQL = $sql;
 
-        return parent::prepare($sql, $driver_options);
+        return parent::prepare($sql, $driverOptions);
     }
 
     /**
@@ -518,15 +518,15 @@ class Connection extends PDO {
         $modified = FALSE;
         //为子层生成占位符
         foreach (array_filter($args, 'is_array') as $key => $data) {
-            $new_keys = array();
+            $newKeys = array();
 
             foreach ($data as $i => $value) {
-                $new_keys[$key . '_' . $i] = $value;
+                $newKeys[$key . '_' . $i] = $value;
             }
 
-            $sql = preg_replace('/' . $key . '\b/', implode(', ', array_keys($new_keys)), $sql);
+            $sql = preg_replace('/' . $key . '\b/', implode(', ', array_keys($newKeys)), $sql);
             unset($args[$key]);
-            $args += $new_keys;
+            $args += $newKeys;
             $modified = TRUE;
         }
 

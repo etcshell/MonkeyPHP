@@ -90,10 +90,10 @@ class ErrorReporting {
 
         }
         else { //显示可公开的错误信息
-            $_errorInfo['title'] = $errorInfo['title'];
-            $_errorInfo['code'] = $errorInfo['code'];
-            $_errorInfo['time'] = $errorInfo['time'];
-            $this->_show($_errorInfo, $this->config['error_tpl_public']);
+            $outErrorInfo['title'] = $errorInfo['title'];
+            $outErrorInfo['code'] = $errorInfo['code'];
+            $outErrorInfo['time'] = $errorInfo['time'];
+            $this->_show($outErrorInfo, $this->config['error_tpl_public']);
         }
 
         if ($exit) {

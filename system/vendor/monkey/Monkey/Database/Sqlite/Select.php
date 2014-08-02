@@ -90,13 +90,13 @@ class Select extends Query\Select {
             isset($table['join type']) and $query .= $table['join type'] . ' JOIN ';
 
             if ($table['table'] instanceof Select) {
-                $table_string = '(' . $table['table']->getString($qi) . ')';
+                $tableString = '(' . $table['table']->getString($qi) . ')';
             }
             else {
-                $table_string = '{:' . $table['table'] . ':}';
+                $tableString = '{:' . $table['table'] . ':}';
             }
 
-            $query .= $table_string . ' AS ' . $table['alias'];
+            $query .= $tableString . ' AS ' . $table['alias'];
             !empty($table['condition']) and $query .= ' ON ' . $table['condition'];
         }
         // WHERE
