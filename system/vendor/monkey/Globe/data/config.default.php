@@ -43,12 +43,12 @@ return array('timezone' => 'PRC', 'response_charset' => 'UTF-8', 'domain' => '',
             'transactions' => true, //数据库（引擎）是否支持事务
         ),),
 
-    'errorReporting' => array('default_provider' => 'default', 'default' => '\Monkey\ErrorReporting\ErrorReporting',), 'errorReporting_default' => array(//错误提示页模板目录，内部必须有4个文件，见框架自带错误提示页模板；
+    'errorReporting' => array('default_provider' => 'default', 'default' => '\Monkey\ErrorReporting\ErrorReporting',), 'errorReporting_default' => array( //错误提示页模板目录，内部必须有4个文件，见框架自带错误提示页模板；
         //留空，即使用MonkeyPHP自带的错误提示页模板
         //如果填写，比如'/ErrorTemplate'表示当前应用目录下的 ErrorTemplate 子目录中
         'errorTemplate' => '',),
 
-    'logger' => array('default_provider' => 'default', 'default' => '\Monkey\Logger\Logger',), 'logger_default' => array(//一般错误日志
+    'logger' => array('default_provider' => 'default', 'default' => '\Monkey\Logger\Logger',), 'logger_default' => array( //一般错误日志
         'error_enable' => true, 'error_dir' => '/logs/error', //表示当前应用目录下的 /logs/error 子目录中
         //sql错误日志
         'sql_enable' => true, 'sql_dir' => '/logs/sql', //表示当前应用目录下的 /logs/sql 子目录中
@@ -56,21 +56,21 @@ return array('timezone' => 'PRC', 'response_charset' => 'UTF-8', 'domain' => '',
 
     'permission' => array('default_provider' => 'default', 'default' => '\Monkey\Permission\Permission',), 'Permission_default' => array(),
 
-    'router' => array('default_provider' => 'default', 'default' => '\Monkey\Router\Router',), 'router_default' => array(//路由存贮配置，相对应用目录。
+    'router' => array('default_provider' => 'default', 'default' => '\Monkey\Router\Router',), 'router_default' => array( //路由存贮配置，相对应用目录。
         'map_file' => '/data/router.map.php', //路由器到控制器的映射表
-        'pattern_option' => array(//路由匹配时的编译标签，简记名（只能用一对花括号括起来）=>正则表达式（只能用一对括号括起来）
+        'pattern_option' => array( //路由匹配时的编译标签，简记名（只能用一对花括号括起来）=>正则表达式（只能用一对括号括起来）
             '{i}' => "([0-9]|[1-9]\d+)", '{s}' => "([^\/]+)", '{year}' => "([1-2]\d{3})", '{month}' => "(1[0,1,2]|[1-9])", '{day}' => "([1-9]|[1,2][0-9]|3[0,1])", '{name}' => "(\w+)", '{zh|en}' => "(zh|en)", '{json}' => "(\.json)",), 'router_class_auto_prefix' => true, //自动将router表中类名加上前缀 \AppName\Controller\
 
         //三个选择：rewrite（需服务器支持）、pathinfo（需服务器支持）、get（传统方式）
         'search_mode' => 'rewrite', //get字段上的显式方法设置，如http://www.xxx.php?r=index
         'search_get' => 'r',),
 
-    'session' => array('default_provider' => 'file', 'file' => '\Monkey\Session\File', 'memcache' => '\Monkey\Session\Memcache', 'apc' => '\Monkey\Session\Apc',), 'session_file' => array(//Session键名前缀，保证每个应用的Session不会碰撞（尤其是使用Memcache作为存储介质时）。
+    'session' => array('default_provider' => 'file', 'file' => '\Monkey\Session\File', 'memcache' => '\Monkey\Session\Memcache', 'apc' => '\Monkey\Session\Apc',), 'session_file' => array( //Session键名前缀，保证每个应用的Session不会碰撞（尤其是使用Memcache作为存储介质时）。
         'prefix' => 'Monkey', 'expire' => 1440, //默认缓存时间
         'dir' => '/sessionCache', //表示当前应用目录下的 '/sessionCache' 子目录中
-        'filename' => 'session', 'filesize' => '15M', 'check' => false,), 'session_memcache' => array(//Session键名前缀，保证每个应用的Session不会碰撞（尤其是使用Memcache作为存储介质时）。
+        'filename' => 'session', 'filesize' => '15M', 'check' => false,), 'session_memcache' => array( //Session键名前缀，保证每个应用的Session不会碰撞（尤其是使用Memcache作为存储介质时）。
         'prefix' => 'Monkey', 'expire' => 1440, //默认缓存时间
-        'host' => 'localhost', 'port' => 11211, 'persistent' => '', 'compressed' => FALSE,), 'session_apc' => array(//Session键名前缀，保证每个应用的Session不会碰撞（尤其是使用Memcache作为存储介质时）。
+        'host' => 'localhost', 'port' => 11211, 'persistent' => '', 'compressed' => FALSE,), 'session_apc' => array( //Session键名前缀，保证每个应用的Session不会碰撞（尤其是使用Memcache作为存储介质时）。
         'prefix' => 'Monkey', 'expire' => 1440, //默认缓存时间
     ),
 

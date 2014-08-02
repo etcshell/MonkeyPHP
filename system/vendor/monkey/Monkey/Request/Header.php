@@ -71,8 +71,9 @@ class Header {
         else {
             $name = strtolower($name);
 
-            if (array_key_exists($name, $this->cacheControls))
+            if (array_key_exists($name, $this->cacheControls)) {
                 return $this->cacheControls[$name];
+            }
             else {
                 return $defaultValue;
             }

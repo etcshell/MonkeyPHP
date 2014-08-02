@@ -26,8 +26,9 @@ class Verification {
             if (!is_array($rule)) {
                 return FALSE;
             }
-            if (count($rule) < 3)
+            if (count($rule) < 3) {
                 return FALSE;
+            }
             $method = array_shift($rule);
             $error_msg = array_pop($rule);
             if (!call_user_func_array(array($this, $method), $rule)) {
@@ -57,10 +58,12 @@ class Verification {
      * @return bool
      */
     public function inLength($str, $min = -1, $max = null) {
-        if ($min >= -1 && strlen($str) < $min)
+        if ($min >= -1 && strlen($str) < $min) {
             return false;
-        if (!is_null($max) && strlen($str) > $max)
+        }
+        if (!is_null($max) && strlen($str) > $max) {
             return false;
+        }
         return true;
     }
 
@@ -80,8 +83,9 @@ class Verification {
      * @return bool
      */
     public function isEmpty($str) {
-        if (empty($str) || trim($str) == '')
+        if (empty($str) || trim($str) == '') {
             return TRUE;
+        }
         return FALSE;
     }
 
@@ -217,8 +221,9 @@ class Verification {
      * @return boolean
      */
     public function isUserName($username) {
-        if (!$username)
+        if (!$username) {
             return false;
+        }
         return preg_match("/^[_a-zA-Z0-9]+$/", $username) //欧美语系 or preg_match("/^[\x{4e00}-\x{9fa5}_a-zA-Z0-9]+$/u", $username) //汉字 or preg_match("/^[\x{2e80}-\x{9fff}_a-zA-Z0-9]+$/u", $username); //亚洲语系
     }
 }

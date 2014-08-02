@@ -26,7 +26,7 @@
 
  */
 /******** 匹配路径到路由器的映射表——简称路由匹配表（示例） ********/
-return array(///////////////////////////////////////////
+return array( ///////////////////////////////////////////
     //静态匹配：
     'static' => array('get/' => 'index', //匹配为/，如 http://www.google.cn/  或 http://www.google.cn/index.php
         'get/blog' => 'blog', //匹配为/blog，如 http://www.google.cn/blog
@@ -37,11 +37,11 @@ return array(///////////////////////////////////////////
     ///////////////////////////////////////////
     //动态匹配：
     //'get|post|put|delete|head'的一种，数字为匹配被/分割后的节数
-    'get-1' => array(//原形为：get/{zh|en}:language，下面是编译后的：//匹配如 http://www.google.cn/zh
-        array('prefix' => '/', 'pattern' => '(zh|en)', 'params' => 'language', 'router' => 'index',),), 'get-2' => array(//原形为：get/blog/{i}:id，下面是编译后的：//匹配如 http://www.google.cn/blog/118
+    'get-1' => array( //原形为：get/{zh|en}:language，下面是编译后的：//匹配如 http://www.google.cn/zh
+        array('prefix' => '/', 'pattern' => '(zh|en)', 'params' => 'language', 'router' => 'index',),), 'get-2' => array( //原形为：get/blog/{i}:id，下面是编译后的：//匹配如 http://www.google.cn/blog/118
         array('prefix' => '/blog/', 'pattern' => '([0-9]\d*)', 'params' => 'id', 'router' => 'blogRead',),),
 
-    'get-4' => array(//匹配如 http://www.google.cn/article/2014/04/hello-world ， route为articleGet， 参数名为year、month、title
+    'get-4' => array( //匹配如 http://www.google.cn/article/2014/04/hello-world ， route为articleGet， 参数名为year、month、title
         //原形为：get/article/{year}/{month}/{s}:year:month:title，下面是编译后的：
         array('prefix' => '/article/', 'pattern' => '([1-9]\d{3})/(1[0,1,2]|[1-9])/([^\/]+)', 'params' => 'year:month:title', 'router' => 'articleGet',),),
 

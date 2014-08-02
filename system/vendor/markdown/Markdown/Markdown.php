@@ -167,7 +167,7 @@ class Markdown implements MarkdownInterface {
         return $text . "\n";
     }
 
-    protected $document_gamut = array(# Strip link definitions, store in hashes.
+    protected $document_gamut = array( # Strip link definitions, store in hashes.
         "stripLinkDefinitions" => 20,
 
         "runBasicBlockGamut" => 30,);
@@ -388,7 +388,7 @@ class Markdown implements MarkdownInterface {
     }
 
 
-    protected $block_gamut = array(#
+    protected $block_gamut = array( #
         # These are all the transformations that form block-level
         # tags like paragraphs, headers, and list items.
         #
@@ -442,7 +442,7 @@ class Markdown implements MarkdownInterface {
     }
 
 
-    protected $span_gamut = array(#
+    protected $span_gamut = array( #
         # These are all the transformations that occur *within* block-level
         # tags like paragraphs, headers, and list items.
         #
@@ -1331,8 +1331,9 @@ class Markdown implements MarkdownInterface {
                 # roughly 10% raw, 45% hex, 45% dec
                 # '@' *must* be encoded. I insist.
                 # '"' has to be encoded inside the attribute
-                if ($r > 90 && $char != '@' && $char != '"') /* do nothing */
+                if ($r > 90 && $char != '@' && $char != '"') /* do nothing */ {
                     ;
+                }
                 else if ($r < 45) {
                     $chars[$key] = '&#x' . dechex($ord) . ';';
                 }

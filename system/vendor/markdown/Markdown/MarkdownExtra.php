@@ -507,8 +507,9 @@ class MarkdownExtra extends Markdown {
         #
         # Returns an array of that form: ( processed text , remaining text )
         #
-        if ($text === '')
+        if ($text === '') {
             return array('', '');
+        }
 
         # Regex to match `markdown` attribute inside of a tag.
         $markdown_attr_re = '

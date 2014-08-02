@@ -32,8 +32,9 @@ class Filter {
      * @return string
      */
     public static function xssToText($data) {
-        if (is_array($data))
+        if (is_array($data)) {
             return array_map(__METHOD__, $data);
+        }
         $data = trim(strip_tags($data, '<br>'));
         $data = self::delRedundancy($data);
         $data = str_replace("\n", '<br>', $data);
@@ -49,10 +50,12 @@ class Filter {
      * @return string
      */
     public static function xssToHtml($data) {
-        if (is_array($data))
+        if (is_array($data)) {
             return array_map(__METHOD__, $data);
-        if (function_exists('htmlspecialchars'))
+        }
+        if (function_exists('htmlspecialchars')) {
             $data = htmlspecialchars($data);
+        }
         else $data = str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&#039;', '&lt;', '&gt;'), $data);
         $data = str_replace(array('%3C', '%3E', ' '), array('&lt;', '&gt;', '&nbsp;'), $data);
         $data = self::delRedundancy($data);
@@ -69,8 +72,9 @@ class Filter {
      * @return array|string
      */
     public static function xssDeleteScript($data) {
-        if (is_array($data))
+        if (is_array($data)) {
             return array_map(__METHOD__, $data);
+        }
         //过滤恶意重复空白
         $data = self::delRedundancy($data);
         //完全过滤注释
@@ -106,8 +110,9 @@ class Filter {
      * @return array|string
      */
     public static function nl2br($data) {
-        if (is_array($data))
+        if (is_array($data)) {
             return array_map(__METHOD__, $data);
+        }
         return trim(preg_replace('/(\015)?(\012)/', '<br/>', $data));
     }
 
@@ -118,8 +123,9 @@ class Filter {
      * @return array|string
      */
     public static function nl2delete($data) {
-        if (is_array($data))
+        if (is_array($data)) {
             return array_map(__METHOD__, $data);
+        }
         return trim(preg_replace('/((\015)?(\012))+/', '$1', $data));
     }
 
@@ -130,8 +136,9 @@ class Filter {
      * @return array|string
      */
     public static function phptag($data) {
-        if (is_array($data))
+        if (is_array($data)) {
             return array_map(__METHOD__, $data);
+        }
         return str_replace(array('<?', '?>'), array('&lt;?', '?&gt;'), $data);
     }
 }

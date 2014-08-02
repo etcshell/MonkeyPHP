@@ -30,8 +30,9 @@ class Cart {
     public function readCart() {
         //从购物车cookie中读取数据
         $data = $this->_cookier->get($this->_cart_name);
-        if (!$data)
+        if (!$data) {
             return false;
+        }
         return $data;
     }
 
@@ -45,8 +46,9 @@ class Cart {
      * @return boolean
      */
     public function add($id, $product = null, $num = 1, $price = null, $options = array()) {
-        if (!$id)
+        if (!$id) {
             return false;
+        }
         $num = (int)$num;
         $data = $this->readCart();
         //当购物车中没有商品记录时
@@ -80,15 +82,18 @@ class Cart {
      */
     public function insert($data) {
         //参数分析
-        if (!$data || !is_array($data))
+        if (!$data || !is_array($data)) {
             return false;
+        }
         $cart_data = $this->readCart();
         //当购物车中没有商品记录时
-        if (!$cart_data)
+        if (!$cart_data) {
             $cart_data = array();
+        }
         foreach ($data as $lines) {
-            if (!is_array($lines) || empty($lines[0]))
+            if (!is_array($lines) || empty($lines[0])) {
                 continue;
+            }
             if (isset($cart_data[$lines[0]])) {
                 $cart_data[$lines[0]][2] += $lines[2];
             }
@@ -114,12 +119,14 @@ class Cart {
      * 用于update()时,如果购物车中已有ID为101的商品时,将信息更改为当前$data的数据(更改的不只是库存)
      */
     public function update($data) {
-        if (!is_array($data) || empty($data[0]))
+        if (!is_array($data) || empty($data[0])) {
             return false;
+        }
         $cart_data = $this->readCart();
         //判断将要更改的商品数据是否在购物车中存在
-        if (!isset($cart_data[$data[0]]))
+        if (!isset($cart_data[$data[0]])) {
             return false;
+        }
         $cart_data[$data[0]] = array($data[0], $data[1], $data[2], $data[3], $data[4]);
         $this->_cookier->set($this->_cart_name, $cart_data);
         return true;
@@ -132,11 +139,13 @@ class Cart {
      * @return boolean
      */
     public function delete($key) {
-        if (!$key)
+        if (!$key) {
             return false;
+        }
         $cart_data = $this->readCart();
-        if (!$cart_data)
+        if (!$cart_data) {
             return true;
+        }
         if (isset($cart_data[$key])) {
             unset($cart_data[$key]);
             $this->_cookier->set($this->_cart_name, $cart_data);
@@ -175,10 +184,11 @@ class Cart {
     public function getTotalNum() {
         $cart_data = $this->readCart();
         $total_num = 0;
-        if ($cart_data)
+        if ($cart_data) {
             foreach ($cart_data as $lines) {
                 $total_num += $cart_data[$lines[0]][2];
             }
+        }
         return $total_num;
     }
 
@@ -190,10 +200,11 @@ class Cart {
         $cart_data = $this->readCart();
         $total_price = 0;
         //当购物车中有商品记录时
-        if ($cart_data)
+        if ($cart_data) {
             foreach ($cart_data as $lines) {
                 $total_price += $cart_data[$lines[0]][3];
             }
+        }
         return $total_price;
     }
 
@@ -203,11 +214,13 @@ class Cart {
      * @return boolean
      */
     public function issetInCart($key) {
-        if (!$key)
+        if (!$key) {
             return false;
+        }
         $cart_data = $this->readCart();
-        if ($cart_data && isset($cart_data[$key]))
+        if ($cart_data && isset($cart_data[$key])) {
             return true;
+        }
         return false;
     }
 
@@ -217,8 +230,9 @@ class Cart {
      * @return $this
      */
     public function setName($cart_name) {
-        if (!$cart_name)
+        if (!$cart_name) {
             return false;
+        }
         $this->_cart_name = trim($cart_name);
         return $this;
     }

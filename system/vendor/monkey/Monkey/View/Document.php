@@ -382,8 +382,9 @@ class Document {
                 $options['checked'] = 'checked';
             }
             else {
-                if (isset($options['checked']))
+                if (isset($options['checked'])) {
                     unset($options['checked']);
+                }
             }
 
             $html .= '<label>' . $this->input('radio', $name, $options) . $item[0] . '</label>';

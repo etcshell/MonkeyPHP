@@ -23,8 +23,9 @@ class Image {
             $font_file = dirname(__FILE__) . '/font/Molengo-Regular.ttf';
         }
         //验证码字符全集
-        if (empty($charset))
+        if (empty($charset)) {
             $charset = 'abcdefghijklmnpqrstuvwxyz123456789';
+        }
         $chars_array = str_split($charset, 1);
         $char_total = count($chars_array);
         $chars = $char = ''; //已选出的验证码字符子集 和 当前选择的验证码字符
@@ -73,8 +74,9 @@ class Image {
      */
     public function getInfo($image_path) {
         $imageInfo = @getimagesize($image_path);
-        if ($imageInfo == false)
+        if ($imageInfo == false) {
             return false;
+        }
         $imageType = strtolower(substr(image_type_to_extension($imageInfo[2]), 1));
         $imageSize = intval(sprintf("%u", filesize($image_path)));
         $info = array('width' => $imageInfo[0], 'height' => $imageInfo[1], 'type' => $imageType, 'size' => $imageSize, 'mime' => $imageInfo['mime']);
@@ -93,14 +95,16 @@ class Image {
      */
     public function thumb($image, $thumb_filePath = null, $type = '', $thumb_width_max = 200, $thumb_height_max = 50, $interlace = true) {
         $info = $this->getInfo($image); // 获取原图信息
-        if ($info == false)
+        if ($info == false) {
             return false;
+        }
         $source_width = $info['width'];
         $source_height = $info['height'];
         $type = empty($type) ? $info['type'] : $type;
         $type = strtolower($type);
-        if ($type == 'jpg')
+        if ($type == 'jpg') {
             $type = 'jpeg';
+        }
         $interlace = $interlace ? 1 : 0;
         unset($info);
         $scale = min($thumb_width_max / $source_width, $thumb_height_max / $source_height); // 计算缩放比例
@@ -134,8 +138,9 @@ class Image {
             imagecolortransparent($thumb_image, $background_color); //  设置为透明色，若注释掉该行则输出绿色的图
         }
         // 对jpeg图形设置隔行扫描
-        if ('jpeg' == $type)
+        if ('jpeg' == $type) {
             imageinterlace($thumb_image, $interlace);
+        }
         // 生成图片
         $imageFun = 'image' . $type;
         if (is_null($thumb_filePath)) {
@@ -163,10 +168,12 @@ class Image {
      */
     public function waterByPicture($image_path, $water_path, $water_position_option = 9, $water_trans_color = array(), $alpha = 85, $result_path = NULL) {
         //检查图片是否存在
-        if (!file_exists($image_path) || !file_exists($water_path))
+        if (!file_exists($image_path) || !file_exists($water_path)) {
             return false;
-        if (!is_null($result_path))
+        }
+        if (!is_null($result_path)) {
             dir_check(dirname($result_path));
+        }
         //读取原图像文件
         $imageInfo = $this->getInfo($image_path);
         $imageFun = 'imagecreatefrom' . $imageInfo['type'];
@@ -197,12 +204,15 @@ class Image {
      */
     public function waterByText($image_path, $water_text, $result_path = NULL, $water_position_option = 9, $alpha = 85, $font_file = NULL, $font_style = array('size' => 12, 'color' => array(192, 192, 192), 'angle' => 0)) {
         //检查图片是否存在
-        if (!file_exists($image_path))
+        if (!file_exists($image_path)) {
             return false;
-        if (!is_null($result_path))
+        }
+        if (!is_null($result_path)) {
             dir_check(dirname($result_path));
-        if (empty($font_file) || !file_exists($font_file))
+        }
+        if (empty($font_file) || !file_exists($font_file)) {
             $font_file = config()->dir_frame . '/font/Molengo-Regular.ttf';
+        }
         //读取原图像文件
         $imageInfo = $this->getInfo($image_path);
         $imageFun = "imagecreatefrom" . $imageInfo['type'];
@@ -239,10 +249,12 @@ class Image {
      */
     public function waterByTextOfEmboss($image_path, $water_text, $font_file, $font_size = 50, $font_angle = 0, $emboss = TRUE, $water_position_option = 9, $alpha = 60, $result_path = NULL) {
         //检查图片是否存在
-        if (!file_exists($image_path))
+        if (!file_exists($image_path)) {
             return false;
-        if (!is_null($result_path))
+        }
+        if (!is_null($result_path)) {
             dir_check(dirname($result_path));
+        }
         //读取原图像文件
         $imageInfo = $this->getInfo($image_path);
         $imageFun = "imagecreatefrom" . $imageInfo['type'];
@@ -297,10 +309,12 @@ class Image {
      * @param bool $water_type_is_png 是否生成png格式，否则生成jpg格式
      */
     private function _water($image_handler, $water_handler, $result_image_path, $result_image_type, $image_w, $image_h, $water_w, $water_h, $water_position_option = 9, $alpha = 85, $water_type_is_png = FALSE) {
-        if ($alpha > 100)
+        if ($alpha > 100) {
             $alpha = 100;
-        if ($alpha < 0)
+        }
+        if ($alpha < 0) {
             $alpha = 0;
+        }
         $pos = array();
         $pos[0] = array(rand(0, ($image_w - $water_w)), rand(0, ($image_h - $water_h))); //随机
         $pos[1] = array(0, 0); //1为顶端居左
@@ -312,8 +326,9 @@ class Image {
         $pos[7] = array(0, $image_h - $water_h); //7为底端居左
         $pos[8] = array(($image_w - $water_w) / 2, $image_h - $water_h); //8为底端居中
         $pos[9] = array($image_w - $water_w, $image_h - $water_h); //9为底端居右
-        if (!isset($pos[$water_position_option]))
+        if (!isset($pos[$water_position_option])) {
             $water_position_option = 0;
+        }
         $pos = $pos[$water_position_option];
         imagealphablending($image_handler, true);
         if ($water_type_is_png) {

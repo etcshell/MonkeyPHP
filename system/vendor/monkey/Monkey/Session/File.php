@@ -136,17 +136,20 @@ class File extends SessionAbstract {
      */
     public function fetch($key, &$result) {
         $result = null;
-        if (!$this->_fetch(md5($key), $content))
+        if (!$this->_fetch(md5($key), $content)) {
             return false;
+        }
         $time = (int)substr($content, 0, 12);
-        if ($time != -1 && $this->TIME >= $time)
+        if ($time != -1 && $this->TIME >= $time) {
             return false;
+        }
         if ($this->dataOnCheck) {
             //开启数据校验
             $check = substr($content, 12, 32);
             $content = substr($content, 44);
-            if ($check != md5($content))
-                return false; //校验错误
+            if ($check != md5($content)) {
+                return false;
+            } //校验错误
         }
         else {
             $content = substr($content, 12);
@@ -164,13 +167,16 @@ class File extends SessionAbstract {
      */
     public function store($key, $value, $time = -1) {
         //数据为空，缓存时间为0,则不缓存
-        if (empty($key) || empty($value))
+        if (empty($key) || empty($value)) {
             return false;
+        }
         $data = serialize($value); //将数据序列化
-        if ($time == -1)
+        if ($time == -1) {
             $time = $this->expire;
-        if ($time != 0)
-            $time = $this->TIME + $time; //过期时间
+        }
+        if ($time != 0) {
+            $time = $this->TIME + $time;
+        } //过期时间
         //是否开启数据校验
         $check = $this->dataOnCheck ? md5($data) : '';
         $data = sprintf('%012d', $time) . $check . $data;
@@ -200,8 +206,9 @@ class File extends SessionAbstract {
         for ($i = 0; $i < 16; $i++) {
             $this->seek(60 + $i * $this->schemaItemSize);
             $info = unpack('V1' . implode('/V1', $this->schemaStruct), fread($this->rs, $this->schemaItemSize));
-            if (!$info['size'])
+            if (!$info['size']) {
                 return $schema;
+            }
             $info['id'] = $i;
             $schema[$i] = $info;
         }
@@ -281,11 +288,13 @@ class File extends SessionAbstract {
      * @return bool
      */
     private function _delete($md5Key, $pos = false) {
-        if (!$pos && !$this->search($md5Key, $pos))
+        if (!$pos && !$this->search($md5Key, $pos)) {
             return false;
+        }
         $info = $this->getNode($pos);
-        if (!$info)
+        if (!$info) {
             return false;
+        }
         //删除data区域
         if ($info['prev']) {
             $this->setNode($info['prev'], 'next', $info['next']);
@@ -305,8 +314,9 @@ class File extends SessionAbstract {
         $c++;
         $this->seek($pos);
         list(, $next) = unpack('V1', fread($this->rs, 4));
-        if ($next)
+        if ($next) {
             return $this->dfollow($next, $c);
+        }
         return $pos;
     }
 
@@ -325,19 +335,22 @@ class File extends SessionAbstract {
         $info = $this->getNode($offset);
         $schemaId = $this->getSizeSchemaId($info['size']);
         if ($schemaId === false) {
-            if ($locked)
+            if ($locked) {
                 $this->unlockCacheFile();
+            }
             return false;
         }
         $this->seek($info['data']);
         $return = fread($this->rs, $info['size']);
         if ($return === false) {
-            if ($locked)
+            if ($locked) {
                 $this->unlockCacheFile();
+            }
             return false;
         }
-        if (!$locked)
+        if (!$locked) {
             return true;
+        }
         $this->lruPush($schemaId, $info['offset']);
         $this->setSchema($schemaId, 'hits', $this->getSchema($schemaId, 'hits') + 1);
         return $this->unlockCacheFile();
@@ -474,8 +487,9 @@ class File extends SessionAbstract {
      */
     private function getSizeSchemaId($size) {
         foreach ($this->blockSizeList as $k => $blockSize) {
-            if ($size <= $blockSize)
+            if ($size <= $blockSize) {
                 return $k;
+            }
         }
         return false;
     }
@@ -487,8 +501,9 @@ class File extends SessionAbstract {
      * @return bool
      */
     private function lockCacheFile($isBlock, $whatever = false) {
-        if ($this->existsFileLock)
+        if ($this->existsFileLock) {
             return flock($this->rs, $isBlock ? LOCK_EX : LOCK_EX + LOCK_NB);
+        }
         ignore_user_abort(true);
         $supportUsleep = version_compare(PHP_VERSION, 5, '>=') ? 20 : 1;
         $lockfile = $this->cacheFile . '.lck';
@@ -532,11 +547,13 @@ class File extends SessionAbstract {
 
     private function lruPop($schemaId) {
         $node = $this->getSchema($schemaId, 'lru_tail');
-        if (!$node)
+        if (!$node) {
             return false;
+        }
         $info = $this->getNode($node);
-        if (!$info['data'])
+        if (!$info['data']) {
             return false;
+        }
         $this->_delete($info['key'], $info['offset']);
         if (!$this->getSchema($schemaId, 'free')) {
             $this->error(__METHOD__ . ':弹出lru区（最少使用区），但是空间没有被释放');
@@ -547,8 +564,9 @@ class File extends SessionAbstract {
     private function lruPush($schemaId, $offset) {
         $lruHead = $this->getSchema($schemaId, 'lru_head');
         $lruTail = $this->getSchema($schemaId, 'lru_tail');
-        if ((!$offset) || ($lruHead == $offset))
+        if ((!$offset) || ($lruHead == $offset)) {
             return true;
+        }
         $info = $this->getNode($offset);
         $this->setNode($info['lru_right'], 'lru_left', $info['lru_left']);
         $this->setNode($info['lru_left'], 'lru_right', $info['lru_right']);
@@ -577,8 +595,9 @@ class File extends SessionAbstract {
         }
         switch (strtolower($match[2])) {
             case 'g':
-                if ($match[1] > 1)
+                if ($match[1] > 1) {
                     $this->error(__METHOD__ . ':设置缓存大小时越界，最大只能支持【1G】');
+                }
                 $size = $match[1] << 30;
                 break;
             case 'm':
@@ -590,10 +609,12 @@ class File extends SessionAbstract {
             default:
                 $size = $match[1];
         }
-        if ($size <= 0)
+        if ($size <= 0) {
             $this->error(__METHOD__ . ':设置缓存大小时越界，缓存文件大小为0则无意义！');
-        if ($size < 10485760)
+        }
+        if ($size < 10485760) {
             return 10485760;
+        }
         return $size;
     }
 
@@ -695,8 +716,9 @@ class File extends SessionAbstract {
      * @return bool
      */
     private function _store($md5Key, $data) {
-        if (!$this->lockCacheFile(true))
+        if (!$this->lockCacheFile(true)) {
             $this->error(__METHOD__ . ':不能锁定文件!');
+        }
         $size = strlen($data);
         //get list_idx
         $hasKey = $this->search($md5Key, $listIdxOffset);
@@ -738,8 +760,9 @@ class File extends SessionAbstract {
                 $this->setNodeRoot($md5Key, $hdseq);
             }
         }
-        if ($dataoffset > $this->maxSize)
+        if ($dataoffset > $this->maxSize) {
             $this->error(__METHOD__ . ':分配缓存空间时出错！');
+        }
         $this->puts($dataoffset, $data);
         $this->setSchema($schemaId, 'miss', $this->getSchema($schemaId, 'miss') + 1);
         $this->lruPush($schemaId, $hdseq);
@@ -752,8 +775,9 @@ class File extends SessionAbstract {
      * @return bool
      */
     private function unlockCacheFile() {
-        if ($this->existsFileLock)
+        if ($this->existsFileLock) {
             return flock($this->rs, LOCK_UN);
+        }
         ignore_user_abort(false);
         return @unlink($this->cacheFile . '.lck');
     }

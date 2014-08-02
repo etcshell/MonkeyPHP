@@ -182,8 +182,9 @@ class Request {
      * @return string
      */
     public function getUri() {
-        if ($this->isAbsUri())
+        if ($this->isAbsUri()) {
             return $this->getUrl();
+        }
         else {
             return $this->getUriPrefix() . $this->getUrl();
         }
@@ -272,10 +273,12 @@ class Request {
      * @return Boolean
      */
     public function isAjax() {
-        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']))
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
             return $_SERVER['HTTP_ACCEPT'] == 'text/javascript, application/javascript, */*';
-        else
+        }
+        else {
             return strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+        }
     }
 
     /**
@@ -398,10 +401,12 @@ class Request {
         $result = array();
 
         foreach ($names as $key => $value) {
-            if (is_int($key))
+            if (is_int($key)) {
                 $result[$value] = isset($data[$value]) ? $data[$value] : null;
-            else
+            }
+            else {
                 $result[$key] = array_key_exists($key, $data) ? $data[$key] : $value;
+            }
         }
 
         return $result;

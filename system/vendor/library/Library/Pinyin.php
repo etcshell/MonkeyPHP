@@ -40,8 +40,9 @@ class Pinyin {
             return false;
         }
         //编码转换.
-        if ($utf8)
+        if ($utf8) {
             $zh_str = iconv('utf-8', 'gbk', $zh_str);
+        }
         $num = strlen($zh_str);
         $pinyin = '';
         for ($i = 0; $i < $num; $i++) {
@@ -53,8 +54,9 @@ class Pinyin {
             $pinyin .= $this->_num2str($temp);
         }
         //输出的拼音编码转换.
-        if ($utf8)
+        if ($utf8) {
             $pinyin = iconv('gbk', 'utf-8', $pinyin);
+        }
         return $pinyin;
     }
 

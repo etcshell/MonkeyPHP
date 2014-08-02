@@ -46,12 +46,14 @@ class GetMacAddr {
 
     function forWindows() {
         @exec("ipconfig /all", $this->return_array);
-        if ($this->return_array)
+        if ($this->return_array) {
             return $this->return_array;
+        }
         else {
             $ipconfig = $_SERVER["WINDIR"] . "\system32\ipconfig.exe";
-            if (is_file($ipconfig))
+            if (is_file($ipconfig)) {
                 @exec($ipconfig . " /all", $this->return_array);
+            }
             else {
                 @exec($_SERVER["WINDIR"] . "\system\ipconfig.exe /all", $this->return_array);
             }

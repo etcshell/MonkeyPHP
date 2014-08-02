@@ -17,12 +17,14 @@ class Download {
         if (DIRECTORY_SEPARATOR == '\\') {
             $file_path = iconv("UTF-8", "GB2312//IGNORE", $file_path);
         }
-        if (!file_exists($file_path))
+        if (!file_exists($file_path)) {
             return notice(FALSE, '你要下载的文件不存在！');
+        }
         $file_size_string = sprintf("%u", filesize($file_path));
         $file_size = intval($file_size_string);
-        if (headers_sent())
+        if (headers_sent()) {
             return notice(FALSE, '文件头已经输出了！');
+        }
         $filename = $rename == NULL ? basename($file_path) : $rename;
         header('Content-Description: File Transfer');
         header('Content-Type: application/octet-stream');
@@ -49,8 +51,9 @@ class Download {
     private static function _readFileOfLarge($file_path, $chunk_size = 1024) {
         $cnt = $buffer = 0;
         $handle = fopen($file_path, 'rb');
-        if ($handle === false)
+        if ($handle === false) {
             return notice(FALSE, '不能打开这个大文件！');
+        }
         while (!feof($handle)) {
             $buffer = fread($handle, $chunk_size);
             echo $buffer;
@@ -58,8 +61,9 @@ class Download {
             flush();
             $cnt += strlen($buffer);
         }
-        if (!fclose($handle))
+        if (!fclose($handle)) {
             throw new \Exception('下载文件后出错了！向浏览器发送完大文件后关闭文件失败。');
+        }
         return notice(TRUE, $cnt);
     }
 }

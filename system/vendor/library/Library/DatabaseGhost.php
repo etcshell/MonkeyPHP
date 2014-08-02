@@ -106,27 +106,33 @@ class DatabaseGhost {
      * @return boolean          成功返回TRUE，失败返回FALSE
      */
     public function restore($date_Ymd) {
-        if (empty($date_Ymd))
+        if (empty($date_Ymd)) {
             return false;
+        }
         $targetDir = $this->_data_dir . '/' . $date_Ymd;
         $structure_file = $targetDir . '/' . $this->_structure_file;
-        if (!file_exists($structure_file))
+        if (!file_exists($structure_file)) {
             return FALSE;
-        if (!$this->import_sql_file($structure_file))
+        }
+        if (!$this->import_sql_file($structure_file)) {
             return FALSE;
+        }
         $handle = opendir($targetDir);
         $target = '';
         $ext_len = strlen($this->_data_fix);
         $successful = TRUE;
         if ($handle) {
             while (($item = readdir($handle)) !== false) {
-                if ($item == '.' || $item == '..')
+                if ($item == '.' || $item == '..') {
                     continue;
+                }
                 $target = $targetDir . '/' . $item;
-                if (is_dir($target))
+                if (is_dir($target)) {
                     continue;
-                if (substr($item, 0 - $ext_len) !== $this->_data_fix)
+                }
+                if (substr($item, 0 - $ext_len) !== $this->_data_fix) {
                     continue;
+                }
                 if (!$this->import_sql_file($target)) {
                     $successful = FALSE;
                 }
@@ -183,13 +189,16 @@ class DatabaseGhost {
         $result = array();
         $commenter = array('#', '--');
         //判断文件是否存在
-        if (!file_exists($sql_file))
+        if (!file_exists($sql_file)) {
             return false;
+        }
         $content = file_get_contents($sql_file); //读取sql文件
-        if ($content[0] == '<')
+        if ($content[0] == '<') {
             $content = preg_replace('/[^\n]*\n/', '', $content, 1);
-        if (!empty($old_prefix))
-            $content = str_replace($old_prefix, $new_prefix, $content); //替换前缀
+        }
+        if (!empty($old_prefix)) {
+            $content = str_replace($old_prefix, $new_prefix, $content);
+        } //替换前缀
         //通过sql语法的语句分割符进行分割
         $segment = explode($separator, trim($content));
         //去掉注释和多余的空行
@@ -208,8 +217,9 @@ class DatabaseGhost {
                         }
                     }
                     //如果不是注释，则认为是sql语句
-                    if (!$isComment)
+                    if (!$isComment) {
                         $newStatement[] = $subSentence;
+                    }
                 }
             }
             $data[] = $newStatement;

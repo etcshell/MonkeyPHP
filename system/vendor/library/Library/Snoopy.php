@@ -851,12 +851,10 @@ class Snoopy {
             $this->results[] = $results;
             for ($x = 0; $x < count($match[1]); $x++)
                 $this->_frameurls[] = $this->_expandlinks($match[1][$x], $URI_PARTS["scheme"] . "://" . $this->host);
-        }
-        // have we already fetched framed content?
+        } // have we already fetched framed content?
         elseif (is_array($this->results)) {
             $this->results[] = $results;
-        }
-        // no framed content
+        } // no framed content
         else {
             $this->results = $results;
         }
@@ -1010,12 +1008,10 @@ class Snoopy {
             $this->results[] = $results;
             for ($x = 0; $x < count($match[1]); $x++)
                 $this->_frameurls[] = $this->_expandlinks($match[1][$x], $URI_PARTS["scheme"] . "://" . $this->host);
-        }
-        // have we already fetched framed content?
+        } // have we already fetched framed content?
         elseif (is_array($this->results)) {
             $this->results[] = $results;
-        }
-        // no framed content
+        } // no framed content
         else {
             $this->results = $results;
         }

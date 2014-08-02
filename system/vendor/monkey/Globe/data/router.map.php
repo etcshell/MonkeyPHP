@@ -2,7 +2,7 @@
 
 /******** 路由器到控制器的映射表——简称路由映射表（示例） ********/
 //其中请求方法get可以省略，其它如post等则不能省略
-return array(//静态路由
+return array( //静态路由
     'get/' => 'Index:index', //'Index:index'相当于请求\DefaultApp\Controller\Index类的action_index方法
     '/' => 'Index:index', //效果同上
 

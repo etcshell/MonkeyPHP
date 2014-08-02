@@ -213,8 +213,8 @@ class App {
         //注册系统默认错误处理函数
         //set_error_handler(array($this, 'errorHandler'), $this->DEBUG);
         set_error_handler(function ($code = 0, $message = '', $file = null, $line = null) {
-                throw new Exceptions\Exception($message, $code, null, $file, $line);
-            }, $this->DEBUG);
+            throw new Exceptions\Exception($message, $code, null, $file, $line);
+        }, $this->DEBUG);
     }
 
     /**

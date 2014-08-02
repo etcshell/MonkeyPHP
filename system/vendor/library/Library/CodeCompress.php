@@ -12,7 +12,7 @@ class CodeCompress {
      * @return array
      */
     protected static function sourceList() {
-        return array(//'源文件列表',
+        return array( //'源文件列表',
         );
     }
 
@@ -78,12 +78,14 @@ class CodeCompress {
             return FALSE;
         }
         while (($item = readdir($handler)) !== false) {
-            if ($item == '.' || $item == '..')
+            if ($item == '.' || $item == '..') {
                 continue;
+            }
             $new = $dir . "/" . $item;
             is_dir($new) && self::compressDir($new);
-            if (substr($item, -4) !== '.php')
+            if (substr($item, -4) !== '.php') {
                 continue;
+            }
             copy($new, $new . '.bak');
             file_put_contents($new, rtrim(self::phpStripWhitespace($new)));
         }
@@ -92,15 +94,18 @@ class CodeCompress {
 
     private static function _compressDirAndMerge($dir, &$compress) {
         $handler = opendir($dir);
-        if (!$handler)
+        if (!$handler) {
             return FALSE;
+        }
         while (($item = readdir($handler)) !== false) {
-            if ($item == '.' || $item == '..')
+            if ($item == '.' || $item == '..') {
                 continue;
+            }
             $new = $dir . "/" . $item;
             is_dir($new) && self::_compressDirAndMerge($new, $compress);
-            if (substr($item, -4) !== '.php')
+            if (substr($item, -4) !== '.php') {
                 continue;
+            }
             $compress .= rtrim(self::phpStripWhitespace($new));
         }
         closedir($handler);
@@ -206,8 +211,9 @@ class CodeCompress {
                             $new .= " ";
                         }
                         $_last = substr($new, -1);
-                        if ($_last == ';' || $_last == '{' || $_last == '}')
+                        if ($_last == ';' || $_last == '{' || $_last == '}') {
                             $new .= PHP_EOL;
+                        }
                         $iw = false;
                     }
                     elseif ($tn == T_START_HEREDOC) {

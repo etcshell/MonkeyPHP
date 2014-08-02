@@ -242,10 +242,12 @@ class Upload {
             }
         }
         if (file_exists($saveName)) {
-            if (!$overwrite)
+            if (!$overwrite) {
                 return $this->_notice(0, '要保存的文件名已存在，且不可覆盖！');
-            else
+            }
+            else {
                 unlink($saveName);
+            }
         }
         $result = move_uploaded_file($upTmp, $saveName);
         return $this->_notice($result, $result ? $saveName : '未知错误，上传失败！');
@@ -307,16 +309,19 @@ class Upload {
      */
     private function _getTypeOfReal($file_name) {
         static $file_code = array('-48-49' => 'doc|xls', '7790' => 'exe', '7784' => 'midi', '8075' => 'zip', '8297' => 'rar', '7173' => 'gif', '255216' => 'jpg', '6677' => 'bmp', '13780' => 'png', '104116' => 'txt',);
-        if (!file_exists($file_name))
+        if (!file_exists($file_name)) {
             return '';
+        }
         $file = fopen($file_name, 'rb');
         $bin = fread($file, 2);
         $strInfo = @unpack("C2chars", $bin);
         $typeCode = $strInfo['chars1'] . '' . $strInfo['chars2'];
-        if ($typeCode == '-1-40')
+        if ($typeCode == '-1-40') {
             $typeCode = '255216';
-        if ($typeCode == '-11980')
+        }
+        if ($typeCode == '-11980') {
             $typeCode = '13780';
+        }
         return (string)$file_code[$typeCode];
     }
 }

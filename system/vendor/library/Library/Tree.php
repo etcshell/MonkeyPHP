@@ -38,10 +38,12 @@ class Tree {
         if (!empty($id_key)) {
             $this->_id_key = $id_key;
         }
-        if (!empty($pid_key))
+        if (!empty($pid_key)) {
             $this->_pid_key = $pid_key;
-        if (!empty($name_key))
+        }
+        if (!empty($name_key)) {
             $this->_name_key = $name_key;
+        }
     }
 
     /**
@@ -51,8 +53,9 @@ class Tree {
      * @return array 子节点数据
      */
     public function findChildren($pid, $data = null) {
-        if (is_null($data))
+        if (is_null($data)) {
             $data = $this->_data;
+        }
         $children = array();
         foreach ($data as $node) {
             if ($node[$this->_pid_key] == $pid) {
@@ -72,8 +75,9 @@ class Tree {
      * 取消注释就可以正常使用了。
      */
     public function buildTreeOfIcon($id, $icon_fix = '', &$data = null) {
-        if (empty($data))
+        if (empty($data)) {
             $data = $this->_data;
+        }
         $tree = array();
         //搜索树根
         foreach ($data as $key => $root) {
@@ -85,8 +89,9 @@ class Tree {
                 unset($data[$key]); //从数据中删除搜索到的树根，减小以后的搜索量
             }
         }
-        if (empty($tree))
-            return $tree; //树根不存在时直接返回空树
+        if (empty($tree)) {
+            return $tree;
+        } //树根不存在时直接返回空树
         //搜索子树
         $stack = array();
         $last_deep = 0;
@@ -110,8 +115,9 @@ class Tree {
                 $stack = array_merge($children, $stack);
             }
             //分析栈
-            if (empty($stack))
-                break; //空栈退出循环
+            if (empty($stack)) {
+                break;
+            } //空栈退出循环
             $current_node = array_shift($stack);
             $last_deep = $current_node['deep'];
             $last_deep_icon_fix = $current_node['ifix'] . ($current_node['icon'] == '　└' ? '　　' : '　│');
@@ -135,8 +141,9 @@ class Tree {
      * 取消注释就可以正常使用了。
      */
     public function buildSubtreeOfIcon($pid, $icon_fix = '', $data = null) {
-        if (empty($data))
+        if (empty($data)) {
             $data = $this->_data;
+        }
         $subTree = array();
         foreach ($data as $node) {
             if ($node[$this->_pid_key] == $pid) {
@@ -156,8 +163,9 @@ class Tree {
      * 取消注释就可以正常使用了。
      */
     public function buildForestOfIcon($id_array, $icon_fix = '', $data = null) {
-        if (empty($data))
+        if (empty($data)) {
             $data = $this->_data;
+        }
         $forest = array();
         foreach ($id_array as $id) {
             $temp = $data;
@@ -215,12 +223,15 @@ class Tree {
     public function orderedToUnordered($data, $left_is_order = true, $root_id = null, $left_key = null, $right_key = null) {
         $left_key and $this->_left_key = $left_key;
         $right_key and $this->_right_key = $right_key;
-        if ($root_id)
+        if ($root_id) {
             $data = $this->_node_filter_by_id($data, $root_id);
-        if (empty($data))
+        }
+        if (empty($data)) {
             return $data;
-        if (!$left_is_order)
+        }
+        if (!$left_is_order) {
             $data = $this->_order_left($data);
+        }
         $parent_key = null;
         $right_parent_keys = array();
         $i = 0;
@@ -264,12 +275,15 @@ class Tree {
     public function orderedToTree($data, $children = 'children', $left_is_order = true, $root_left = null, $left_key = null, $right_key = null) {
         $left_key and $this->_left_key = $left_key;
         $right_key and $this->_right_key = $right_key;
-        if ($root_left)
+        if ($root_left) {
             $data = $this->_node_filter_by_left($data, $root_left);
-        if (empty($data))
+        }
+        if (empty($data)) {
             return $data;
-        if (!$left_is_order)
+        }
+        if (!$left_is_order) {
             $data = $this->_order_left($data);
+        }
         $parent_key = null;
         $right_parent_keys = array();
         $tree = array();
@@ -311,8 +325,9 @@ class Tree {
                 break;
             }
         }
-        if (empty($range_node))
+        if (empty($range_node)) {
             return $range_node;
+        }
         $root_left = $range_node[0][$this->_left_key];
         $root_right = $range_node[0][$this->_right_key];
         foreach ($data as $node) {
@@ -331,8 +346,9 @@ class Tree {
                 break;
             }
         }
-        if (empty($range_node))
+        if (empty($range_node)) {
             return $range_node;
+        }
         $root_right = $range_node[0][$this->_right_key];
         foreach ($data as $node) {
             if ($node[$this->_left_key] > $root_left && $node[$this->_right_key] < $root_right) {

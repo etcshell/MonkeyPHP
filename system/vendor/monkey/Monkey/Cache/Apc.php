@@ -25,7 +25,7 @@ class Apc implements CacheInterface {
      *
      * @var int
      */
-    private $_expire = 3600;
+    private $expire = 3600;
 
     /**
      * 构造方法
@@ -40,7 +40,7 @@ class Apc implements CacheInterface {
         }
 
         $config = $app->config()->getComponentConfig('cache', 'apc');
-        isset($config['expire']) and $this->_expire = $config['expire'];
+        isset($config['expire']) and $this->expire = $config['expire'];
     }
 
     /**
@@ -54,7 +54,7 @@ class Apc implements CacheInterface {
      */
     public function store($key, $value, $time = -1) {
         if ($time == -1) {
-            $time = $this->_expire;
+            $time = $this->expire;
         }
         return apc_store($key, serialize($value), $time);
     }

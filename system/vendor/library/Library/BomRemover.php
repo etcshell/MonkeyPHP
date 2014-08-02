@@ -30,8 +30,9 @@ final class BomRemover {
             return FALSE;
         }
         while (($item = readdir($handler)) !== false) {
-            if ($item == '.' || $item == '..')
+            if ($item == '.' || $item == '..') {
                 continue;
+            }
             $new = $dir . "/" . $item;
             is_dir($new) && self::_scanDir($new, $result, $clear);
             self::_checkBom($new, $result, $clear);

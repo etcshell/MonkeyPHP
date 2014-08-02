@@ -31,7 +31,7 @@ class Tag {
      * @return array
      */
     public static function getReplaceTag() {
-        return array(//添加常量解析标签：
+        return array( //添加常量解析标签：
             array('/__[A-Z_]+__/', '<?php if(defined("$0")) echo $0; else echo "$0"; ?>'), /*添加变量解析标签：将变量{$name}替换成<?php  echo $name;?> */
             array('/\{(\$[a-z_]\w*(?:\[[\w\.\"\'\[\]\$]+\])*)\}/i', '<?php echo $1; ?>'),
 
@@ -69,7 +69,7 @@ class Tag {
      * @return array
      */
     public static function getCallbackTag() {
-        return array(//直接输出型API调用标签，返回字符串或数字等标量 不需要结束标签
+        return array( //直接输出型API调用标签，返回字符串或数字等标量 不需要结束标签
             /*{myapi::method pname1=pvalue1 pname2=pvalue2 ...}替换成 <?php echo call_user_func(array('appName\\LabelApi\\myapi', 'method'),array("pname1"=>pvalue1,"pname2"=>pvalue2, ... )); ?>*/ /*<?php echo Label\$1::$2( template::reg_param("$3") ); ?>*/
             array('/\{([a-z_][a-z0-9_]*)::([a-z_][a-z0-9_]*)((\s+[a-z_][a-z0-9_]*=\S+)*)\s*\}/i', array(__CLASS__, 'apiString')),
 

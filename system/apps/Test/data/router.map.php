@@ -2,7 +2,7 @@
 
 /******** 路由器到控制器的映射表——简称路由映射表（示例） ********/
 //其中get可以省略，其它如post则不能省略，下同
-return array(//静态路由
+return array( //静态路由
     'get/' => 'Index:index', //或 '/'=>'Index:index',
     'get/hello' => 'Index:hello', //或 '/hello'=>'Index:hello',
 

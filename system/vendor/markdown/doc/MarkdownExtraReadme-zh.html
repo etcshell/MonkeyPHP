@@ -177,303 +177,303 @@
 </head>
 <body ryt13914="1">
 <div class="container-fluid">
-    <div class="row-fluid">
-        <div class="post span12">
-            <div id="newtoptitle">
-                <h1>PHP Markdown Extra增强markdown特性</h1>
-                <a href="http://higrid.net/c-art-php_markdown_extra.htm">原文出处：http://higrid.net/c-art-php_markdown_extra.htm</a>
-            </div>
-            <p>核心提示：本文主要讲述<strong>PHP Markdown Extra增强markdown特性</strong>相关内容：PHP Markdown Extra是PHP
-                Markdown的特别版本比原始的markdown增加了内部HTML、HTML块级元素内Markdown、标题Id特性、栅栏式代码块、表格、定义列表、脚注、缩写等特性，使其增加了不少功能。</p>
-            <ol id="toc">
-                <li><a href="#html">PHP Markdown Extra内部HTML</a></li>
-                <li><a href="#markdown-attr">HTML块级元素内Markdown</a></li>
-                <li><a href="#header-id">标题Id特性</a></li>
-                <li><a href="#fenced-code-blocks">栅栏式代码块</a></li>
-                <li><a href="#table">表格</a></li>
-                <li><a href="#def-list">定义列表</a></li>
-                <li><a href="#footnotes">脚注</a></li>
-                <li><a href="#fn-output">输出</a></li>
-                <li><a href="#abbr">缩写</a></li>
-                <li><a href="#em">强调</a></li>
-                <li><a href="#backslash">反义</a></li>
-                <li><a href="#">致谢</a></li>
-            </ol>
-            <p><strong>PHP Markdown Extra</strong>是PHP Markdown的特别版本，实现了一些 <a target="_top"
-                                                                              href="http://higrid.net/c-tags.htm#markdown">MarkDown</a>
-                没有的特性。在<a target="_blank" rel="external nofollow" href="http://michelf.com/projects/php-markdown/">PHP
-                    Markdown主页</a>可以下载最新版本的PHP Markdown Extra。这篇文档说明了PHP Markdown
-                Extra对Markdown的改动及扩展。阅读之前应当熟悉Markdown语法。<a target="_top" href="http://higrid.net/">嗨网在线</a> 同时提供 <a
-                        href="http://higrid.net/c-art-markdown_basics.htm">Markdown入门教程</a> 和 <a
-                        href="http://higrid.net/c-art-markdown_syntax.htm">Markdown语法说明</a>。</p>
+<div class="row-fluid">
+<div class="post span12">
+<div id="newtoptitle">
+    <h1>PHP Markdown Extra增强markdown特性</h1>
+    <a href="http://higrid.net/c-art-php_markdown_extra.htm">原文出处：http://higrid.net/c-art-php_markdown_extra.htm</a>
+</div>
+<p>核心提示：本文主要讲述<strong>PHP Markdown Extra增强markdown特性</strong>相关内容：PHP Markdown Extra是PHP
+    Markdown的特别版本比原始的markdown增加了内部HTML、HTML块级元素内Markdown、标题Id特性、栅栏式代码块、表格、定义列表、脚注、缩写等特性，使其增加了不少功能。</p>
+<ol id="toc">
+    <li><a href="#html">PHP Markdown Extra内部HTML</a></li>
+    <li><a href="#markdown-attr">HTML块级元素内Markdown</a></li>
+    <li><a href="#header-id">标题Id特性</a></li>
+    <li><a href="#fenced-code-blocks">栅栏式代码块</a></li>
+    <li><a href="#table">表格</a></li>
+    <li><a href="#def-list">定义列表</a></li>
+    <li><a href="#footnotes">脚注</a></li>
+    <li><a href="#fn-output">输出</a></li>
+    <li><a href="#abbr">缩写</a></li>
+    <li><a href="#em">强调</a></li>
+    <li><a href="#backslash">反义</a></li>
+    <li><a href="#">致谢</a></li>
+</ol>
+<p><strong>PHP Markdown Extra</strong>是PHP Markdown的特别版本，实现了一些 <a target="_top"
+                                                                  href="http://higrid.net/c-tags.htm#markdown">MarkDown</a>
+    没有的特性。在<a target="_blank" rel="external nofollow" href="http://michelf.com/projects/php-markdown/">PHP
+        Markdown主页</a>可以下载最新版本的PHP Markdown Extra。这篇文档说明了PHP Markdown
+    Extra对Markdown的改动及扩展。阅读之前应当熟悉Markdown语法。<a target="_top" href="http://higrid.net/">嗨网在线</a> 同时提供 <a
+            href="http://higrid.net/c-art-markdown_basics.htm">Markdown入门教程</a> 和 <a
+            href="http://higrid.net/c-art-markdown_syntax.htm">Markdown语法说明</a>。</p>
 
-            <h2 id="html">PHP Markdown Extra内部HTML</h2>
+<h2 id="html">PHP Markdown Extra内部HTML</h2>
 
-            <p>Markdown下可以插入HTML代码。当某些特性Markdown不支持而HTML容易实现时，这就很有用了。但是Markdown对块级元素有严格的限制。来看Markdown语法文档：</p>
-            <blockquote><p>HTML块级元素，比如div,table,pre,p等必须与其它内容用空行分隔开，并且开始与结束标签不能有缩进。</p></blockquote>
-            <p>PHP Markdown Extra放宽了这种限制：</p>
-            <ol>
-                <li>块级元素的开始标签不能有超过三个空格的缩进，超过的按代码块处理。</li>
-                <li>列表中块级元素的缩进与列表项的缩进一致。（更多的缩进也没问题，只要第一个开始标签不是缩进了太多而当成了代码块，见第一条）。</li>
-            </ol>
-            <h2 id="markdown-attr">HTML块级元素内Markdown</h2>
+<p>Markdown下可以插入HTML代码。当某些特性Markdown不支持而HTML容易实现时，这就很有用了。但是Markdown对块级元素有严格的限制。来看Markdown语法文档：</p>
+<blockquote><p>HTML块级元素，比如div,table,pre,p等必须与其它内容用空行分隔开，并且开始与结束标签不能有缩进。</p></blockquote>
+<p>PHP Markdown Extra放宽了这种限制：</p>
+<ol>
+    <li>块级元素的开始标签不能有超过三个空格的缩进，超过的按代码块处理。</li>
+    <li>列表中块级元素的缩进与列表项的缩进一致。（更多的缩进也没问题，只要第一个开始标签不是缩进了太多而当成了代码块，见第一条）。</li>
+</ol>
+<h2 id="markdown-attr">HTML块级元素内Markdown</h2>
 
-            <p>原生的Markdown不支持块级元素内Markdown语法。PHP Markdown Extra则支持，只要为元素添加一个特性markdown=”1″。例如：</p> <pre><code>&lt;div
-            markdown="1"&gt;
-            This is *true* markdown text.
-            &lt;/div&gt;
-        </code></pre>
-            <p>在转换时markdown=”1″特性去掉，div内的markdown转换为HTML。最终结果为：</p> <pre><code>&lt;div&gt;
-            &lt;p&gt;This is &lt;em&gt;true&lt;/em&gt; markdown text.&lt;/p&gt;
-            &lt;/div&gt;
-        </code></pre>
-            <p>根据元素的类型，PHP Markdown Extra会智能地处理。例如添加到p元素上，则转换为内联元素，不会转换为列表、引用或代码这些块级元素。</p>
+<p>原生的Markdown不支持块级元素内Markdown语法。PHP Markdown Extra则支持，只要为元素添加一个特性markdown=”1″。例如：</p> <pre><code>&lt;div
+    markdown="1"&gt;
+    This is *true* markdown text.
+    &lt;/div&gt;
+</code></pre>
+<p>在转换时markdown=”1″特性去掉，div内的markdown转换为HTML。最终结果为：</p> <pre><code>&lt;div&gt;
+    &lt;p&gt;This is &lt;em&gt;true&lt;/em&gt; markdown text.&lt;/p&gt;
+    &lt;/div&gt;
+</code></pre>
+<p>根据元素的类型，PHP Markdown Extra会智能地处理。例如添加到p元素上，则转换为内联元素，不会转换为列表、引用或代码这些块级元素。</p>
 
-            <p>但是在某些情况下并不能这么智能，例如：</p> <pre><code>&lt;table&gt;
-            &lt;tr&gt;
-            &lt;td markdown="1"&gt;This is *true* markdown text.&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;/table&gt;
-        </code></pre>
-            <p>表格单元可以包含内联与块级元素，像上面的例子将转换为内联元素。如果想转换为块级元素，则添加上特性markdown=”block”而不是markdown=”1″。</p>
+<p>但是在某些情况下并不能这么智能，例如：</p> <pre><code>&lt;table&gt;
+    &lt;tr&gt;
+    &lt;td markdown="1"&gt;This is *true* markdown text.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/table&gt;
+</code></pre>
+<p>表格单元可以包含内联与块级元素，像上面的例子将转换为内联元素。如果想转换为块级元素，则添加上特性markdown=”block”而不是markdown=”1″。</p>
 
-            <h2 id="header-id">标题Id特性</h2>
+<h2 id="header-id">标题Id特性</h2>
 
-            <p>PHP Markdown Extra下可以给标题元素添加id特性。id写在标题那行末，以#打头并用大括号括起来，像这样：</p> <pre><code>Header 1 {#header1}
-            ========
+<p>PHP Markdown Extra下可以给标题元素添加id特性。id写在标题那行末，以#打头并用大括号括起来，像这样：</p> <pre><code>Header 1 {#header1}
+    ========
 
-            ## Header 2 ## {#header2}
-        </code></pre>
-            <p>然后给文档相应位置添加锚点：</p> <pre><code>[Link back to header 1](#header1)
-        </code></pre>
-            <p>目前只能给标题元素添加id特性。</p>
+    ## Header 2 ## {#header2}
+</code></pre>
+<p>然后给文档相应位置添加锚点：</p> <pre><code>[Link back to header 1](#header1)
+</code></pre>
+<p>目前只能给标题元素添加id特性。</p>
 
-            <h2 id="fenced-code-blocks">栅栏式代码块</h2>
+<h2 id="fenced-code-blocks">栅栏式代码块</h2>
 
-            <p>PHP Markdown Extra v1.2
-                引进了不需要缩进的代码块语法，栅栏式代码块。像Markdown的代码块一样，只是不用缩进，而由起始与末尾的栅栏行去界定代码块。代码块的起始行由三个或更多的~组成，末尾行由相同数目的~组成。例如：</p> <pre><code>This
-            is a paragraph introducing:
+<p>PHP Markdown Extra v1.2
+    引进了不需要缩进的代码块语法，栅栏式代码块。像Markdown的代码块一样，只是不用缩进，而由起始与末尾的栅栏行去界定代码块。代码块的起始行由三个或更多的~组成，末尾行由相同数目的~组成。例如：</p> <pre><code>This
+    is a paragraph introducing:
 
-            ~~~~~~~~~~~~~~~~~~~~~
-            a one-line code block
-            ~~~~~~~~~~~~~~~~~~~~~
-        </code></pre>
-            <p>与缩进式代码块相比，栅栏式代码块中代码开头与结尾可以有空白行：</p> <pre><code>~~~
+    ~~~~~~~~~~~~~~~~~~~~~
+    a one-line code block
+    ~~~~~~~~~~~~~~~~~~~~~
+</code></pre>
+<p>与缩进式代码块相比，栅栏式代码块中代码开头与结尾可以有空白行：</p> <pre><code>~~~
 
-            blank line before
-            blank line after
+    blank line before
+    blank line after
 
-            ~~~
-        </code></pre>
-            <p>缩进式代码块不能紧跟在列表后面，因为这时列表的缩进语法起作用。栅栏式代码块没这个限制：</p> <pre><code>1. List item
+    ~~~
+</code></pre>
+<p>缩进式代码块不能紧跟在列表后面，因为这时列表的缩进语法起作用。栅栏式代码块没这个限制：</p> <pre><code>1. List item
 
-            Not an indented code block, but a second paragraph
-            in the list item
+    Not an indented code block, but a second paragraph
+    in the list item
 
-            ~~~~
-            This is a code block, fenced-style
-            ~~~~
-        </code></pre>
-            <p>当编辑器不能缩进文本块时栅栏式代码块就很有用，比如浏览器中的文本框。</p>
+    ~~~~
+    This is a code block, fenced-style
+    ~~~~
+</code></pre>
+<p>当编辑器不能缩进文本块时栅栏式代码块就很有用，比如浏览器中的文本框。</p>
 
-            <h2 id="table">表格</h2>
+<h2 id="table">表格</h2>
 
-            <p>PHP Markdown Extra支持创建简单的表格。“简单”是指这样的：</p> <pre><code>First Header | Second Header
-            ------------- | -------------
-            Content Cell | Content Cell
-            Content Cell | Content Cell
-        </code></pre>
-            <p>第一行是表头；第二行是分隔行，将表头与下面内容分开；再下面的每一行都是表格中的一行。列之间由管道符(|)分开。转换结果：</p> <pre><code>&lt;table&gt;
-            &lt;thead&gt;
-            &lt;tr&gt;
-            &lt;th&gt;First Header&lt;/th&gt;
-            &lt;th&gt;Second Header&lt;/th&gt;
-            &lt;/tr&gt;
-            &lt;/thead&gt;
-            &lt;tbody&gt;
-            &lt;tr&gt;
-            &lt;td&gt;Content Cell&lt;/td&gt;
-            &lt;td&gt;Content Cell&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-            &lt;td&gt;Content Cell&lt;/td&gt;
-            &lt;td&gt;Content Cell&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;/tbody&gt;
-            &lt;/table&gt;
-        </code></pre>
-            <p>也可以在行首与行末加上管道符。两种方式随你喜欢，结果是一样的：</p> <pre><code>| First Header | Second Header |
-            | ------------- | ------------- |
-            | Content Cell | Content Cell |
-            | Content Cell | Content Cell |
-        </code></pre>
-            <p>注意每行至少得有一个管道符。假如创建单列表格，则在每行行首或行末，或两处都加上管道符。</p>
+<p>PHP Markdown Extra支持创建简单的表格。“简单”是指这样的：</p> <pre><code>First Header | Second Header
+    ------------- | -------------
+    Content Cell | Content Cell
+    Content Cell | Content Cell
+</code></pre>
+<p>第一行是表头；第二行是分隔行，将表头与下面内容分开；再下面的每一行都是表格中的一行。列之间由管道符(|)分开。转换结果：</p> <pre><code>&lt;table&gt;
+    &lt;thead&gt;
+    &lt;tr&gt;
+    &lt;th&gt;First Header&lt;/th&gt;
+    &lt;th&gt;Second Header&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td&gt;Content Cell&lt;/td&gt;
+    &lt;td&gt;Content Cell&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;Content Cell&lt;/td&gt;
+    &lt;td&gt;Content Cell&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+</code></pre>
+<p>也可以在行首与行末加上管道符。两种方式随你喜欢，结果是一样的：</p> <pre><code>| First Header | Second Header |
+    | ------------- | ------------- |
+    | Content Cell | Content Cell |
+    | Content Cell | Content Cell |
+</code></pre>
+<p>注意每行至少得有一个管道符。假如创建单列表格，则在每行行首或行末，或两处都加上管道符。</p>
 
-            <p>可以在分隔行里加上冒号来指定列的对齐方式。冒号在左边则列左对齐，在右边则列右对齐，在两边则列中间对齐。</p> <pre><code>| Item | Value |
-            | --------- | -----:|
-            | Computer | $1600 |
-            | Phone | $12 |
-            | Pipe | $1 |
-        </code></pre>
-            <p>转换时相关列会加上align属性。</p>
+<p>可以在分隔行里加上冒号来指定列的对齐方式。冒号在左边则列左对齐，在右边则列右对齐，在两边则列中间对齐。</p> <pre><code>| Item | Value |
+    | --------- | -----:|
+    | Computer | $1600 |
+    | Phone | $12 |
+    | Pipe | $1 |
+</code></pre>
+<p>转换时相关列会加上align属性。</p>
 
-            <p>单元格内可以用Markdown生成内联元素：</p> <pre><code>| Function name | Description |
-            | ------------- | ------------------------------ |
-            | `help()` | Display the help window. |
-            | `destroy()` | **Destroy your computer!** |
-        </code></pre>
-            <h2 id="def-list">定义列表</h2>
+<p>单元格内可以用Markdown生成内联元素：</p> <pre><code>| Function name | Description |
+    | ------------- | ------------------------------ |
+    | `help()` | Display the help window. |
+    | `destroy()` | **Destroy your computer!** |
+</code></pre>
+<h2 id="def-list">定义列表</h2>
 
-            <p>PHP Markdown Extra支持定义列表。定义列表很像词典，由词汇及定义组成。</p>
+<p>PHP Markdown Extra支持定义列表。定义列表很像词典，由词汇及定义组成。</p>
 
-            <p>简单的定义列表由单行的词汇，加上以冒号打头的定义组成：</p> <pre><code>Apple
-            : Pomaceous fruit of plants of the genus Malus in
-            the family Rosaceae.
+<p>简单的定义列表由单行的词汇，加上以冒号打头的定义组成：</p> <pre><code>Apple
+    : Pomaceous fruit of plants of the genus Malus in
+    the family Rosaceae.
 
-            Orange
-            : The fruit of an evergreen tree of the genus Citrus.
-        </code></pre>
-            <p>词汇与上条定义之间需要用空行分开。定义可能是多行的，理应缩进，但是犯懒不缩进也行：</p> <pre><code>Apple
-            : Pomaceous fruit of plants of the genus Malus in
-            the family Rosaceae.
+    Orange
+    : The fruit of an evergreen tree of the genus Citrus.
+</code></pre>
+<p>词汇与上条定义之间需要用空行分开。定义可能是多行的，理应缩进，但是犯懒不缩进也行：</p> <pre><code>Apple
+    : Pomaceous fruit of plants of the genus Malus in
+    the family Rosaceae.
 
-            Orange
-            : The fruit of an evergreen tree of the genus Citrus.
-        </code></pre>
-            <p>缩进与不缩进得到的结果一样：</p> <pre><code>&lt;dl&gt;
-            &lt;dt&gt;Apple&lt;/dt&gt;
-            &lt;dd&gt;Pomaceous fruit of plants of the genus Malus in
-            the family Rosaceae.&lt;/dd&gt;
+    Orange
+    : The fruit of an evergreen tree of the genus Citrus.
+</code></pre>
+<p>缩进与不缩进得到的结果一样：</p> <pre><code>&lt;dl&gt;
+    &lt;dt&gt;Apple&lt;/dt&gt;
+    &lt;dd&gt;Pomaceous fruit of plants of the genus Malus in
+    the family Rosaceae.&lt;/dd&gt;
 
-            &lt;dt&gt;Orange&lt;/dt&gt;
-            &lt;dd&gt;The fruit of an evergreen tree of the genus Citrus.&lt;/dd&gt;
-            &lt;/dl&gt;
-        </code></pre>
-            <p>像普通列表一样，定义可以包含多个段落，以及其它的块级元素，比如引用，代码块，列表，甚至是其它的定义列表。</p> <pre><code>Term 1
+    &lt;dt&gt;Orange&lt;/dt&gt;
+    &lt;dd&gt;The fruit of an evergreen tree of the genus Citrus.&lt;/dd&gt;
+    &lt;/dl&gt;
+</code></pre>
+<p>像普通列表一样，定义可以包含多个段落，以及其它的块级元素，比如引用，代码块，列表，甚至是其它的定义列表。</p> <pre><code>Term 1
 
-            : This is a definition with two paragraphs. Lorem ipsum
-            dolor sit amet, consectetuer adipiscing elit. Aliquam
-            hendrerit mi posuere lectus.
+    : This is a definition with two paragraphs. Lorem ipsum
+    dolor sit amet, consectetuer adipiscing elit. Aliquam
+    hendrerit mi posuere lectus.
 
-            Vestibulum enim wisi, viverra nec, fringilla in, laoreet
-            vitae, risus.
+    Vestibulum enim wisi, viverra nec, fringilla in, laoreet
+    vitae, risus.
 
-            : Second definition for term 1, also wrapped in a paragraph
-            because of the blank line preceding it.
+    : Second definition for term 1, also wrapped in a paragraph
+    because of the blank line preceding it.
 
-            Term 2
+    Term 2
 
-            : This definition has a code block, a blockquote and a list.
+    : This definition has a code block, a blockquote and a list.
 
-            code block.
+    code block.
 
-            &gt; block quote
-            &gt; on two lines.
+    &gt; block quote
+    &gt; on two lines.
 
-            1. first list item
-            2. second list item
-        </code></pre>
-            <h2 id="footnotes">脚注</h2>
+    1. first list item
+    2. second list item
+</code></pre>
+<h2 id="footnotes">脚注</h2>
 
-            <p>脚注的实现跟参考链接的实现差不多。脚注由两部分组成：上标数字；脚注文本。一个脚注例子：</p> <pre><code>That's some text with a footnote.[^1]
+<p>脚注的实现跟参考链接的实现差不多。脚注由两部分组成：上标数字；脚注文本。一个脚注例子：</p> <pre><code>That's some text with a footnote.[^1]
 
-            [^1]: And that's the footnote.
-        </code></pre>
-            <p>脚注文本可以放在文档中的任意位置，但是转换时是按照加注处位置的先后生成列表，然后放到文档末尾。注意一个脚注不能添加到两个地方，否则第二个加注处视为普通文本。</p>
+    [^1]: And that's the footnote.
+</code></pre>
+<p>脚注文本可以放在文档中的任意位置，但是转换时是按照加注处位置的先后生成列表，然后放到文档末尾。注意一个脚注不能添加到两个地方，否则第二个加注处视为普通文本。</p>
 
-            <p>每个脚注必须有一个唯一的名字，这个名字用来链接加注处与脚注文本，跟脚注编号没有关系。取名规则与HTML中的Id特性一样（例子中名字为1,但是id命名必须以字母开头，译注）。</p>
+<p>每个脚注必须有一个唯一的名字，这个名字用来链接加注处与脚注文本，跟脚注编号没有关系。取名规则与HTML中的Id特性一样（例子中名字为1,但是id命名必须以字母开头，译注）。</p>
 
-            <p>脚注可以包含块级元素，这意味着可以将多个段落，列表，引用等放在脚注里。跟普通列表一样在定义中用四个空格缩进：</p> <pre><code>That's some text with a
-            footnote.[^1]
+<p>脚注可以包含块级元素，这意味着可以将多个段落，列表，引用等放在脚注里。跟普通列表一样在定义中用四个空格缩进：</p> <pre><code>That's some text with a
+    footnote.[^1]
 
-            [^1]: And that's the footnote.
+    [^1]: And that's the footnote.
 
-            That's the second paragraph.
-        </code></pre>
-            <p>如果想排版得更好，可以这样：</p> <pre><code>[^1]:
-            And that's the footnote.
+    That's the second paragraph.
+</code></pre>
+<p>如果想排版得更好，可以这样：</p> <pre><code>[^1]:
+    And that's the footnote.
 
-            That's the second paragraph.
-        </code></pre>
-            <h3 id="fn-output">输出</h3>
+    That's the second paragraph.
+</code></pre>
+<h3 id="fn-output">输出</h3>
 
-            <p>脚注只是一种输出不能满足所有人，将来的版本可能支持不同的输出。现在的输出与<a target="_blank" rel="external nofollow"
-                                                       href="http://daringfireball.net/2005/07/footnotes">Daring
-                Fireball</a>上的示例一样，不过作了稍微改动。下面是上面第一个例子的输出：</p> <pre><code>&lt;p&gt;That's some text with a footnote.
-            &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+<p>脚注只是一种输出不能满足所有人，将来的版本可能支持不同的输出。现在的输出与<a target="_blank" rel="external nofollow"
+                                           href="http://daringfireball.net/2005/07/footnotes">Daring
+    Fireball</a>上的示例一样，不过作了稍微改动。下面是上面第一个例子的输出：</p> <pre><code>&lt;p&gt;That's some text with a footnote.
+    &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 
-            &lt;div class="footnotes"&gt;
-            &lt;hr /&gt;
-            &lt;ol&gt;
+    &lt;div class="footnotes"&gt;
+    &lt;hr /&gt;
+    &lt;ol&gt;
 
-            &lt;li id="fn:1"&gt;
-            &lt;p&gt;And that's the footnote.
-            &lt;a href="#fnref:1" rev="footnote"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-            &lt;/li&gt;
+    &lt;li id="fn:1"&gt;
+    &lt;p&gt;And that's the footnote.
+    &lt;a href="#fnref:1" rev="footnote"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
 
-            &lt;/ol&gt;
-            &lt;/div&gt;
-        </code></pre>
-            <p>看着有点晕，不过在浏览器中看是这样的：</p>
+    &lt;/ol&gt;
+    &lt;/div&gt;
+</code></pre>
+<p>看着有点晕，不过在浏览器中看是这样的：</p>
 
-            <div class="html"><p>That’s some text with a footnote.<sup id="fnref:1"><a rel="footnote" href="#fn:1">1</a></sup>
-            </p>
+<div class="html"><p>That’s some text with a footnote.<sup id="fnref:1"><a rel="footnote" href="#fn:1">1</a></sup>
+</p>
 
-                <div class="footnotes">
-                    <hr>
-                    <ol>
-                        <li id="fn:1"><p>And that’s the footnote. <a rev="footnote" href="#fnref:1">↩</a></p></li>
-                    </ol>
-                </div>
-            </div>
-            <p>链接的rel与rev特性表明了元素之间的关系，加注处链接到脚注（因此rel=”footnote”)，脚注反链到加注处（因此rev=”footnote”）。可以用css给链接添加样式：</p> <pre><code>a[rel="footnote"]
-            a[rev="footnote"]
-        </code></pre>
-            <p>也可以给这些链接添加class与title特性。在PHP Markdown Extra文件的开头有四项与此相关的设置。特性值中的%%会被替换为当前脚注编号。例如：</p> <pre><code>define(
-            'MARKDOWN_FN_LINK_TITLE', "Go to footnote %%." );
-        </code></pre>
-            <h2 id="abbr">缩写</h2>
-
-            <p>PHP Markdown Extra支持缩写（HTML标签&lt;abbr&gt;）。语法很简单，像这样定义缩写：</p> <pre><code>*[HTML]: Hyper Text Markup
-            Language
-            *[W3C]: World Wide Web Consortium
-        </code></pre>
-            <p>然后在文档的其它地方，像这样使用缩写：</p> <pre><code>The HTML specification
-            is maintained by the W3C.
-        </code></pre>
-            <p>转换后的结果：</p> <pre><code>The &lt;abbr title="Hyper Text Markup Language"&gt;HTML&lt;/abbr&gt; specification
-            is maintained by the &lt;abbr title="World Wide Web Consortium"&gt;W3C&lt;/abbr&gt;.
-        </code></pre>
-            <p>缩写区分大小写，多个单词也无妨。缩写也可能是空的定义，这种情况下，仍然生成&lt;abbr&gt;标签，但是没有title特性。</p> <pre><code>Operation Tigra Genesis
-            is going well.
-
-            *[Tigra Genesis]:
-        </code></pre>
-            <p>缩写定义可以放在文档的任意位置，转换时会去掉这些定义。</p>
-
-            <h2 id="em">强调</h2>
-
-            <p>PHP Markdown Extra稍微改变了Markdown的强调语法。下划线语法只对整个单词有效，单词中间的下划线视为正常字符。如果想强调单词中的部分内容，可以使用星号语法。</p>
-
-            <p>比如：</p> <pre><code>Please open the folder "secret_magic_box".
-        </code></pre>
-            <p>下划线位于单词中间，不会转换，得到的HTML为：</p> <pre><code>&lt;p&gt;Please open the folder "secret_magic_box".&lt;/p&gt;
-        </code></pre>
-            <p>下划线语法仍然可用，只要将整个单词包住：</p> <pre><code>I like it when you say _you love me_.
-        </code></pre>
-            <p>strong的强调语法一样：单词中间不能用下划线语法，只能用星号语法。</p>
-
-            <h2 id="backslash">反义</h2>
-
-            <p>PHP Markdown Extra可用反斜杠\来反义冒号(:)与管道符(|)，防止被判断为定义列表或表格。</p>
-
-            <h2 id="">致谢</h2>
-
-            <p>上面许多点子之前在<a target="_blank" rel="external nofollow"
-                           href="http://daringfireball.net/projects/markdown/#discussion-list">Markdown讨论列表</a>上讨论过。感谢所有参加讨论的人，感谢实现与改进Markdown的人。
-            </p>
-        </div>
+    <div class="footnotes">
+        <hr>
+        <ol>
+            <li id="fn:1"><p>And that’s the footnote. <a rev="footnote" href="#fnref:1">↩</a></p></li>
+        </ol>
     </div>
+</div>
+<p>链接的rel与rev特性表明了元素之间的关系，加注处链接到脚注（因此rel=”footnote”)，脚注反链到加注处（因此rev=”footnote”）。可以用css给链接添加样式：</p> <pre><code>a[rel="footnote"]
+    a[rev="footnote"]
+</code></pre>
+<p>也可以给这些链接添加class与title特性。在PHP Markdown Extra文件的开头有四项与此相关的设置。特性值中的%%会被替换为当前脚注编号。例如：</p> <pre><code>define(
+    'MARKDOWN_FN_LINK_TITLE', "Go to footnote %%." );
+</code></pre>
+<h2 id="abbr">缩写</h2>
+
+<p>PHP Markdown Extra支持缩写（HTML标签&lt;abbr&gt;）。语法很简单，像这样定义缩写：</p> <pre><code>*[HTML]: Hyper Text Markup
+    Language
+    *[W3C]: World Wide Web Consortium
+</code></pre>
+<p>然后在文档的其它地方，像这样使用缩写：</p> <pre><code>The HTML specification
+    is maintained by the W3C.
+</code></pre>
+<p>转换后的结果：</p> <pre><code>The &lt;abbr title="Hyper Text Markup Language"&gt;HTML&lt;/abbr&gt; specification
+    is maintained by the &lt;abbr title="World Wide Web Consortium"&gt;W3C&lt;/abbr&gt;.
+</code></pre>
+<p>缩写区分大小写，多个单词也无妨。缩写也可能是空的定义，这种情况下，仍然生成&lt;abbr&gt;标签，但是没有title特性。</p> <pre><code>Operation Tigra Genesis
+    is going well.
+
+    *[Tigra Genesis]:
+</code></pre>
+<p>缩写定义可以放在文档的任意位置，转换时会去掉这些定义。</p>
+
+<h2 id="em">强调</h2>
+
+<p>PHP Markdown Extra稍微改变了Markdown的强调语法。下划线语法只对整个单词有效，单词中间的下划线视为正常字符。如果想强调单词中的部分内容，可以使用星号语法。</p>
+
+<p>比如：</p> <pre><code>Please open the folder "secret_magic_box".
+</code></pre>
+<p>下划线位于单词中间，不会转换，得到的HTML为：</p> <pre><code>&lt;p&gt;Please open the folder "secret_magic_box".&lt;/p&gt;
+</code></pre>
+<p>下划线语法仍然可用，只要将整个单词包住：</p> <pre><code>I like it when you say _you love me_.
+</code></pre>
+<p>strong的强调语法一样：单词中间不能用下划线语法，只能用星号语法。</p>
+
+<h2 id="backslash">反义</h2>
+
+<p>PHP Markdown Extra可用反斜杠\来反义冒号(:)与管道符(|)，防止被判断为定义列表或表格。</p>
+
+<h2 id="">致谢</h2>
+
+<p>上面许多点子之前在<a target="_blank" rel="external nofollow"
+               href="http://daringfireball.net/projects/markdown/#discussion-list">Markdown讨论列表</a>上讨论过。感谢所有参加讨论的人，感谢实现与改进Markdown的人。
+</p>
+</div>
+</div>
 </div>
 
 </body>

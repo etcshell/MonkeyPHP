@@ -49,8 +49,9 @@ class HttpClient {
      * @return string 返回：HTTP获取处理后的信息
      */
     public function post($post, $url, $ip = '', $timeout = 15, $cookie = '', $freadLen = 0) {
-        if ($freadLen > $this->_defaultFlen)
+        if ($freadLen > $this->_defaultFlen) {
             $freadLen = $this->_defaultFlen;
+        }
         $this->_http($url, $post, $ip, $timeout, $cookie, $freadLen);
     }
 
@@ -92,8 +93,9 @@ class HttpClient {
             }
             if ($isHttpHeader) {
                 $httpReturn = @fread($httpFp, $freadLen);
-                if (strlen($httpReturn) > $freadLen)
+                if (strlen($httpReturn) > $freadLen) {
                     $stopFread = true;
+                }
             }
         }
         fclose($httpFp);
@@ -178,8 +180,9 @@ class HttpClient {
      * @return string
      */
     private function _parseArrToUrlstr($arr) {
-        if (!is_array($arr))
+        if (!is_array($arr)) {
             return '';
+        }
         return http_build_query($arr, 'flags_');
     }
 
@@ -193,8 +196,9 @@ class HttpClient {
     private function _parseUrlToHost($url) {
         $parse = @parse_url($url);
         $reg = '/^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/';
-        if (empty($parse) || preg_match($reg, trim($url)) == false)
+        if (empty($parse) || preg_match($reg, trim($url)) == false) {
             return '';
+        }
         return str_replace(array('http://', 'https://'), array('', 'ssl://'), $parse['scheme'] . '://') . $parse['host'];
     }
 

@@ -433,14 +433,18 @@ class Connection extends PDO {
         if (is_array($data)) {
             return array_map(__METHOD__, $data);
         } //array($this, 'quoteParameters')
-        if (is_null($data))
+        if (is_null($data)) {
             return 'NULL';
-        if (is_bool($data))
+        }
+        if (is_bool($data)) {
             return $data ? '1' : '0';
-        if (is_int($data))
+        }
+        if (is_int($data)) {
             return (int)$data;
-        if (is_float($data))
+        }
+        if (is_float($data)) {
             return (float)$data;
+        }
         return $this->quote($data);
     }
 
