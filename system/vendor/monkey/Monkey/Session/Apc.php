@@ -19,8 +19,7 @@ use Monkey;
  *
  * @package Monkey\Session
  */
-class Apc extends SessionAbstract
-{
+class Apc extends SessionAbstract {
     /**
      * 构造方法
      *
@@ -28,8 +27,7 @@ class Apc extends SessionAbstract
      *
      * @throws \Exception
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
         if (!extension_loaded('apc')) {
             new \Exception('会话出错:没有安装APC扩展。', 2048);
         }
@@ -47,8 +45,7 @@ class Apc extends SessionAbstract
      *
      * @return boolean
      */
-    public function open($path, $name)
-    {
+    public function open($path, $name) {
         //因为没有用文件存储Session，所以用不着
         return true;
     }
@@ -58,8 +55,7 @@ class Apc extends SessionAbstract
      *
      * @return boolean
      */
-    public function close()
-    {
+    public function close() {
         //因为没有用文件存储Session，所以用不着
         return true;
     }
@@ -71,12 +67,12 @@ class Apc extends SessionAbstract
      *
      * @return    mixed    返回session中对应的数据
      */
-    public function read($sessionId)
-    {
+    public function read($sessionId) {
         $out = apc_fetch($this->_storageKey($sessionId));
         if ($out === FALSE) {
             return '';
-        } else {
+        }
+        else {
             return $out;
         }
     }
@@ -89,8 +85,7 @@ class Apc extends SessionAbstract
      *
      * @return boolean
      */
-    public function write($sessionId, $data)
-    {
+    public function write($sessionId, $data) {
         return apc_store($this->_storageKey($sessionId), $data, $this->expire);
     }
 
@@ -101,8 +96,7 @@ class Apc extends SessionAbstract
      *
      * @return boolean
      */
-    public function destroy($sessionId)
-    {
+    public function destroy($sessionId) {
         return apc_delete($this->_storageKey($sessionId));
     }
 
@@ -113,8 +107,7 @@ class Apc extends SessionAbstract
      *
      * @return boolean
      */
-    public function gc($lifetime)
-    {
+    public function gc($lifetime) {
         //无需额外回收,apc有自己的过期回收机制
         return true;
     }

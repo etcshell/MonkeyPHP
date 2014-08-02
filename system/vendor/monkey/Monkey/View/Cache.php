@@ -19,8 +19,7 @@ use Monkey;
  *
  * @package Monkey\View
  */
-class Cache
-{
+class Cache {
     /**
      * 应用对象
      *
@@ -48,8 +47,7 @@ class Cache
      * @param Monkey\App $app
      * @param string|null $cache_file 默认使用路由作为缓存文件名（不含后缀名，路径相对于应用程序目录）
      */
-    public function __construct($app, $cache_file = null)
-    {
+    public function __construct($app, $cache_file = null) {
         $this->app = $app;
         $this->setFile($cache_file ? $cache_file : $app->router()->getPath());
     }
@@ -61,8 +59,7 @@ class Cache
      *
      * @return $this
      */
-    public function setFile($file)
-    {
+    public function setFile($file) {
         $this->cache_file = $this->app->DIR . '/temp/html' . $file . '.php';
         $this->expire_file = $this->cache_file . '_expire.php';
         dir_check(dirname($this->cache_file));
@@ -78,8 +75,7 @@ class Cache
      *
      * @return bool
      */
-    public function store($html, $expire = 0)
-    {
+    public function store($html, $expire = 0) {
         file_put_contents($this->cache_file, $html, LOCK_EX);
 
         if ($expire != 0) {
@@ -95,12 +91,13 @@ class Cache
      *
      * @return string
      */
-    public function fetch()
-    {
-        if ($this->_exists())
+    public function fetch() {
+        if ($this->_exists()) {
             return require $this->cache_file;
-        else
+        }
+        else {
             return '';
+        }
     }
 
     /**
@@ -110,8 +107,7 @@ class Cache
      *
      * 成功返回true，失败返回false
      */
-    public function load()
-    {
+    public function load() {
         if (!$this->_exists()) {
             return FALSE;
         }
@@ -128,8 +124,7 @@ class Cache
      *
      * 成功返回true，失败返回false
      */
-    public function delete()
-    {
+    public function delete() {
         if (file_exists($this->cache_file)) {
             unlink($this->cache_file);
         }
@@ -144,8 +139,7 @@ class Cache
      *
      * @return boolean
      */
-    public function clear()
-    {
+    public function clear() {
         return dir_delete($this->app->DIR . '/temp/html');
     }
 
@@ -154,8 +148,7 @@ class Cache
      *
      * @return bool|string
      */
-    private function _exists()
-    {
+    private function _exists() {
         if (!file_exists($this->cache_file)) {
             $this->delete();
             return FALSE;

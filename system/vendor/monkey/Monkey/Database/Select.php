@@ -19,8 +19,7 @@ use Monkey;
  *
  * @package Monkey\Database
  */
-class Select
-{
+class Select {
     /**
      * 应用对象
      *
@@ -127,8 +126,7 @@ class Select
      * @param null $alias
      * @param array $options
      */
-    public function __construct(Connection $connection, $table, $alias = NULL, $options = array())
-    {
+    public function __construct(Connection $connection, $table, $alias = NULL, $options = array()) {
         $this->app = $connection->app;
         $this->queryIdentifier = uniqid('', TRUE);
         if (empty($alias)) {
@@ -149,8 +147,7 @@ class Select
      *
      * @return $this
      */
-    public function distinct($distinct = TRUE)
-    {
+    public function distinct($distinct = TRUE) {
         $this->distinct = (bool)$distinct;
         return $this;
     }
@@ -180,9 +177,8 @@ class Select
      * field(array('f1', 'aF2'=>'aliasF2', 'f3')) //即，第二个参数中，可以用字符串键名来设置别名
      *
      */
-    public function fields($fields = array())
-    {
-        if (func_num_args()>1) {
+    public function fields($fields = array()) {
+        if (func_num_args() > 1) {
             $fields = func_get_args();
         }
 
@@ -198,8 +194,7 @@ class Select
      *
      * @return $this
      */
-    public function addField($table_alias, $field, $alias = NULL)
-    {
+    public function addField($table_alias, $field, $alias = NULL) {
         //修复表别名
         $table_alias = $this->checkTableAlias($table_alias);
         $this->_addField($table_alias, $field, $alias);
@@ -231,8 +226,7 @@ class Select
      * 添加 a 表中的 3 个字段，并且将字段 'aF2' 的别名设置为 'aliasF2'
      * field('a', array('aF1', 'aF2'=>'aliasF2', 'aF3')) //即，第二个参数中，可以用字符串键名来设置别名
      */
-    public function addFields($table_alias, $fields = array())
-    {
+    public function addFields($table_alias, $fields = array()) {
         //修复表别名
         $table_alias = $this->checkTableAlias($table_alias);
         $this->_addFields($table_alias, $fields);
@@ -247,8 +241,7 @@ class Select
      *
      * @return string
      */
-    protected function checkTableAlias($test)
-    {
+    protected function checkTableAlias($test) {
         //检查存在的已定义的别名
         foreach ($this->tables as $alias => $item) {
             if ($test == $alias or $test == $item['table'] or $test == $item['alias']) {
@@ -257,11 +250,10 @@ class Select
         }
 
         //没有定义过别名，$test就是表名或子查询了
-        return strpos($test,':') ? $test : '{:' . $test . ':}';
+        return strpos($test, ':') ? $test : '{:' . $test . ':}';
     }
 
-    protected function _addField($table_alias, $field, $alias = NULL)
-    {
+    protected function _addField($table_alias, $field, $alias = NULL) {
         empty($alias) and $alias = $field;
         !empty($this->fields[$alias]) and $alias = $table_alias . '_' . $field;
         $alias_candidate = $alias;
@@ -273,15 +265,10 @@ class Select
 
         $alias = $alias_candidate;
 
-        $this->fields[$alias] = array(
-            'field' => $field,
-            'table' => $table_alias,
-            'alias' => $alias,
-        );
+        $this->fields[$alias] = array('field' => $field, 'table' => $table_alias, 'alias' => $alias,);
     }
 
-    protected function _addFields($table_alias, $fields = array())
-    {
+    protected function _addFields($table_alias, $fields = array()) {
         if (empty($fields)) {
             $this->tables[$table_alias]['all_fields'] = TRUE;
             return $this;
@@ -299,6 +286,7 @@ class Select
 
         return $this;
     }
+
     /**
      * 添加一个表达式到结果集中
      *
@@ -311,8 +299,7 @@ class Select
      * 如：$select->addFieldByExpression( 'numb', 'count(*)' );
      * 如果表达式中出现了表名，请这样表示：'{:tablename:}'
      */
-    public function addFieldByExpression($alias, $expression, $arguments = array())
-    {
+    public function addFieldByExpression($alias, $expression, $arguments = array()) {
         if (empty($alias)) {
             $alias = 'expression';
         }
@@ -325,11 +312,7 @@ class Select
         }
 
         $alias = $alias_candidate;
-        $this->expressions[$alias] = array(
-            'expression' => $expression,
-            'alias' => $alias,
-            'arguments' => $arguments,
-        );
+        $this->expressions[$alias] = array('expression' => $expression, 'alias' => $alias, 'arguments' => $arguments,);
 
         return $this;
     }
@@ -345,8 +328,7 @@ class Select
      *
      * @return $this
      */
-    public function addJoin($type, $table, $alias = NULL, $condition = NULL, $arguments = array())
-    {
+    public function addJoin($type, $table, $alias = NULL, $condition = NULL, $arguments = array()) {
         if (empty($alias)) {
             $alias = $table instanceof Select ? 'subquery' : '{:' . $table . ':}';
         }
@@ -364,13 +346,7 @@ class Select
             $condition = str_replace('%alias', $alias, $condition);
         }
 
-        $this->tables[$alias] = array(
-            'join type' => $type,
-            'table' => $table,
-            'alias' => $alias,
-            'condition' => $condition,
-            'arguments' => $arguments,
-        );
+        $this->tables[$alias] = array('join type' => $type, 'table' => $table, 'alias' => $alias, 'condition' => $condition, 'arguments' => $arguments,);
 
         return $this;
     }
@@ -385,8 +361,7 @@ class Select
      *
      * @return $this
      */
-    public function join($table, $alias = NULL, $condition = NULL, $arguments = array())
-    {
+    public function join($table, $alias = NULL, $condition = NULL, $arguments = array()) {
         return $this->addJoin('INNER', $table, $alias, $condition, $arguments);
     }
 
@@ -400,8 +375,7 @@ class Select
      *
      * @return $this
      */
-    public function innerJoin($table, $alias = NULL, $condition = NULL, $arguments = array())
-    {
+    public function innerJoin($table, $alias = NULL, $condition = NULL, $arguments = array()) {
         return $this->addJoin('INNER', $table, $alias, $condition, $arguments);
     }
 
@@ -415,8 +389,7 @@ class Select
      *
      * @return $this
      */
-    public function leftJoin($table, $alias = NULL, $condition = NULL, $arguments = array())
-    {
+    public function leftJoin($table, $alias = NULL, $condition = NULL, $arguments = array()) {
         return $this->addJoin('LEFT OUTER', $table, $alias, $condition, $arguments);
     }
 
@@ -430,8 +403,7 @@ class Select
      *
      * @return $this
      */
-    public function rightJoin($table, $alias = NULL, $condition = NULL, $arguments = array())
-    {
+    public function rightJoin($table, $alias = NULL, $condition = NULL, $arguments = array()) {
         return $this->addJoin('RIGHT OUTER', $table, $alias, $condition, $arguments);
     }
 
@@ -444,8 +416,7 @@ class Select
      *
      * @return $this
      */
-    public function where($fieldName, $fieldValue = NULL, $operator = NULL)
-    {
+    public function where($fieldName, $fieldValue = NULL, $operator = NULL) {
         $this->where->where($fieldName, $fieldValue, $operator);
         return $this;
     }
@@ -457,8 +428,7 @@ class Select
      *
      * @return $this
      */
-    public function isNull($fieldName)
-    {
+    public function isNull($fieldName) {
         $this->where->where($fieldName, NULL, 'IS NULL');
         return $this;
     }
@@ -470,8 +440,7 @@ class Select
      *
      * @return $this
      */
-    public function isNotNull($fieldName)
-    {
+    public function isNotNull($fieldName) {
         $this->where->where($fieldName, NULL, 'IS NOT NULL');
         return $this;
     }
@@ -484,8 +453,7 @@ class Select
      *
      * @return $this
      */
-    public function condition($snippet, $args = array())
-    {
+    public function condition($snippet, $args = array()) {
         $this->where->condition($snippet, $args);
         return $this;
     }
@@ -497,8 +465,7 @@ class Select
      *
      * @return $this
      */
-    public function exists(Select $select)
-    {
+    public function exists(Select $select) {
         $this->where->where('', $select, 'EXISTS');
         return $this;
     }
@@ -510,8 +477,7 @@ class Select
      *
      * @return $this
      */
-    public function notExists(Select $select)
-    {
+    public function notExists(Select $select) {
         $this->where->where('', $select, 'NOT EXISTS');
         return $this;
     }
@@ -524,8 +490,7 @@ class Select
      *
      * @return $this
      */
-    public function orderBy($field, $direction = 'ASC')
-    {
+    public function orderBy($field, $direction = 'ASC') {
         $this->order[$field] = strtoupper($direction) == 'ASC' ? 'ASC' : 'DESC';
         return $this;
     }
@@ -537,8 +502,7 @@ class Select
      *
      * @return $this
      */
-    public function groupBy($field)
-    {
+    public function groupBy($field) {
         $this->group[$field] = $field;
         return $this;
     }
@@ -552,8 +516,7 @@ class Select
      *
      * @return $this
      */
-    public function having($fieldName, $fieldValue = NULL, $operator = NULL)
-    {
+    public function having($fieldName, $fieldValue = NULL, $operator = NULL) {
         $this->having->where($fieldName, $fieldValue, $operator);
         return $this;
     }
@@ -565,8 +528,7 @@ class Select
      *
      * @return $this
      */
-    public function havingIsNull($fieldName)
-    {
+    public function havingIsNull($fieldName) {
         $this->having->where($fieldName, NULL, 'IS NULL');
         return $this;
     }
@@ -578,8 +540,7 @@ class Select
      *
      * @return $this
      */
-    public function havingIsNotNull($fieldName)
-    {
+    public function havingIsNotNull($fieldName) {
         $this->having->where($fieldName, NULL, 'IS NOT NULL');
         return $this;
     }
@@ -592,8 +553,7 @@ class Select
      *
      * @return $this
      */
-    public function havingCondition($snippet, $args = array())
-    {
+    public function havingCondition($snippet, $args = array()) {
         $this->having->condition($snippet, $args);
         return $this;
     }
@@ -606,8 +566,7 @@ class Select
      *
      * @return $this
      */
-    public function range($length = NULL, $start = NULL)
-    {
+    public function range($length = NULL, $start = NULL) {
         $this->range = func_num_args() ? array('start' => (int)$start, 'length' => (int)$length) : array();
         return $this;
     }
@@ -620,8 +579,7 @@ class Select
      *
      * @return $this
      */
-    public function limit($start = 0, $length = 1)
-    {
+    public function limit($start = 0, $length = 1) {
         $this->range = array('start' => (int)$start, 'length' => (int)$length);
         return $this;
     }
@@ -633,8 +591,7 @@ class Select
      *
      * @return $this
      */
-    public function forUpdate($set = TRUE)
-    {
+    public function forUpdate($set = TRUE) {
         isset($set) and $this->forUpdate = $set;
         return $this;
     }
@@ -644,8 +601,7 @@ class Select
      *
      * @return array
      */
-    public function &getFields()
-    {
+    public function &getFields() {
         return $this->fields;
     }
 
@@ -654,8 +610,7 @@ class Select
      *
      * @return array
      */
-    public function &getFieldOfExpressions()
-    {
+    public function &getFieldOfExpressions() {
         return $this->expressions;
     }
 
@@ -664,8 +619,7 @@ class Select
      *
      * @return array
      */
-    public function &getTables()
-    {
+    public function &getTables() {
         return $this->tables;
     }
 
@@ -674,8 +628,7 @@ class Select
      *
      * @return array
      */
-    public function &getOrderBy()
-    {
+    public function &getOrderBy() {
         return $this->order;
     }
 
@@ -684,8 +637,7 @@ class Select
      *
      * @return array
      */
-    public function &getGroupBy()
-    {
+    public function &getGroupBy() {
         return $this->group;
     }
 
@@ -694,8 +646,7 @@ class Select
      *
      * @return array
      */
-    public function &getHavingConditions()
-    {
+    public function &getHavingConditions() {
         return $this->having->getConditions();
     }
 
@@ -706,8 +657,7 @@ class Select
      *
      * @return array|null
      */
-    public function getArguments($queryIdentifier = NULL)
-    {
+    public function getArguments($queryIdentifier = NULL) {
         $queryIdentifier and $this->queryIdentifier = $queryIdentifier;
         $qi = $this->queryIdentifier;
         $args = $this->where->getArguments($qi) + $this->having->getArguments($qi);
@@ -731,8 +681,7 @@ class Select
      *
      * @return string
      */
-    public function getString($queryIdentifier = NULL)
-    {
+    public function getString($queryIdentifier = NULL) {
         $qi = $queryIdentifier ? $this->queryIdentifier = $queryIdentifier : $this->queryIdentifier;
         //!$this->compiled() and $this->compile($this);
         // SELECT
@@ -764,7 +713,8 @@ class Select
             if (isset($table['table']) and $table['table'] instanceof Select) {
                 $table_string = '(' . $table['table']->getString($qi) . ')';
 
-            } else {
+            }
+            else {
                 $table_string = '{:' . $table['table'] . ':}';
             }
 
@@ -803,8 +753,7 @@ class Select
      *
      * @return Select
      */
-    public function getCountQuery()
-    {
+    public function getCountQuery() {
         $count = $this->prepareCountQuery();
         $query = $this->connection->select($count);
         $query->addFieldByExpression('mk_count_value', 'COUNT(*)');
@@ -816,8 +765,7 @@ class Select
      *
      * @return Statement
      */
-    public function execute()
-    {
+    public function execute() {
         return $this->connection->query($this->getString(), $this->getArguments());
     }
 
@@ -826,8 +774,7 @@ class Select
      *
      * @return Select
      */
-    protected function prepareCountQuery()
-    {
+    protected function prepareCountQuery() {
         $count = clone($this);
         $group_by = $count->getGroupBy();
         $having = $count->getHavingConditions();

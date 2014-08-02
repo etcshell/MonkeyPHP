@@ -19,8 +19,7 @@ use Monkey;
  *
  * @package Monkey\Session
  */
-class Memcache extends SessionAbstract
-{
+class Memcache extends SessionAbstract {
     /**
      * Memcache对象
      *
@@ -35,8 +34,7 @@ class Memcache extends SessionAbstract
      *
      * @throws \Exception
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
         if (!extension_loaded('apc')) {
             new \Exception('会话出错:没有安装Memcache扩展。', 2048);
         }
@@ -60,8 +58,7 @@ class Memcache extends SessionAbstract
      *
      * @return boolean
      */
-    public function open($path, $name)
-    {
+    public function open($path, $name) {
         //因为没有用文件存储Session，所以用不着
         return true;
     }
@@ -71,8 +68,7 @@ class Memcache extends SessionAbstract
      *
      * @return boolean
      */
-    public function close()
-    {
+    public function close() {
         //因为没有用文件存储Session，所以用不着
         return true;
     }
@@ -84,13 +80,13 @@ class Memcache extends SessionAbstract
      *
      * @return    mixed    返回session中对应的数据
      */
-    public function read($sessionId)
-    {
+    public function read($sessionId) {
         $out = $this->handler->get($this->_storageKey($sessionId));
 
         if ($out === false || $out == null) {
             return '';
-        } else {
+        }
+        else {
             return $out;
         }
 
@@ -104,11 +100,9 @@ class Memcache extends SessionAbstract
      *
      * @return boolean
      */
-    public function write($sessionId, $data)
-    {
+    public function write($sessionId, $data) {
         $method = $data ? 'set' : 'replace';
-        return $this->handler
-            ->$method($this->_storageKey($sessionId), $data, MEMCACHE_COMPRESSED, $this->expire);
+        return $this->handler->$method($this->_storageKey($sessionId), $data, MEMCACHE_COMPRESSED, $this->expire);
     }
 
     /**
@@ -118,8 +112,7 @@ class Memcache extends SessionAbstract
      *
      * @return boolean
      */
-    public function destroy($sessionId)
-    {
+    public function destroy($sessionId) {
         $this->handler->delete($this->_storageKey($sessionId));
         return;
     }
@@ -131,8 +124,7 @@ class Memcache extends SessionAbstract
      *
      * @return boolean
      */
-    public function gc($lifetime)
-    {
+    public function gc($lifetime) {
         //无需额外回收,memcache有自己的过期回收机制
         return true;
     }

@@ -17,8 +17,7 @@ namespace Monkey\View;
  *
  * @package Monkey\View
  */
-abstract class Widget extends View
-{
+abstract class Widget extends View {
     /**
      * 是否缓存挂件渲染结果
      *
@@ -47,8 +46,7 @@ abstract class Widget extends View
      *
      * @return string
      */
-    public function render($tplFilename)
-    {
+    public function render($tplFilename) {
         return parent::render('/widget' . $tplFilename, false);
     }
 

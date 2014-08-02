@@ -16,8 +16,7 @@ namespace Monkey\Exceptions\Http;
  *
  * @package Monkey\Exceptions\Http
  */
-class Conflict extends Base
-{
+class Conflict extends Base {
     /**
      * @var int
      */

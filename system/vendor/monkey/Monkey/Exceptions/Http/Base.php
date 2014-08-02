@@ -14,14 +14,14 @@ namespace Monkey\Exceptions\Http;
 
 use Monkey\Exceptions\Exception;
 
-class Base extends Exception
-{
+class Base extends Exception {
     /**
      * http 错误代码
      *
      * @var int
      */
     protected $statusCode = 500;
+
     /**
      * construct method
      *
@@ -30,8 +30,7 @@ class Base extends Exception
      *
      * @return \Monkey\Exceptions\Http\Base
      */
-    public function __construct($message = '', $code = -1)
-    {
+    public function __construct($message = '', $code = -1) {
         $code == -1 and $code = $this->statusCode;
         parent::__construct($message, $code);
     }
@@ -41,8 +40,7 @@ class Base extends Exception
      *
      * @return int
      */
-    public function getStatusCode()
-    {
+    public function getStatusCode() {
         return $this->statusCode;
     }
 } 

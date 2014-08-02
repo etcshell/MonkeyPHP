@@ -19,8 +19,7 @@ use Monkey;
  *
  * @package Monkey\Database
  */
-class Database
-{
+class Database {
     /**
      * 应用对象
      *
@@ -61,8 +60,7 @@ class Database
      *
      * @throws \Exception
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
         //效验pdo组件是否存在
         if (!extension_loaded('pdo')) {
             throw new \Exception('没有安装pdo驱动扩展,请先在php.ini中配置安装pdo！', 1024);
@@ -95,12 +93,12 @@ class Database
      * 2.不存在指定的连接（包括默认连接）返回null；
      * 3.连接失败返回false。
      */
-    public function getConnection($name = null)
-    {
+    public function getConnection($name = null) {
         //验证连接名
         if (empty($name)) {
             $name = $this->default;
-        } else {
+        }
+        else {
             $name = strtolower($name);
             $name = isset($this->pool[$name]) ? $name : null;
         }
@@ -130,8 +128,7 @@ class Database
      *
      * @return \Monkey\Database\Connection|false
      */
-    public function tryConnecting($config, $name = 'test')
-    {
+    public function tryConnecting($config, $name = 'test') {
         //设置连接类名
         $class = ucfirst(strtolower($config['protocol']));
         $class = ($class == 'Mysql' ? '' : '\\' . $class); //如果是Mysql驱动，直接使用父类，目的是获得更高的效率
@@ -141,13 +138,10 @@ class Database
             //创建连接对象
             $connect = new $class($this->app, $name, $config);
 
-        } catch (\PDOException $e) {
+        }
+        catch (\PDOException $e) {
             //处理连接错误，记录错误日志
-            $error = array(
-                'error_title' => '连接到PDO时出错。',
-                'message' => $e->getMessage(),
-                'code' => $e->getCode(),
-            );
+            $error = array('error_title' => '连接到PDO时出错。', 'message' => $e->getMessage(), 'code' => $e->getCode(),);
             $this->app->logger()->sql($error);
 
             throw $e;
@@ -163,8 +157,7 @@ class Database
      *
      * @return \Monkey\Database\Connection|false
      */
-    public function tryPool($name)
-    {
+    public function tryPool($name) {
         if (isset($this->pool[$name])) {
             return $this->tryConnecting($this->pool[$name], $name);
         }
@@ -175,8 +168,7 @@ class Database
     /**
      * 注销方法
      */
-    public function __destruct()
-    {
+    public function __destruct() {
         //销毁配置
         $this->config = null;
         $this->pool = null;

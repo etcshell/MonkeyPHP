@@ -5,17 +5,9 @@
 $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
-return array(
-    'Monkey' => array($vendorDir .DIRECTORY_SEPARATOR. 'monkey'),
-    'Markdown' => array($vendorDir .DIRECTORY_SEPARATOR. 'markdown'),
-    'Library' => array($vendorDir .DIRECTORY_SEPARATOR. 'library'),
-    'Uploader' => array($vendorDir .DIRECTORY_SEPARATOR. 'uploader'),
+return array('Monkey' => array($vendorDir . DIRECTORY_SEPARATOR . 'monkey'), 'Markdown' => array($vendorDir . DIRECTORY_SEPARATOR . 'markdown'), 'Library' => array($vendorDir . DIRECTORY_SEPARATOR . 'library'), 'Uploader' => array($vendorDir . DIRECTORY_SEPARATOR . 'uploader'),
 
 
-
-    'Macaca' => array($baseDir .DIRECTORY_SEPARATOR. 'apps'),
-    'Test' => array($baseDir .DIRECTORY_SEPARATOR. 'apps'),
-    'Install' => array($baseDir .DIRECTORY_SEPARATOR. 'apps'),
-    'DefaultApp' => array($baseDir .DIRECTORY_SEPARATOR. 'apps'),
+    'Macaca' => array($baseDir . DIRECTORY_SEPARATOR . 'apps'), 'Test' => array($baseDir . DIRECTORY_SEPARATOR . 'apps'), 'Install' => array($baseDir . DIRECTORY_SEPARATOR . 'apps'), 'DefaultApp' => array($baseDir . DIRECTORY_SEPARATOR . 'apps'),
 
 );

@@ -20,7 +20,6 @@ use Monkey\Exceptions\Exception;
  *
  * @package Monkey\Exceptions\Sql
  */
-class SqlEmptyException extends Exception
-{
+class SqlEmptyException extends Exception {
     protected $code = 3000;
 } 

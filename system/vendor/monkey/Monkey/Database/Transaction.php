@@ -19,8 +19,7 @@ use Monkey;
  *
  * @package Monkey\Database
  */
-class Transaction
-{
+class Transaction {
     /**
      * 应用对象
      *
@@ -73,8 +72,7 @@ class Transaction
      *
      * @throws \Exception
      */
-    public function __construct(Connection $connection, $connectionName, $transName = null)
-    {
+    public function __construct(Connection $connection, $connectionName, $transName = null) {
         $this->conn = $connection;
         self::$transactionsTotal += array($connectionName => array());
         $this->pdoTrans = & self::$transactionsTotal[$connectionName];
@@ -97,7 +95,8 @@ class Transaction
 
         if ($this->conn->inTransaction()) {
             $this->conn->query('SAVEPOINT ' . $transName);
-        } else {
+        }
+        else {
             $this->conn->beginTransaction();
         }
 
@@ -107,8 +106,7 @@ class Transaction
     /**
      * 提交事务
      */
-    public function commit()
-    {
+    public function commit() {
         if (!$this->pdoTrans[$this->name]) {
             return;
         }
@@ -120,8 +118,7 @@ class Transaction
     /**
      * 事务回滚
      */
-    public function rollback()
-    {
+    public function rollback() {
         if (!$this->getDepth() or !$this->conn->inTransaction()) {
             throw new \Exception('不在事务处理中.');
         }
@@ -149,7 +146,8 @@ class Transaction
 
                 return;
 
-            } else {
+            }
+            else {
                 $rolled_back_other_active_savepoint = TRUE;
             }
         }
@@ -167,8 +165,7 @@ class Transaction
      * 获取事务深度
      * @return int 返回事务嵌套层数
      */
-    public function getDepth()
-    {
+    public function getDepth() {
         return count($this->pdoTrans);
     }
 
@@ -176,16 +173,14 @@ class Transaction
      * 获取事务名称
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
     /**
      * 析构方法
      */
-    public function __destruct()
-    {
+    public function __destruct() {
         if (!$this->rolledBack) {
             $this->_pop($this->name);
         }
@@ -194,8 +189,7 @@ class Transaction
     /**
      * 执行事务query
      */
-    protected function _pop()
-    {
+    protected function _pop() {
         foreach (array_reverse($this->pdoTrans) as $name => $active) {
 
             if ($active) {
@@ -209,7 +203,8 @@ class Transaction
                     throw new \Exception('commit failed.');
                 }
 
-            } else {
+            }
+            else {
                 $this->conn->query('RELEASE SAVEPOINT ' . $name);
             }
         }

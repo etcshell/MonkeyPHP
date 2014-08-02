@@ -46,8 +46,7 @@ use Monkey;
  *
  * @package Monkey\View
  */
-class Page
-{
+class Page {
     /**
      * 应用对象
      *
@@ -215,8 +214,7 @@ class Page
      * @param Monkey\App $app
      * @param array $config
      */
-    public function __construct($app, $config)
-    {
+    public function __construct($app, $config) {
         $this->app = $app;
         $this->config = $config;
         $this->style = $config['page_style_name'];
@@ -229,8 +227,7 @@ class Page
      *
      * @return $this
      */
-    public function setUrlPre($urlPre)
-    {
+    public function setUrlPre($urlPre) {
         $this->urlPre = $urlPre;
         return $this;
     }
@@ -241,8 +238,7 @@ class Page
      *
      * @return $this
      */
-    public function setAjax($isAjax = false)
-    {
+    public function setAjax($isAjax = false) {
         $this->isAjax = (bool)$isAjax;
         return $this;
     }
@@ -252,8 +248,7 @@ class Page
      * @param string | null $style
      * @return $this
      */
-    public function setStyle($style = null)
-    {
+    public function setStyle($style = null) {
         $this->style = $style ? $style : $this->config['page_style_name'];
         $this->currentLayout = '';
         return $this;
@@ -266,8 +261,7 @@ class Page
      * 如'pre-current-next'
      * @return $this
      */
-    public function setCurrentLayout($currentLayout = null)
-    {
+    public function setCurrentLayout($currentLayout = null) {
         $this->currentLayout = $currentLayout ? $currentLayout : $this->config[$this->style . $this->layout];
         return $this;
     }
@@ -280,8 +274,7 @@ class Page
      * @param int $barLimit 分页栏上显示的页码数量
      * @return string
      */
-    public function getByList($currentPage, $totalItem, $listLimit, $barLimit = 10)
-    {
+    public function getByList($currentPage, $totalItem, $listLimit, $barLimit = 10) {
         $totalPage = ceil($totalItem / $listLimit);
         return $this->getByPage($currentPage, $totalPage, $barLimit);
     }
@@ -293,11 +286,12 @@ class Page
      * @param int $barLimit 分页栏上显示的页码数量
      * @return string
      */
-    public function getByPage($currentPage, $totalPage, $barLimit = 10)
-    {
+    public function getByPage($currentPage, $totalPage, $barLimit = 10) {
         $currentPage == 0 and $currentPage = 1;
-        $totalPage == 0 and $totalPage =1;
-        if ($currentPage > $totalPage or $currentPage < 1 or $barLimit < 1) return '';
+        $totalPage == 0 and $totalPage = 1;
+        if ($currentPage > $totalPage or $currentPage < 1 or $barLimit < 1) {
+            return '';
+        }
         $this->currentPage = $currentPage;
         $this->barLimit = $barLimit;
         $this->totalPage = $totalPage;
@@ -308,57 +302,58 @@ class Page
         $layout = explode('-', $layout);
         foreach ($layout as $method) {
             $method = 'get_' . $method;
-            if (method_exists($this, $method))
+            if (method_exists($this, $method)) {
                 $result .= $this->$method();
+            }
         }
         return $result;
     }
 
-    private function get_first()
-    {
-        if ($this->currentPage == 1) return '';
+    private function get_first() {
+        if ($this->currentPage == 1) {
+            return '';
+        }
         $s = str_replace($this->tagNumber, '1', $this->_link);
         return str_replace($this->tagText, $this->config[$this->style . $this->first], $s);
     }
 
-    private function get_pre()
-    {
-        if ($this->currentPage < 2) return '';
+    private function get_pre() {
+        if ($this->currentPage < 2) {
+            return '';
+        }
         $s = str_replace($this->tagNumber, $this->currentPage - 1, $this->_link);
         return str_replace($this->tagText, $this->config[$this->style . $this->pre], $s);
     }
 
-    private function get_current()
-    {
+    private function get_current() {
         return str_replace($this->tagNumber, $this->currentPage, $this->config[$this->style . $this->spanCurrent]);
     }
 
-    private function get_next()
-    {
-        if ($this->currentPage >= $this->totalPage) return '';
+    private function get_next() {
+        if ($this->currentPage >= $this->totalPage) {
+            return '';
+        }
         $s = str_replace($this->tagNumber, $this->currentPage + 1, $this->_link);
         return str_replace($this->tagText, $this->config[$this->style . $this->next], $s);
     }
 
-    private function get_last()
-    {
-        if ($this->currentPage == $this->totalPage) return '';
+    private function get_last() {
+        if ($this->currentPage == $this->totalPage) {
+            return '';
+        }
         $s = str_replace($this->tagNumber, $this->totalPage, $this->_link);
         return str_replace($this->tagText, $this->config[$this->style . $this->last], $s);
     }
 
-    private function get_total()
-    {
+    private function get_total() {
         return str_replace($this->tagNumber, $this->totalPage, $this->config[$this->style . $this->spanTotal]);
     }
 
-    private function get_jump()
-    {
+    private function get_jump() {
         return str_replace($this->tagUrlPre, $this->urlPre, $this->config[$this->style . $this->inputJump]);
     }
 
-    private function get_list()
-    {
+    private function get_list() {
         $half = ceil($this->barLimit / 2);
         $end = ($this->currentPage + $half > $this->totalPage ? $this->totalPage : $this->currentPage + $half);
         $begin = $end - $this->barLimit;

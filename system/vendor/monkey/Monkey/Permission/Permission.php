@@ -19,8 +19,7 @@ use Monkey;
  *
  * @package Monkey\Permission
  */
-class Permission
-{
+class Permission {
     /**
      * 匿名名称
      *
@@ -33,15 +32,14 @@ class Permission
      *
      * @var callable
      */
-    private   $authFinder;
+    private $authFinder;
 
     /**
      * 构造方法
      *
      * @param Monkey\App $app
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
     }
 
     /**
@@ -53,8 +51,7 @@ class Permission
      * $finder方法返回值应为allowed、denied、own、others之一，
      * $finder方法返回值分别代表具有该角色的：所有用户允许、所有用户拒绝、仅创建者允许、除开创建者允许
      */
-    public function setAuthFinder(callable $finder)
-    {
+    public function setAuthFinder(callable $finder) {
         $this->authFinder = $finder;
     }
 
@@ -67,8 +64,7 @@ class Permission
      *
      * @return bool|string
      */
-    public function getRoleAuth($resource, $action, $role = '')
-    {
+    public function getRoleAuth($resource, $action, $role = '') {
         if (empty($role)) {
             return $this->getAnonymousAuth($resource, $action);
         }
@@ -90,8 +86,7 @@ class Permission
      *
      * @return bool|string
      */
-    public function getAnonymousAuth($resource, $action)
-    {
+    public function getAnonymousAuth($resource, $action) {
         return $this->findRoleAuth($resource, $action, $this->anonymous);
     }
 
@@ -104,8 +99,7 @@ class Permission
      *
      * @return bool|string
      */
-    private function findRoleAuth($resource, $action, $role)
-    {
+    private function findRoleAuth($resource, $action, $role) {
         $behaviour = $this->behaviourCoder($resource, $action, $role);
         $auth = call_user_func($this->authFinder, $behaviour);
         return $auth;
@@ -120,8 +114,7 @@ class Permission
      *
      * @return string
      */
-    public function behaviourCoder($resource, $action, $role)
-    {
+    public function behaviourCoder($resource, $action, $role) {
         return md5($resource . '#' . $action . '#' . $role);
     }
 }

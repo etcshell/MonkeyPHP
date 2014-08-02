@@ -12,15 +12,14 @@
  */
 namespace Monkey\Exceptions\Http;
 
-//use DefaultApp\LabelApi\Base;
+    //use DefaultApp\LabelApi\Base;
 
 /**
  * Class BadRequest
  *
  * @package Monkey\Exceptions\Http
  */
-class BadRequest extends Base
-{
+class BadRequest extends Base {
     /**
      * @var int
      */

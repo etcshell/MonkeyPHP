@@ -10,7 +10,7 @@
  */
 namespace Monkey\Database;
 
-use \PDOStatement;
+use PDOStatement;
 
 /**
  * Class Statement
@@ -19,8 +19,7 @@ use \PDOStatement;
  *
  * @package Monkey\Database
  */
-class Statement extends PDOStatement
-{
+class Statement extends PDOStatement {
 
     /**
      * 连接对象
@@ -41,8 +40,7 @@ class Statement extends PDOStatement
      *
      * @param Connection $pdo
      */
-    protected function __construct(Connection $pdo)
-    {
+    protected function __construct(Connection $pdo) {
         $this->conn = $pdo;
     }
 
@@ -53,8 +51,7 @@ class Statement extends PDOStatement
      *
      * @return true|false
      */
-    public function execute($args = array())
-    {
+    public function execute($args = array()) {
         $this->isExecuteTrue = parent::execute($args);
         return $this->isExecuteTrue;
     }
@@ -64,8 +61,7 @@ class Statement extends PDOStatement
      *
      * @return Connection
      */
-    public function connection()
-    {
+    public function connection() {
         return $this->conn;
     }
 
@@ -74,8 +70,7 @@ class Statement extends PDOStatement
      *
      * @return string
      */
-    public function lastInsertId()
-    {
+    public function lastInsertId() {
         return $this->conn->lastInsertId();
     }
 
@@ -84,8 +79,7 @@ class Statement extends PDOStatement
      *
      * @return bool
      */
-    public function isSuccess()
-    {
+    public function isSuccess() {
         return $this->isExecuteTrue;
     }
 
@@ -94,8 +88,7 @@ class Statement extends PDOStatement
      *
      * @return int
      */
-    public function affected()
-    {
+    public function affected() {
         return $this->rowCount();
     }
 
@@ -104,8 +97,7 @@ class Statement extends PDOStatement
      *
      * implements PDOStatement
      */
-    public function getSQL()
-    {
+    public function getSQL() {
         return $this->queryString;
     }
 

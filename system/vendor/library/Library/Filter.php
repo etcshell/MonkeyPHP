@@ -6,8 +6,7 @@ namespace Library;
  * 浏览器输入数据的过滤类
  * @package Library
  */
-class Filter
-{
+class Filter {
     /**
      * @static
      * 压缩空白字符
@@ -15,10 +14,12 @@ class Filter
      * @return array|string
      */
     public static function compressWhite($data) {
-        if(is_array($data)) return array_map(__METHOD__ , $data);
-        $data = preg_replace ( '/\s+/',' ', $data );//压缩空白
-        $data = preg_replace ( '/\s+(\r?\n)/','$1', $data );//压缩行尾空白
-        $data = preg_replace ( '/(\r?\n)+/','$1', $data );//压缩回车换行
+        if (is_array($data)) {
+            return array_map(__METHOD__, $data);
+        }
+        $data = preg_replace('/\s+/', ' ', $data); //压缩空白
+        $data = preg_replace('/\s+(\r?\n)/', '$1', $data); //压缩行尾空白
+        $data = preg_replace('/(\r?\n)+/', '$1', $data); //压缩回车换行
         return $data;
     }
 
@@ -30,11 +31,12 @@ class Filter
      * @param array|string $data
      * @return string
      */
-    public static function xssToText($data){
-        if(is_array($data)) return array_map(__METHOD__ , $data);
-        $data=trim(strip_tags($data,'<br>'));
-        $data=self::delRedundancy($data);
-        $data = str_replace("\n",'<br>',   $data);
+    public static function xssToText($data) {
+        if (is_array($data))
+            return array_map(__METHOD__, $data);
+        $data = trim(strip_tags($data, '<br>'));
+        $data = self::delRedundancy($data);
+        $data = str_replace("\n", '<br>', $data);
         $data = addslashes($data);
         return $data;
     }
@@ -47,13 +49,15 @@ class Filter
      * @return string
      */
     public static function xssToHtml($data) {
-        if(is_array($data)) return array_map(__METHOD__ , $data);
-        if (function_exists('htmlspecialchars')) $data=htmlspecialchars($data);
-        else $data=str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&#039;', '&lt;', '&gt;'), $data);
-        $data = str_replace( array('%3C','%3E',' '),array('&lt;', '&gt;','&nbsp;'), $data);
+        if (is_array($data))
+            return array_map(__METHOD__, $data);
+        if (function_exists('htmlspecialchars'))
+            $data = htmlspecialchars($data);
+        else $data = str_replace(array('&', '"', "'", '<', '>'), array('&amp;', '&quot;', '&#039;', '&lt;', '&gt;'), $data);
+        $data = str_replace(array('%3C', '%3E', ' '), array('&lt;', '&gt;', '&nbsp;'), $data);
         $data = self::delRedundancy($data);
         $data = str_replace(' ', '&nbsp;', $data);
-        $data = str_replace("\n",'<br>',   $data);
+        $data = str_replace("\n", '<br>', $data);
         return $data;
     }
 
@@ -65,33 +69,36 @@ class Filter
      * @return array|string
      */
     public static function xssDeleteScript($data) {
-        if(is_array($data)) return array_map(__METHOD__ , $data);
+        if (is_array($data))
+            return array_map(__METHOD__, $data);
         //过滤恶意重复空白
-        $data=self::delRedundancy($data);
+        $data = self::delRedundancy($data);
         //完全过滤注释
-        $data = preg_replace ( '/<!--.*?-->/s', '', $data );
-        $data = preg_replace ( '/\/\*.*?\*\//s', '', $data );
+        $data = preg_replace('/<!--.*?-->/s', '', $data);
+        $data = preg_replace('/\/\*.*?\*\//s', '', $data);
         //完全过滤动态代码
-        $data = preg_replace ( '/<\?.*?\?>/s', '', $data );
+        $data = preg_replace('/<\?.*?\?>/s', '', $data);
         //过滤危险的属性，如：过滤on事件lang js
-        $data = preg_replace("/(<[^><]+)(lang|on|action|background|codebase|dynsrc|lowsrc)(\b)/i",'$1$3',$data);
-        $data = preg_replace("/(<[^><]+)(window\.|javascript:|js:|about:|file:|document\.|vbs:|cookie)(.*?\b)/i",'$1$3',$data);
+        $data = preg_replace("/(<[^><]+)(lang|on|action|background|codebase|dynsrc|lowsrc)(\b)/i", '$1$3', $data);
+        $data = preg_replace("/(<[^><]+)(window\.|javascript:|js:|about:|file:|document\.|vbs:|cookie)(.*?\b)/i", '$1$3', $data);
         //完全过滤js
-        $data = preg_replace("/<script(.*?)>(.*?)<\/script>/si",'',$data);
-        $data = preg_replace("/<iframe(.*?)>(.*?)<\/iframe>/si",'',$data);
+        $data = preg_replace("/<script(.*?)>(.*?)<\/script>/si", '', $data);
+        $data = preg_replace("/<iframe(.*?)>(.*?)<\/iframe>/si", '', $data);
         $data = preg_replace("/<object.+<\/object>/iesU", '', $data);
         //对空格编码
         $data = str_replace(' ', '&nbsp;', $data);
-        $data = str_replace("\n",'<br>',   $data);
+        $data = str_replace("\n", '<br>', $data);
         return $data;
     }
+
     //过滤恶意重复空白
-    private static function delRedundancy($data){
-        $data = preg_replace ( '/\s+(\r?\n)/','$1', $data );//去除恶意空格
-        $data = preg_replace ( '/\s{8,}/',' ', $data );//去除恶意空格
-        $data = preg_replace ( '/(\r?\n){3,}/','$1', $data );//去除恶意换行
+    private static function delRedundancy($data) {
+        $data = preg_replace('/\s+(\r?\n)/', '$1', $data); //去除恶意空格
+        $data = preg_replace('/\s{8,}/', ' ', $data); //去除恶意空格
+        $data = preg_replace('/(\r?\n){3,}/', '$1', $data); //去除恶意换行
         return $data;
     }
+
     /**
      * @static
      * 转化文本中的换行符号为<br/>
@@ -99,8 +106,9 @@ class Filter
      * @return array|string
      */
     public static function nl2br($data) {
-        if(is_array($data)) return array_map(__METHOD__ , $data);
-        return trim (preg_replace ( '/(\015)?(\012)/', '<br/>', $data ));
+        if (is_array($data))
+            return array_map(__METHOD__, $data);
+        return trim(preg_replace('/(\015)?(\012)/', '<br/>', $data));
     }
 
     /**
@@ -110,8 +118,9 @@ class Filter
      * @return array|string
      */
     public static function nl2delete($data) {
-        if(is_array($data)) return array_map(__METHOD__ , $data);
-        return trim (preg_replace ( '/((\015)?(\012))+/', '$1', $data ));
+        if (is_array($data))
+            return array_map(__METHOD__, $data);
+        return trim(preg_replace('/((\015)?(\012))+/', '$1', $data));
     }
 
     /**
@@ -121,7 +130,8 @@ class Filter
      * @return array|string
      */
     public static function phptag($data) {
-        if(is_array($data)) return array_map(__METHOD__ , $data);
+        if (is_array($data))
+            return array_map(__METHOD__, $data);
         return str_replace(array('<?', '?>'), array('&lt;?', '?&gt;'), $data);
     }
 }

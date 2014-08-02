@@ -17,8 +17,7 @@ namespace Monkey;
  *
  * @package Monkey
  */
-class Config
-{
+class Config {
 
     /**
      * 配置数据
@@ -47,8 +46,7 @@ class Config
      * @param $configFile
      * @param $tempDir
      */
-    public function __construct($configFile, $tempDir)
-    {
+    public function __construct($configFile, $tempDir) {
         //设置应用配置文件
         $this->_configFile = $configFile;
 
@@ -63,8 +61,7 @@ class Config
     /**
      * 加载配置
      */
-    private function _loadConfig()
-    {
+    private function _loadConfig() {
         $configFile = $this->_configFile;
         $compileFile = $this->_compileFile;
 
@@ -72,7 +69,8 @@ class Config
             //直接读取配置
             self::$data = unserialize(file_get_contents($compileFile));
 
-        } else {
+        }
+        else {
 
             //加载应用专有配置
             self::$data = (array)include($configFile);
@@ -91,8 +89,7 @@ class Config
      * @param $key
      * @param $value
      */
-    public function set($key, $value)
-    {
+    public function set($key, $value) {
         self::$data[$key] = $value;
     }
 
@@ -104,10 +101,8 @@ class Config
      *
      * @return mixed 配置值
      */
-    public function get($key, $defaultValue = null)
-    {
-        return (isset(self::$data[$key]) || self::$data[$key] !== null) ?
-            self::$data[$key] : $defaultValue;
+    public function get($key, $defaultValue = null) {
+        return (isset(self::$data[$key]) || self::$data[$key] !== null) ? self::$data[$key] : $defaultValue;
     }
 
     /**
@@ -117,8 +112,7 @@ class Config
      *
      * @return array|null
      */
-    public function getComponentProvider($component_name)
-    {
+    public function getComponentProvider($component_name) {
         return self::$data[$component_name];
     }
 
@@ -130,16 +124,14 @@ class Config
      *
      * @return array|null
      */
-    public function getComponentConfig($component_name, $provider)
-    {
+    public function getComponentConfig($component_name, $provider) {
         return self::$data[$component_name . '_' . $provider];
     }
 
     /**
      * 更新源文件配置
      */
-    public function update()
-    {
+    public function update() {
         file_save_variable($this->_configFile, self::$data);
     }
 

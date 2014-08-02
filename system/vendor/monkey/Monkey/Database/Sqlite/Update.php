@@ -19,16 +19,14 @@ use Monkey\Database as Query;
  *
  * @package Monkey\Database\Sqlite
  */
-class Update extends Query\Update
-{
+class Update extends Query\Update {
     /**
      * 构造方法
      *
      * @param Connection $connection
      * @param $table
      */
-    public function __construct(Connection $connection, $table)
-    {
+    public function __construct(Connection $connection, $table) {
         $this->app = $connection->app;
         $this->connection = $connection;
         $this->queryIdentifier = uniqid('', TRUE);

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-3-19
- * Time: 下午3:34
- */
 
 namespace Test\Controller\Blog;
 
@@ -19,15 +13,12 @@ use Monkey\Controller;
  * 因此“Blog\Blog:index”等价于“Test\Controller\Blog\Blog:index”。
  * @package Test\Controller\Blog
  */
-class Blog extends Controller
-{
-    public function action_index()
-    {
+class Blog extends Controller {
+    public function action_index() {
         $this->writeLine('博客首页');
     }
 
-    public function writeLine($string)
-    {
+    public function writeLine($string) {
         $this->response->addBody($string . '<br/>');
     }
 } 

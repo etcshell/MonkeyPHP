@@ -19,78 +19,25 @@ use Monkey\Database as Query;
  *
  * @package Monkey\Database\Sqlite
  */
-class CreateTable extends Query\CreateTable
-{
+class CreateTable extends Query\CreateTable {
     /**
      * 字段类型映射
      *
      * @var array
      */
-    protected static $map = array
-    (
-        'char' => array
-        (
-            'normal' => 'CHAR',
-            'tiny' => 'VARCHAR',
-            'small' => 'VARCHAR',
-            'medium' => 'CHAR',
-            'big' => 'CHAR'
-        ),
+    protected static $map = array('char' => array('normal' => 'CHAR', 'tiny' => 'VARCHAR', 'small' => 'VARCHAR', 'medium' => 'CHAR', 'big' => 'CHAR'),
 
-        'text' => array
-        (
-            'normal' => 'TEXT',
-            'tiny' => 'TINYTEXT',
-            'small' => 'TINYTEXT',
-            'medium' => 'MEDIUMTEXT',
-            'big' => 'LONGTEXT'
-        ),
+        'text' => array('normal' => 'TEXT', 'tiny' => 'TINYTEXT', 'small' => 'TINYTEXT', 'medium' => 'MEDIUMTEXT', 'big' => 'LONGTEXT'),
 
-        'serial' => array
-        (
-            'normal' => 'INT',
-            'tiny' => 'TINYINT',
-            'small' => 'SMALLINT',
-            'medium' => 'MEDIUMINT',
-            'big' => 'BIGINT'
-        ),
+        'serial' => array('normal' => 'INT', 'tiny' => 'TINYINT', 'small' => 'SMALLINT', 'medium' => 'MEDIUMINT', 'big' => 'BIGINT'),
 
-        'int' => array
-        (
-            'normal' => 'INT',
-            'tiny' => 'TINYINT',
-            'small' => 'SMALLINT',
-            'medium' => 'MEDIUMINT',
-            'big' => 'BIGINT'
-        ),
+        'int' => array('normal' => 'INT', 'tiny' => 'TINYINT', 'small' => 'SMALLINT', 'medium' => 'MEDIUMINT', 'big' => 'BIGINT'),
 
-        'float' => array
-        (
-            'normal' => 'FLOAT',
-            'tiny' => 'FLOAT',
-            'small' => 'FLOAT',
-            'medium' => 'FLOAT',
-            'big' => 'DOUBLE'
-        ),
+        'float' => array('normal' => 'FLOAT', 'tiny' => 'FLOAT', 'small' => 'FLOAT', 'medium' => 'FLOAT', 'big' => 'DOUBLE'),
 
-        'numeric' => array
-        (
-            'normal' => 'DECIMAL',
-            'tiny' => 'DECIMAL',
-            'small' => 'DECIMAL',
-            'medium' => 'DECIMAL',
-            'big' => 'DECIMAL'
-        ),
+        'numeric' => array('normal' => 'DECIMAL', 'tiny' => 'DECIMAL', 'small' => 'DECIMAL', 'medium' => 'DECIMAL', 'big' => 'DECIMAL'),
 
-        'blob' => array
-        (
-            'normal' => 'BLOB',
-            'tiny' => 'TINYBLOB',
-            'small' => 'MEDIUMBLOB',
-            'medium' => 'BLOB',
-            'big' => 'LONGBLOB'
-        ),
-    );
+        'blob' => array('normal' => 'BLOB', 'tiny' => 'TINYBLOB', 'small' => 'MEDIUMBLOB', 'medium' => 'BLOB', 'big' => 'LONGBLOB'),);
 
     /**
      * 构造方法
@@ -101,8 +48,7 @@ class CreateTable extends Query\CreateTable
      * @param string $characterSet 字符集， 默认使用'utf8'
      * @param string $collation 本地语言
      */
-    public function __construct($tableName, $comment = '', $engine = null, $characterSet = null, $collation = null)
-    {
+    public function __construct($tableName, $comment = '', $engine = null, $characterSet = null, $collation = null) {
         $this->tableName = $tableName;
         $this->engine = $engine ? $engine : 'InnoDB';
         $this->characterSet = $characterSet ? $characterSet : 'utf8';
@@ -124,8 +70,7 @@ class CreateTable extends Query\CreateTable
      *
      * @return $this
      */
-    public function addField($fieldName, $comment, $type, $scale, $size = null, $default = 'notNull', $autoIncrement = false, $primaryKey = false)
-    {
+    public function addField($fieldName, $comment, $type, $scale, $size = null, $default = 'notNull', $autoIncrement = false, $primaryKey = false) {
         $field = '`' . $fieldName . '` ';
 
         if ($type != 'char' and $type != 'serial' and $type != 'int' and $type != 'binary') {
@@ -155,8 +100,7 @@ class CreateTable extends Query\CreateTable
      * @param bool $autoIncrement 是否为自增字段
      * @return $this
      */
-    public function addFieldByString($field, $autoIncrement = false)
-    {
+    public function addFieldByString($field, $autoIncrement = false) {
         $this->fields[] = $field;
         $autoIncrement and $this->autoIncrement = true;
         return $this;
@@ -167,8 +111,7 @@ class CreateTable extends Query\CreateTable
      * @param $fieldName
      * @return $this
      */
-    public function setPrimaryKey($fieldName)
-    {
+    public function setPrimaryKey($fieldName) {
         !$this->keys['primary'] and $this->keys['primary'] = 'PRIMARY KEY (`' . $fieldName . '`)';
         return $this;
     }
@@ -178,8 +121,7 @@ class CreateTable extends Query\CreateTable
      * @param $fieldName
      * @param null $alias
      */
-    public function setUniqueKey($fieldName, $alias = null)
-    {
+    public function setUniqueKey($fieldName, $alias = null) {
         !$alias and $alias = $fieldName;
         $this->keys['unique'][$fieldName] = 'UNIQUE KEY `' . $alias . '` (`' . $fieldName . '`)';
     }
@@ -189,8 +131,7 @@ class CreateTable extends Query\CreateTable
      * @param $fieldName
      * @param null $alias
      */
-    public function setKey($fieldName, $alias = null)
-    {
+    public function setKey($fieldName, $alias = null) {
         !$alias and $alias = $fieldName;
         $this->keys['key'][$fieldName] = 'KEY `' . $alias . '` (`' . $fieldName . '`)';
     }
@@ -199,8 +140,7 @@ class CreateTable extends Query\CreateTable
      * 获取完整的数据表创建语句
      * @return string
      */
-    public function getSql()
-    {
+    public function getSql() {
         $sql = 'CREATE TABLE IF NOT EXISTS {:' . $this->tableName . ":} \n(\n";
         $fields = $this->fields;
         !empty($this->keys['primary']) and $fields[] = $this->keys['primary'];

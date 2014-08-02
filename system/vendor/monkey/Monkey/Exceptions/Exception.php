@@ -19,8 +19,7 @@ use Monkey;
  *
  * @package Monkey\Exceptions
  */
-class Exception extends \Exception
-{
+class Exception extends \Exception {
     /**
      * 应用对象
      *
@@ -38,32 +37,16 @@ class Exception extends \Exception
      *
      * @var array
      */
-    private static $_errorTitle = array(
-        -1 => '致命错误(E_FATAL)',
-        1 => '致命错误(E_ERROR)',
-        2 => '警告(E_WARNING)',
-        4 => '语法解析错误(E_PARSE)',
-        8 => '提示(E_NOTICE)',
-        16 => '启动时的致命错误(E_CORE_ERROR)',
-        32 => '启动时的非致命错误(E_CORE_WARNING)',
-        64 => '编译错误(E_COMPILE_ERROR)',
-        128 => '编译警告(E_COMPILE_WARNING)',
-        256 => '致命错误(E_USER_ERROR)',
-        512 => '警告(E_USER_WARNING)',
-        1024 => '提示(E_USER_NOTICE)',
-        2047 => 'E_ALL',
-        2048 => '建议您改变代码，以提高代码的互用性和兼容性(E_STRICT)'
-    );
+    private static $_errorTitle = array(-1 => '致命错误(E_FATAL)', 1 => '致命错误(E_ERROR)', 2 => '警告(E_WARNING)', 4 => '语法解析错误(E_PARSE)', 8 => '提示(E_NOTICE)', 16 => '启动时的致命错误(E_CORE_ERROR)', 32 => '启动时的非致命错误(E_CORE_WARNING)', 64 => '编译错误(E_COMPILE_ERROR)', 128 => '编译警告(E_COMPILE_WARNING)', 256 => '致命错误(E_USER_ERROR)', 512 => '警告(E_USER_WARNING)', 1024 => '提示(E_USER_NOTICE)', 2047 => 'E_ALL', 2048 => '建议您改变代码，以提高代码的互用性和兼容性(E_STRICT)');
 
-    public function __construct($message = '', $code = 0, $previous = null, $file = null, $line = null)
-    {
+    public function __construct($message = '', $code = 0, $previous = null, $file = null, $line = null) {
         parent::__construct($message, $code, $previous);
 
         !is_null($file) and $this->file = $file;
         !is_null($line) and $this->line = $line;
 
         $info = array();
-        $app = &self::$app;
+        $app = & self::$app;
 
         //设置错误信息
         $info['time'] = date('Y-m-d H:i:s', $app->TIME);
@@ -89,8 +72,8 @@ class Exception extends \Exception
      *
      * @param array $info
      */
-    public function showError($info){
-        self::$errorReporting->showError($info,true);
+    public function showError($info) {
+        self::$errorReporting->showError($info, true);
     }
 
 }

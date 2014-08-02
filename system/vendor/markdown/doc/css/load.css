@@ -5,28 +5,35 @@ html, body {
     margin: 0;
     padding: 0;
 }
+
 html {
     font-size: 1em;
 }
+
 element.style {
     display: block;
 }
+
 body {
     background-color: #F6F6F6;
 }
+
 html, body {
     font-family: sans-serif;
     height: 100%;
     margin: 0;
     padding: 0;
 }
+
 body.vector-animateLayout div#content, body.vector-animateLayout div#footer, body.vector-animateLayout #left-navigation {
     transition: margin-left 250ms ease 0s, padding 250ms ease 0s;
 }
+
 div#content {
     margin-left: 11em;
     padding: 1.25em 1.5em 1.5em;
 }
+
 div#content {
     -moz-border-bottom-colors: none;
     -moz-border-left-colors: none;
@@ -49,6 +56,7 @@ div#content {
     line-height: 1.6;
     position: relative;
 }
+
 .mw-content-ltr {
     direction: ltr;
 }
@@ -67,32 +75,41 @@ a {
 a.new, #p-personal a.new {
     color: #BA0000;
 }
+
 sup.reference {
     unicode-bidi: -moz-isolate;
 }
+
 sup, sub {
     line-height: 1;
 }
+
 div#content h2 {
     font-size: 1.5em;
 }
+
 div#content h1, div#content h2, div#content #firstHeading {
-    font-family: "Linux Libertine",Georgia,Times,serif;
+    font-family: "Linux Libertine", Georgia, Times, serif;
     line-height: 1.3;
 }
+
 h2 {
     font-size: 150%;
 }
+
 h1, h2, h3, h4, h5, h6 {
     color: #000000;
     font-weight: normal;
 }
+
 div#content .mw-editsection, div#content .mw-editsection-like {
     font-family: sans-serif;
 }
+
 .mw-content-ltr .mw-editsection, .mw-content-rtl .mw-content-ltr .mw-editsection {
     margin-left: 1em;
 }
+
 .mw-editsection, .mw-editsection-like {
     display: inline-block;
     font-size: small;
@@ -101,6 +118,7 @@ div#content .mw-editsection, div#content .mw-editsection-like {
     margin-left: 1em;
     vertical-align: baseline;
 }
+
 .mw-editsection, .toctoggle, #jump-to-nav {
     -moz-user-select: none;
 }
@@ -108,37 +126,46 @@ div#content .mw-editsection, div#content .mw-editsection-like {
 div#content h3, div#content h4 {
     font-weight: bold;
 }
+
 div#content h3 {
     font-size: 1.17em;
 }
+
 div#content h3, div#content h4, div#content h5, div#content h6 {
     line-height: 1.6;
     margin-bottom: 0;
     margin-top: 0.3em;
     padding-bottom: 0;
 }
+
 h3, h4, h5 {
     margin-bottom: 0.3em;
 }
+
 h3 {
     font-size: 132%;
 }
+
 h3, h4, h5, h6 {
     border-bottom: medium none;
     font-weight: bold;
 }
+
 pre, .mw-code {
     line-height: 1.3em;
 }
+
 pre, .mw-code {
     background-color: #F9F9F9;
     border: 1px solid #DDDDDD;
     color: #000000;
     padding: 1em;
 }
+
 pre, code, tt, kbd, samp, .mw-code {
-    font-family: monospace,Courier;
+    font-family: monospace, Courier;
 }
+
 body.skin-vector div.mw-geshi {
     background-color: #F9F9F9;
     border: 1px dashed #2F6FAB;
@@ -151,6 +178,7 @@ body.skin-vector div.mw-geshi {
     display: table;
     padding: 7px;
 }
+
 #toc, .toc, .mw-warning {
     background-color: #F9F9F9;
     border: 1px solid #AAAAAA;

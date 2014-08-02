@@ -17,8 +17,7 @@ namespace Monkey\Request;
  *
  * @package Monkey\Request
  */
-class Header
-{
+class Header {
     /**
      * 请求头集
      *
@@ -50,8 +49,7 @@ class Header
     /**
      * 构造方法
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->requestHeaders = $this->getAllHeaders();
         $this->cacheControls = $this->getCacheControls();
     }
@@ -65,18 +63,19 @@ class Header
      *
      * @return array|null
      */
-    public function getCacheControl($name = null, $defaultValue = null)
-    {
+    public function getCacheControl($name = null, $defaultValue = null) {
         if ($name === null) {
             return $this->cacheControls;
 
-        } else {
+        }
+        else {
             $name = strtolower($name);
 
             if (array_key_exists($name, $this->cacheControls))
                 return $this->cacheControls[$name];
-            else
+            else {
                 return $defaultValue;
+            }
         }
     }
 
@@ -88,8 +87,7 @@ class Header
      *
      * @return bool
      */
-    public function hasCacheControl($name)
-    {
+    public function hasCacheControl($name) {
         $name = strtolower($name);
         return array_key_exists($name, $this->cacheControls);
     }
@@ -100,8 +98,7 @@ class Header
      *
      * @return null  默认为close
      */
-    public function getConnection()
-    {
+    public function getConnection() {
         return $this->_get('Connection', 'close');
     }
 
@@ -111,8 +108,7 @@ class Header
      *
      * @return array|null 如果存在就是数组
      */
-    public function getAccept()
-    {
+    public function getAccept() {
         if (empty($this->accept)) {
             $this->accept = $this->_getList('Accept', 'text/html');
         }
@@ -125,8 +121,7 @@ class Header
      *
      * @return array
      */
-    public function getAcceptCharsets()
-    {
+    public function getAcceptCharsets() {
         return $this->_getList('Accept-Charset', 'utf-8');
     }
 
@@ -136,8 +131,7 @@ class Header
      *
      * @return array
      */
-    public function getAcceptEncodings()
-    {
+    public function getAcceptEncodings() {
         return explode(',', $this->_get('Accept-Encoding'));
     }
 
@@ -147,8 +141,7 @@ class Header
      *
      * @return array
      */
-    public function getAcceptLanguages()
-    {
+    public function getAcceptLanguages() {
         if (empty($this->languages)) {
             $l = $this->_getList('Accept-Language', 'en');
             $ls = array();
@@ -158,7 +151,8 @@ class Header
 
                 if ($item['0'] == 'i' && isset($item['1'])) {
                     $ls[] = $item['1'];
-                } else {
+                }
+                else {
                     $ls[] = $item['0'];
                 }
             }
@@ -174,8 +168,7 @@ class Header
      *
      * @return null bytes表示希望获取字节为单位的片段，none表示希望获取整个文档。
      */
-    public function getAcceptRanges()
-    {
+    public function getAcceptRanges() {
         return $this->_get('Accept-Ranges', 'none');
     }
 
@@ -194,8 +187,7 @@ class Header
      * 第一个和最后一个字节：bytes=0-0,-1
      * 同时指定几个范围：bytes=500-600,601-999
      */
-    public function getRanges()
-    {
+    public function getRanges() {
         return $this->_get('Ranges'); //Range:bytes=500-600,601-999
     }
 
@@ -209,8 +201,7 @@ class Header
      * 浏览器通过发送请求对象的 ETag 或者 自己所知道的最后修改时间给 WEB 服务器，让其判断对象是否改变了。
      * 总是跟 Range 头部一起使用。
      */
-    public function getIfRange()
-    {
+    public function getIfRange() {
         return $this->_get('If-Range');
     }
 
@@ -225,8 +216,7 @@ class Header
      * 这时，可以用 Authorization请求头 来回应向服务器表明自己的身份。
      * 如 Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==
      */
-    public function getAuthorization()
-    {
+    public function getAuthorization() {
         return $this->requestHeaders['Authorization'];
     }
 
@@ -235,13 +225,8 @@ class Header
      *
      * @return array ( 'type'=>验证类型, 'user'=>用户名, 'password'=>密码 )
      */
-    public function getAuthorizationArray()
-    {
-        return array(
-            'type' => isset($_SERVER['AUTH_TYPE']) ? $_SERVER['AUTH_TYPE'] : 'Base',
-            'user' => isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : $_SERVER['AUTH_USER'],
-            'password' => isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : $_SERVER['AUTH_PASSWORD'],
-        );
+    public function getAuthorizationArray() {
+        return array('type' => isset($_SERVER['AUTH_TYPE']) ? $_SERVER['AUTH_TYPE'] : 'Base', 'user' => isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : $_SERVER['AUTH_USER'], 'password' => isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : $_SERVER['AUTH_PASSWORD'],);
     }
 
     /**
@@ -253,8 +238,7 @@ class Header
      * 用户代理，是一个特殊字符串头，
      * 使得服务器能够识别客户端使用的操作系统及版本、CPU 类型、浏览器及版本、浏览器渲染引擎、浏览器语言、浏览器插件等
      */
-    public function getUserAgent()
-    {
+    public function getUserAgent() {
         return $this->_get('User-Agent');
     }
 
@@ -263,8 +247,7 @@ class Header
      *
      * @return string
      */
-    public function getBrowser()
-    {
+    public function getBrowser() {
         $browser = get_browser(null, true);
         return $browser['browser'] . $browser['majorver'];
     }
@@ -274,8 +257,7 @@ class Header
      *
      * @return string
      */
-    public function getClientOS()
-    {
+    public function getClientOS() {
         $browser = get_browser(null, true);
         return $browser['platform'];
     }
@@ -288,8 +270,7 @@ class Header
      * 获取实体文档生成了的时间
      * 当代理服务器用自己缓存的实体去响应请求时，用该头部表明该实体从产生到现在经过多长时间了。
      */
-    public function getAge()
-    {
+    public function getAge() {
         return $this->_get('Age');
     }
 
@@ -301,8 +282,7 @@ class Header
      * 判断Etag标志的实体内容是否匹配
      * 只有请求内容与实体相匹配才有效。如果匹配时只需返回304头即可。
      */
-    public function getIfMatch()
-    {
+    public function getIfMatch() {
         return $this->_get('If-Match');
     }
 
@@ -315,8 +295,7 @@ class Header
      * 如果内容未改变返回304代码，参数为服务器先前发送的Etag，与服务器回应的Etag比较判断是否改变
      * 如果对象的 ETag 改变了，其实也就意味著对象也改变了，才执行请求的动作。
      */
-    public function getIfNoneMatch()
-    {
+    public function getIfNoneMatch() {
         return $this->_get('If-None-Match');
     }
 
@@ -328,8 +307,7 @@ class Header
      * 获取发送文档的最近修改时间
      * 如果这个时间之后，服务器没有修改过文档，只需向浏览器发送304状态头即可
      */
-    public function getIfModifiedSince()
-    {
+    public function getIfModifiedSince() {
         return $this->_get('If-Modified-Since');
     }
 
@@ -340,8 +318,7 @@ class Header
      *
      * 如果请求的对象在该头部指定的时间之后没修改过，才执行请求的动作（比如返回对象）。
      */
-    public function getIfUnmodifiedSince()
-    {
+    public function getIfUnmodifiedSince() {
         return $this->_get('If-Unmodified-Since');
     }
 
@@ -353,8 +330,7 @@ class Header
      * 代理服务器响应浏览器，要求其提供代理身份验证信息。
      * 如 Proxy-Authorization：浏览器响应代理服务器的身份验证请求，提供自己的身份信息。
      */
-    public function getProxyAuthenticate()
-    {
+    public function getProxyAuthenticate() {
         return $this->_get('Proxy-Authenticate');
     }
 
@@ -366,8 +342,7 @@ class Header
      * 限制信息通过代理和网关传送的时间
      * 如 Max-Forwards: 10
      */
-    public function getMaxForwards()
-    {
+    public function getMaxForwards() {
         return $this->_get('Max-Forwards');
     }
 
@@ -383,8 +358,7 @@ class Header
      * 以此类推，当 OCS 收到最后一个代理服务器的请求时，检查 Via 头部，就知道该请求所经过的路由。
      * 例如：Via：1.0 236.D0707195.sina.com.cn:80 (squid/2.6.STABLE13)
      */
-    public function getVia()
-    {
+    public function getVia() {
         return $this->_get('Via');
     }
 
@@ -397,8 +371,7 @@ class Header
      * 例如 Referer：http://www.sina.com/index.html
      * 但是这个可以伪造，不太可靠。
      */
-    public function getReferer()
-    {
+    public function getReferer() {
         return $this->_get('Referer');
     }
 
@@ -410,8 +383,7 @@ class Header
      * 请求的与实体对应的MIME信息
      * 如 Content-Type: application/x-www-form-urlencoded
      */
-    public function getContentType()
-    {
+    public function getContentType() {
         return $this->_get('Content-Type');
     }
 
@@ -423,8 +395,7 @@ class Header
      * 请求的内容长度
      * 如 Content-Length: 348
      */
-    public function getContentLength()
-    {
+    public function getContentLength() {
         return $this->_get('Content-Length');
     }
 
@@ -435,8 +406,7 @@ class Header
      *
      * 请求的特定的服务器行为
      */
-    public function getExpect()
-    {
+    public function getExpect() {
         return $this->_get('Expect');
     }
 
@@ -448,8 +418,7 @@ class Header
      * 发出请求的用户的Email
      * 如 From: user@email.com
      */
-    public function getFrom()
-    {
+    public function getFrom() {
         return $this->_get('From');
     }
 
@@ -458,8 +427,7 @@ class Header
      *
      * @return string
      */
-    public function getWarning()
-    {
+    public function getWarning() {
         return $this->_get('Warning');
     }
 
@@ -471,13 +439,11 @@ class Header
      *
      * @return string|null
      */
-    public function get($name, $defaultValue = null)
-    {
+    public function get($name, $defaultValue = null) {
         return $this->_get($this->formatName($name), $defaultValue);
     }
 
-    private function _get($name, $defaultValue = null)
-    {
+    private function _get($name, $defaultValue = null) {
         return isset($this->requestHeaders[$name]) ? $this->requestHeaders[$name] : $defaultValue;
     }
 
@@ -488,17 +454,16 @@ class Header
      *
      * @return string
      */
-    private function formatName($name)
-    {
+    private function formatName($name) {
         return preg_replace('/\-(.)/e', "'-'.strtoupper('\\1')", strtr(ucfirst(strtolower($name)), '_', '-'));
     }
 
-    private function getAllHeaders()
-    {
+    private function getAllHeaders() {
         if (function_exists('getAllHeaders')) {
             return getallheaders();
 
-        } else {
+        }
+        else {
             $headers = array();
 
             foreach ($_SERVER as $name => $value) {
@@ -510,20 +475,14 @@ class Header
             if (isset($_SERVER['PHP_AUTH_DIGEST'])) {
                 $headers['Authorization'] = $_SERVER['PHP_AUTH_DIGEST'];
 
-            } elseif (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-                $headers['Authorization'] = array(
-                    'type' => $_SERVER['AUTH_TYPE'],
-                    'user' => $_SERVER['PHP_AUTH_USER'],
-                    'password' => $_SERVER['PHP_AUTH_PW']
-                );
+            }
+            elseif (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+                $headers['Authorization'] = array('type' => $_SERVER['AUTH_TYPE'], 'user' => $_SERVER['PHP_AUTH_USER'], 'password' => $_SERVER['PHP_AUTH_PW']);
                 //base64_encode($_SERVER['PHP_AUTH_USER'] . ':' . $_SERVER['PHP_AUTH_PW']);
 
-            } elseif (isset($_SERVER['AUTH_USER']) && isset($_SERVER['AUTH_PASSWORD'])) {
-                $headers['Authorization'] = array(
-                    'type' => $_SERVER['AUTH_TYPE'],
-                    'user' => $_SERVER['AUTH_USER'],
-                    'password' => $_SERVER['AUTH_PASSWORD']
-                );
+            }
+            elseif (isset($_SERVER['AUTH_USER']) && isset($_SERVER['AUTH_PASSWORD'])) {
+                $headers['Authorization'] = array('type' => $_SERVER['AUTH_TYPE'], 'user' => $_SERVER['AUTH_USER'], 'password' => $_SERVER['AUTH_PASSWORD']);
                 //base64_encode($_SERVER['AUTH_USER'] . ':' . $_SERVER['AUTH_PASSWORD']);
 
             }
@@ -532,14 +491,13 @@ class Header
                 $headers['Content-Length'] = $_SERVER['CONTENT_LENGTH'];
             }
 
-//            $headers['Content-Type'] = $this->getContentType();//这句循环求值了
+            //            $headers['Content-Type'] = $this->getContentType();//这句循环求值了
 
             return $headers;
         }
     }
 
-    private function getCacheControls()
-    {
+    private function getCacheControls() {
         $cc = $this->_get('Cache-Controls'); //no-cache, no-store, max-age=0, must-revalidate'
         $cc = explode(',', $cc);
         $ccs = array();
@@ -552,8 +510,7 @@ class Header
         return $ccs;
     }
 
-    private function _getList($name, $defaultValue = null)
-    {
+    private function _getList($name, $defaultValue = null) {
         $temp = $this->_get($name, $defaultValue);
         $t = strstr($temp, ';', true) and $accept = $t;
 

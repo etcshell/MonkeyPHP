@@ -6,16 +6,18 @@ namespace Library;
  * xxtea_encrypt算法加密解密类
  * @package Library
  */
-class XXTEA
-{
-    public function __construct() { }
+class XXTEA {
+    public function __construct() {
+    }
 
     private function long2str($v, $w) {
         $len = count($v);
         $n = ($len - 1) << 2;
         if ($w) {
             $m = $v[$len - 1];
-            if (($m < $n - 3) || ($m > $n)) return false;
+            if (($m < $n - 3) || ($m > $n)) {
+                return false;
+            }
             $n = $m;
         }
         $s = array();
@@ -29,19 +31,24 @@ class XXTEA
             return join('', $s);
         }
     }
+
     private function str2long($s, $w) {
-        $v = unpack("V*", $s. str_repeat("\0", (4 - strlen($s) % 4) & 3));
+        $v = unpack("V*", $s . str_repeat("\0", (4 - strlen($s) % 4) & 3));
         $v = array_values($v);
         if ($w) {
             $v[count($v)] = strlen($s);
         }
         return $v;
     }
+
     private function int32($n) {
-        while ($n >= 2147483648) $n -= 4294967296;
-        while ($n <= -2147483649) $n += 4294967296;
+        while ($n >= 2147483648)
+            $n -= 4294967296;
+        while ($n <= -2147483649)
+            $n += 4294967296;
         return (int)$n;
     }
+
     public function encrypt($str, $key) {
         if ($str == "") {
             return "";
@@ -73,6 +80,7 @@ class XXTEA
         }
         return $this->long2str($v, false);
     }
+
     public function decrypt($str, $key) {
         if ($str == "") {
             return "";

@@ -17,8 +17,7 @@ namespace Monkey\View;
  *
  * @package Monkey\View
  */
-class Document
-{
+class Document {
     /**
      * 处理超级连接代码
      *
@@ -28,9 +27,10 @@ class Document
      *
      * @return string
      */
-    public function a($text, $href = '#', $options = array())
-    {
-        if (!empty($href)) $options['href'] = $href;
+    public function a($text, $href = '#', $options = array()) {
+        if (!empty($href)) {
+            $options['href'] = $href;
+        }
         if (empty($options['title']) && empty($options['TITLE'])) {
             $options['title'] = $text; //为了SEO效果,link的title处理.
         }
@@ -46,8 +46,7 @@ class Document
      *
      * @return string
      */
-    public function email($text, $email = null, $options = array())
-    {
+    public function email($text, $email = null, $options = array()) {
         $options['href'] = 'mailto:' . (is_null($email) ? $text : $email);
         return $this->tag('a', $options, $text);
     }
@@ -61,8 +60,7 @@ class Document
      *
      * @return string
      */
-    public function image($src, $alt = null, $options = array())
-    {
+    public function image($src, $alt = null, $options = array()) {
         if (!$src) {
             return false;
         }
@@ -85,15 +83,12 @@ class Document
      *
      * @return string
      */
-    public function cssFile($url, $media = null)
-    {
+    public function cssFile($url, $media = null) {
         if (!empty($media)) {
             $media = ' media="' . $media . '"';
         }
 
-        return '<link rel="stylesheet" type="text/css" href="'
-        . $this->toText($url)
-        . '"' . $media . ' />\r';
+        return '<link rel="stylesheet" type="text/css" href="' . $this->toText($url) . '"' . $media . ' />\r';
     }
 
     /**
@@ -103,11 +98,8 @@ class Document
      *
      * @return string
      */
-    public function jsFile($url)
-    {
-        return '<script type="text/javascript" src="'
-        . $this->toText($url)
-        . '"></script>\r';
+    public function jsFile($url) {
+        return '<script type="text/javascript" src="' . $this->toText($url) . '"></script>\r';
     }
 
     /**
@@ -117,8 +109,7 @@ class Document
      *
      * @return string
      */
-    public function tableBegin($options = array())
-    {
+    public function tableBegin($options = array()) {
         return $this->tag('table', $options, false, false);
     }
 
@@ -129,8 +120,7 @@ class Document
      *
      * @return string
      */
-    public function tableTR($row = array())
-    {
+    public function tableTR($row = array()) {
         $html = '';
 
         foreach ($row as $col) {
@@ -145,8 +135,7 @@ class Document
      *
      * @return string
      */
-    public function tableEnd()
-    {
+    public function tableEnd() {
         return '</table>';
     }
 
@@ -158,8 +147,7 @@ class Document
      *
      * @return string
      */
-    public function table($content = array(), $options = array())
-    {
+    public function table($content = array(), $options = array()) {
         if (!$content) {
             return false;
         }
@@ -192,8 +180,7 @@ class Document
      *
      * @return string
      */
-    public function begin($action, $options = array(), $method = null, $enctype_item = false)
-    {
+    public function begin($action, $options = array(), $method = null, $enctype_item = false) {
         if (!$action) {
             return false;
         }
@@ -214,8 +201,7 @@ class Document
      *
      * @return string
      */
-    public function end()
-    {
+    public function end() {
         return '</form>';
     }
 
@@ -228,8 +214,7 @@ class Document
      *
      * @return string
      */
-    public function input($type, $name = null, $options = array())
-    {
+    public function input($type, $name = null, $options = array()) {
         if (!$type) {
             return false;
         }
@@ -248,8 +233,7 @@ class Document
      *
      * @return string
      */
-    public function inputText($name, $default_value = null, $options = array())
-    {
+    public function inputText($name, $default_value = null, $options = array()) {
         !is_null($default_value) and $options['value'] = $default_value;
         return $this->input('text', $name, $options);
     }
@@ -263,8 +247,7 @@ class Document
      *
      * @return string
      */
-    public function inputPassword($name, $value = '', $options = array())
-    {
+    public function inputPassword($name, $value = '', $options = array()) {
         $options['value'] = $value;
         return $this->input('password', $name, $options);
     }
@@ -277,8 +260,7 @@ class Document
      *
      * @return string
      */
-    public function inputSubmit($value = '重置', $options = array())
-    {
+    public function inputSubmit($value = '重置', $options = array()) {
         $options['value'] = $value;
         return $this->input('submit', '', $options);
     }
@@ -291,8 +273,7 @@ class Document
      *
      * @return string
      */
-    public function inputReset($value = '重置', $options = array())
-    {
+    public function inputReset($value = '重置', $options = array()) {
         $options['value'] = $value;
         return $this->input('reset', '', $options);
     }
@@ -305,8 +286,7 @@ class Document
      *
      * @return string
      */
-    public function inputButton($value, $options = array())
-    {
+    public function inputButton($value, $options = array()) {
         $options['value'] = $value;
         return $this->input('button', '', $options);
     }
@@ -322,8 +302,7 @@ class Document
      *
      * @return string
      */
-    public function inputCheckbox($name, $label, $value, $selected = false, $options = array())
-    {
+    public function inputCheckbox($name, $label, $value, $selected = false, $options = array()) {
         $options['value'] = $value;
         $selected and $options['checked'] = 'checked';
         return '<label>' . $this->input('checkbox', $name, $options) . $label . '</label>';
@@ -338,8 +317,7 @@ class Document
      *
      * @return string
      */
-    public function inputCheckboxArray($name, $content_array, $options = array())
-    {
+    public function inputCheckboxArray($name, $content_array, $options = array()) {
         if (!$content_array || !is_array($content_array)) {
             return false;
         }
@@ -352,15 +330,14 @@ class Document
             if (isset($item[2])) {
                 $options['checked'] = 'checked';
 
-            } else {
+            }
+            else {
                 if (isset($options['checked'])) {
                     unset($options['checked']);
                 }
             }
 
-            $html .= '<label>'
-                . $this->input('checkbox', $name, $options) . $item[0]
-                . '</label>';
+            $html .= '<label>' . $this->input('checkbox', $name, $options) . $item[0] . '</label>';
         }
 
         return $html;
@@ -377,8 +354,7 @@ class Document
      *
      * @return string
      */
-    public function inputRadio($name, $label, $value, $selected = false, $options = array())
-    {
+    public function inputRadio($name, $label, $value, $selected = false, $options = array()) {
         $options['value'] = $value;
         $selected and $options['checked'] = 'checked';
         return '<label>' . $this->input('radio', $name, $options) . $label . '</label>';
@@ -393,8 +369,7 @@ class Document
      *
      * @return string
      */
-    public function inputRadioArray($name, $content_array, $options = array())
-    {
+    public function inputRadioArray($name, $content_array, $options = array()) {
         if (!$content_array || !is_array($content_array)) {
             return false;
         }
@@ -405,13 +380,13 @@ class Document
 
             if (isset($item[2])) {
                 $options['checked'] = 'checked';
-            } else {
-                if (isset($options['checked'])) unset($options['checked']);
+            }
+            else {
+                if (isset($options['checked']))
+                    unset($options['checked']);
             }
 
-            $html .= '<label>'
-                . $this->input('radio', $name, $options) . $item[0]
-                . '</label>';
+            $html .= '<label>' . $this->input('radio', $name, $options) . $item[0] . '</label>';
         }
 
         return $html;
@@ -424,8 +399,7 @@ class Document
      * @param array $options 属性
      * @return string
      */
-    public function textArea($name, $content = null, $options = array())
-    {
+    public function textArea($name, $content = null, $options = array()) {
         $name and $options['name'] = $name;
         $option_str = '';
 
@@ -448,8 +422,7 @@ class Document
      *
      * @return string
      */
-    public function selectBegin($name, $options = array())
-    {
+    public function selectBegin($name, $options = array()) {
         $name and $options['name'] = $name;
         return $this->tag('select', $options, false, false);
     }
@@ -463,11 +436,8 @@ class Document
      *
      * @return string
      */
-    public function selectOption($caption, $value, $selected = false)
-    {
-        return '<option value="' . $value . ($selected ? '" selected="selected">' : '">')
-        . $caption
-        . '</option>';
+    public function selectOption($caption, $value, $selected = false) {
+        return '<option value="' . $value . ($selected ? '" selected="selected">' : '">') . $caption . '</option>';
     }
 
     /**
@@ -475,8 +445,7 @@ class Document
      *
      * @return string
      */
-    public function selectEnd()
-    {
+    public function selectEnd() {
         return '</select>';
     }
 
@@ -489,8 +458,7 @@ class Document
      *
      * @return string
      */
-    public function select($name, $content_array, $options = array())
-    {
+    public function select($name, $content_array, $options = array()) {
         $name and $options['name'] = $name;
 
         if (!$content_array || !is_array($content_array)) {
@@ -500,10 +468,7 @@ class Document
         $option_str = '';
 
         foreach ($content_array as $item) {
-            $option_str .= '<option value="' . $item[1]
-                . (isset($item[2]) ? '" selected="selected">' : '">')
-                . $item[0]
-                . '</option>';
+            $option_str .= '<option value="' . $item[1] . (isset($item[2]) ? '" selected="selected">' : '">') . $item[0] . '</option>';
         }
 
         return $this->tag('select', $options, $option_str);
@@ -519,8 +484,7 @@ class Document
      *
      * @return string
      */
-    public function tag($tag, $options = array(), $content = null, $close_tag = true)
-    {
+    public function tag($tag, $options = array(), $content = null, $close_tag = true) {
         $option_str = '';
 
         //当$options不为空或类型不为数组时
@@ -533,11 +497,10 @@ class Document
         $html = '<' . $tag . $option_str;
 
         if (!is_null($content)) {
-            return $close_tag
-                ? $html . '>' . $content . '</' . $tag . '>'
-                : $html . '>' . $content;
+            return $close_tag ? $html . '>' . $content . '</' . $tag . '>' : $html . '>' . $content;
 
-        } else {
+        }
+        else {
             return $close_tag ? $html . '/>' : $html . '>';
         }
     }
@@ -550,8 +513,7 @@ class Document
      *
      * @return string
      */
-    public function filterTag($str, $tags = NULL)
-    {
+    public function filterTag($str, $tags = NULL) {
         if (is_null($tags)) {
             return strip_tags($str);
         }
@@ -576,8 +538,7 @@ class Document
      *
      * @return string
      */
-    public function toText($data)
-    {
+    public function toText($data) {
         if (is_array($data)) {
             return array_map(__METHOD__, $data);
         }
@@ -597,8 +558,7 @@ class Document
      *
      * @return mixed
      */
-    private function delRedundancy($data)
-    {
+    private function delRedundancy($data) {
         $data = preg_replace('/\s+(\r?\n)/', '$1', $data); //去除恶意空格
         $data = preg_replace('/\s{8,}/', ' ', $data); //去除恶意空格
         $data = preg_replace('/(\r?\n){3,}/', '$1', $data); //去除恶意换行

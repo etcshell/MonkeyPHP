@@ -19,8 +19,7 @@ use Monkey\Database as Query;
  *
  * @package Monkey\Database\Sqlite
  */
-class Select extends Query\Select
-{
+class Select extends Query\Select {
     /**
      * 构造方法
      *
@@ -29,8 +28,7 @@ class Select extends Query\Select
      * @param null $alias
      * @param array $options
      */
-    public function __construct(Connection $connection, $table, $alias = NULL, $options = array())
-    {
+    public function __construct(Connection $connection, $table, $alias = NULL, $options = array()) {
         $this->app = $connection->app;
         $this->connection = $connection;
         $this->queryIdentifier = uniqid('', TRUE);
@@ -51,8 +49,7 @@ class Select extends Query\Select
      *
      * @return $this
      */
-    public function forUpdate($set = TRUE)
-    {
+    public function forUpdate($set = TRUE) {
         return $this;
     }
 
@@ -63,8 +60,7 @@ class Select extends Query\Select
      *
      * @return string
      */
-    public function getString($queryIdentifier = NULL)
-    {
+    public function getString($queryIdentifier = NULL) {
         $qi = $queryIdentifier ? $this->queryIdentifier = $queryIdentifier : $this->queryIdentifier;
         //!$this->compiled() and $this->compile($this);
         // SELECT
@@ -95,7 +91,8 @@ class Select extends Query\Select
 
             if ($table['table'] instanceof Select) {
                 $table_string = '(' . $table['table']->getString($qi) . ')';
-            } else {
+            }
+            else {
                 $table_string = '{:' . $table['table'] . ':}';
             }
 
