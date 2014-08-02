@@ -20,6 +20,7 @@ use Monkey\Exceptions\Exception;
  *
  * @package Monkey\Exceptions\Sql
  */
-class InsertException extends Exception {
+class InsertException extends Exception
+{
     protected $code = 3010;
 }

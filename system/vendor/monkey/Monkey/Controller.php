@@ -17,7 +17,8 @@ namespace Monkey;
  *
  * @package Monkey
  */
-class Controller {
+class Controller
+{
 
     /**
      * 应用对象
@@ -67,7 +68,8 @@ class Controller {
      *
      * @param App $app
      */
-    public function __construct($app) {
+    public function __construct($app)
+    {
         $this->app = $app;
         $this->appConfig = $app->config();
         $this->request = $app->request();
@@ -80,7 +82,8 @@ class Controller {
      *
      * @return View\View
      */
-    public function getView() {
+    public function getView()
+    {
         empty($this->view) and $this->view = $this->app->view();
         return $this->view;
     }
@@ -90,7 +93,8 @@ class Controller {
      *
      * @return Request\Request
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->request;
     }
 
@@ -99,7 +103,8 @@ class Controller {
      *
      * @return Response\Response
      */
-    public function getResponse() {
+    public function getResponse()
+    {
         return $this->response;
     }
 
@@ -111,7 +116,8 @@ class Controller {
      *
      * @return string
      */
-    public function getParameter($name, $defaultValue = null) {
+    public function getParameter($name, $defaultValue = null)
+    {
         return $this->request->getParameter($name, $defaultValue);
     }
 
@@ -122,7 +128,8 @@ class Controller {
      *
      * @return array
      */
-    public function getRouteParameter($name, $default = null) {
+    public function getRouteParameter($name, $default = null)
+    {
         return $this->app->router()->getParameter($name, $default);
     }
 
@@ -133,7 +140,8 @@ class Controller {
      *
      * @return bool|Database\Connection|null
      */
-    public function db($connectionName = null) {
+    public function db($connectionName = null)
+    {
         return $this->app->database()->getConnection($connectionName);
     }
 
@@ -142,7 +150,8 @@ class Controller {
      *
      * @param string $actionName 不含前缀 'action'
      */
-    public function before($actionName) {
+    public function before($actionName)
+    {
 
     }
 
@@ -151,7 +160,8 @@ class Controller {
      *
      * @param string $actionName 不含前缀 'action'
      */
-    public function after($actionName) {
+    public function after($actionName)
+    {
 
     }
 
@@ -160,7 +170,8 @@ class Controller {
      *
      * @param array $notice
      */
-    public function returnJson($notice) {
+    public function returnJson($notice)
+    {
         $this->app->response()->setJson($notice);
         exit;
     }
@@ -171,7 +182,8 @@ class Controller {
      * @param string $url 重定向的地址
      * @param bool $exitNow 立即退出，默认为否
      */
-    public function redirect($url, $exitNow = false) {
+    public function redirect( $url , $exitNow=false )
+    {
         $this->response->redirect($url, $exitNow);
     }
 

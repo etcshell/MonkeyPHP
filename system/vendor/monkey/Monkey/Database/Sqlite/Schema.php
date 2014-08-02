@@ -19,7 +19,8 @@ use Monkey\Database as Query;
  *
  * @package Monkey\Database\Sqlite
  */
-class Schema extends Query\Schema {
+class Schema extends Query\Schema
+{
 
     /**
      * 构造方法
@@ -27,7 +28,8 @@ class Schema extends Query\Schema {
      * @param Connection $connection
      * @param string|null $databaseName 数据库名，默认使用连接中的数据库
      */
-    public function __construct(Connection $connection, $databaseName = null) {
+    public function __construct(Connection $connection, $databaseName = null)
+    {
         $this->connection = $connection;
         $this->dbConfig = $connection->getConfig();
         /*if(!$databaseName){
@@ -39,7 +41,8 @@ class Schema extends Query\Schema {
     /**
      * 表是否存在
      */
-    public function existsTable($tableName) {
+    public function existsTable($tableName)
+    {
         $sql = "SELECT COUNT(*)  as table_count FROM sqlite_master where type='table' and name='{:$tableName:}'";
         $result = $this->connection->query($sql)->fetch();
         return isset($result['table_count']);
@@ -48,7 +51,8 @@ class Schema extends Query\Schema {
     /**
      * 字段是否存在
      */
-    public function existsField($tableName, $columnName) {
+    public function existsField($tableName, $columnName)
+    {
         $sql = 'PRAGMA table_info({:' . $tableName . ':})';
 
         if (!$this->connection->query($sql)->isSuccess()) {
@@ -69,11 +73,10 @@ class Schema extends Query\Schema {
     /**
      * 索引是否存在
      */
-    public function existsIndex($tableName, $indexName) {
+    public function existsIndex($tableName, $indexName)
+    {
         $sql = "SELECT count(*) AS index_count FROM sqlite_master WHERE type='index' AND tbl_name='{:$tableName:}' AND name='$indexName'";
-        if (!$this->connection->query($sql)->isSuccess()) {
-            return FALSE;
-        }
+        if (!$this->connection->query($sql)->isSuccess()) return FALSE;
         $result = $this->connection->query($sql)->fetch();
         return isset($result['index_count']);
     }
@@ -86,22 +89,27 @@ class Schema extends Query\Schema {
      *
      * @return bool
      */
-    public function createTable($tableName, $tableCreateSql) {
+    public function createTable($tableName, $tableCreateSql)
+    {
         return $this->connection->query($tableCreateSql)->isSuccess();
     }
 
     /**
      * 删除表
      */
-    public function dropTable($tableName) {
+    public function dropTable($tableName)
+    {
         return $this->connection->query('DROP TABLE IF EXISTS {:' . $tableName . ':}')->isSuccess();
     }
 
     /**
      * 修改表名
      */
-    public function renameTable($tableName, $newTableName) {
-        return $this->connection->query('ALTER TABLE {:' . $tableName . ':} RENAME TO {:' . $newTableName . ':}')->isSuccess();
+    public function renameTable($tableName, $newTableName)
+    {
+        return $this->connection
+            ->query('ALTER TABLE {:' . $tableName . ':} RENAME TO {:' . $newTableName . ':}')
+            ->isSuccess();
     }
 
     /**
@@ -109,7 +117,8 @@ class Schema extends Query\Schema {
      * @param string $tableName 表名称
      * @return boolean
      */
-    public function truncateTable($tableName) {
+    public function truncateTable($tableName)
+    {
         if (empty($tableName)) {
             return false;
         }
@@ -127,7 +136,8 @@ class Schema extends Query\Schema {
     /**
      * 添加字段
      */
-    public function addField($tableName, $fieldName, $spec) {
+    public function addField($tableName, $fieldName, $spec)
+    {
         $sql = 'ALTER TABLE {:' . $tableName . ':} ADD COLUMN ' . $fieldName . ' ' . $spec;
         return $this->connection->query($sql)->isSuccess();
     }
@@ -135,7 +145,8 @@ class Schema extends Query\Schema {
     /**
      * 删除字段
      */
-    public function dropField($tableName, $fieldName) {
+    public function dropField($tableName, $fieldName)
+    {
         if (empty($fieldName)) {
             return false;
         }
@@ -160,8 +171,7 @@ class Schema extends Query\Schema {
                 $field['notnull'] and $createTempTable .= ' NOT NULL';
                 $field['dflt_value'] and $createTempTable .= ' DEFAULT ' . $field['dflt_value'];
                 $createTempTable .= "\n";
-            }
-            else {
+            } else {
                 $fieldExists = true;
             }
         }
@@ -207,7 +217,8 @@ class Schema extends Query\Schema {
      *
      * @return bool
      */
-    public function renameField($tableName, $fieldName, $newFieldName) {
+    public function renameField($tableName, $fieldName, $newFieldName)
+    {
         $sql = "SELECT sql FROM sqlite_master WHERE type='table' AND name='{:$tableName:}'";
 
         if (!$this->connection->query($sql)->isSuccess()) {
@@ -274,28 +285,32 @@ class Schema extends Query\Schema {
      *
      * @return bool
      */
-    public function alertField($tableName, $fieldName, $spec) {
+    public function alertField($tableName, $fieldName, $spec)
+    {
         return false; //SQLite数据库系统不允许修改字段属性
     }
 
     /**
      * 设置字段默认值
      */
-    public function fieldSetDefault($tableName, $fieldName, $defaultValue = null) {
+    public function fieldSetDefault($tableName, $fieldName, $defaultValue = null)
+    {
         return false; //SQLite数据库系统不允许修改字段属性
     }
 
     /**
      * 设置字段无默认值
      */
-    public function fieldSetNoDefault($tableName, $fieldName) {
+    public function fieldSetNoDefault($tableName, $fieldName)
+    {
         return false; //SQLite数据库系统不允许修改字段属性
     }
 
     /**
      * 添加主键
      */
-    public function addPrimaryKey($tableName, $fields) {
+    public function addPrimaryKey($tableName, $fields)
+    {
         return false;
         //sqlite中所有表都有一个伪字段rowid
         //这个是自增的可以被Select语句选中，所以没有必要再人为设置主键了
@@ -305,14 +320,16 @@ class Schema extends Query\Schema {
     /**
      * 删除主键
      */
-    public function dropPrimaryKey($tableName) {
+    public function dropPrimaryKey($tableName)
+    {
         return false;
     }
 
     /**
      * 添加唯一索引
      */
-    public function addUniqueKey($tableName, $uniqueKeyName, $fieldName) {
+    public function addUniqueKey($tableName, $uniqueKeyName, $fieldName)
+    {
         is_array($fieldName) and $fieldName = implode(', ', $fieldName);
         $sql = "CREATE UNIQUE INDEX $uniqueKeyName ON {:$tableName:}($fieldName)";
         return $this->connection->query($sql)->isSuccess();
@@ -321,7 +338,8 @@ class Schema extends Query\Schema {
     /**
      * 删除唯一索引
      */
-    public function dropUniqueKey($tableName, $uniqueKeyName) {
+    public function dropUniqueKey($tableName, $uniqueKeyName)
+    {
         $sql = "DROP INDEX IF EXISTS $uniqueKeyName";
         return $this->connection->query($sql)->isSuccess();
     }
@@ -329,7 +347,8 @@ class Schema extends Query\Schema {
     /**
      * 添加索引
      */
-    public function addIndex($tableName, $indexName, $fieldName) {
+    public function addIndex($tableName, $indexName, $fieldName)
+    {
         is_array($fieldName) and $fieldName = implode(', ', $fieldName);
         $sql = "CREATE INDEX $indexName ON {:$tableName:}($fieldName)";
         return $this->connection->query($sql)->isSuccess();
@@ -338,20 +357,23 @@ class Schema extends Query\Schema {
     /**
      * 删除索引
      */
-    public function dropIndex($tableName, $indexName) {
+    public function dropIndex($tableName, $indexName)
+    {
         $sql = "DROP INDEX IF EXISTS $indexName";
         return $this->connection->query($sql)->isSuccess();
     }
 
     //拼缀索引SQL
-    protected function createKeySql($fields) {
+    protected function createKeySql($fields)
+    {
         return '';
     }
 
     /**
      * 执行获取Schema
      */
-    protected function explainSchema($databaseName) {
+    protected function explainSchema($databaseName)
+    {
         return $this;
     }
 }

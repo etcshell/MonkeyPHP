@@ -5,4 +5,6 @@
 $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
-return array($vendorDir . '/monkey/Monkey/function.php');
+return array(
+    $vendorDir.'/monkey/Monkey/function.php'
+);

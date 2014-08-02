@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package Monkey\Database
  */
-class Transaction {
+class Transaction
+{
     /**
      * 应用对象
      *
@@ -72,7 +73,8 @@ class Transaction {
      *
      * @throws \Exception
      */
-    public function __construct(Connection $connection, $connectionName, $transName = null) {
+    public function __construct(Connection $connection, $connectionName, $transName = null)
+    {
         $this->conn = $connection;
         self::$transactionsTotal += array($connectionName => array());
         $this->pdoTrans = & self::$transactionsTotal[$connectionName];
@@ -95,8 +97,7 @@ class Transaction {
 
         if ($this->conn->inTransaction()) {
             $this->conn->query('SAVEPOINT ' . $transName);
-        }
-        else {
+        } else {
             $this->conn->beginTransaction();
         }
 
@@ -106,19 +107,21 @@ class Transaction {
     /**
      * 提交事务
      */
-    public function commit() {
+    public function commit()
+    {
         if (!$this->pdoTrans[$this->name]) {
             return;
         }
 
         $this->pdoTrans[$this->name] = false;
-        $this->pop();
+        $this->_pop();
     }
 
     /**
      * 事务回滚
      */
-    public function rollback() {
+    public function rollback()
+    {
         if (!$this->getDepth() or !$this->conn->inTransaction()) {
             throw new \Exception('不在事务处理中.');
         }
@@ -127,7 +130,7 @@ class Transaction {
             throw new \Exception('当前事务 ' . $this->name . ' 已经不存在了.');
         }
 
-        $rolledBackOtherActiveSavepoint = FALSE;
+        $rolled_back_other_active_savepoint = FALSE;
 
         while ($savepoint = array_pop($this->pdoTrans)) {
 
@@ -138,23 +141,22 @@ class Transaction {
                 }
 
                 $this->conn->query('ROLLBACK TO SAVEPOINT ' . $savepoint);
-                $this->pop();
+                $this->_pop();
 
-                if ($rolledBackOtherActiveSavepoint) {
+                if ($rolled_back_other_active_savepoint) {
                     throw new \Exception(' 存在未处理的子事务');
                 }
 
                 return;
 
-            }
-            else {
-                $rolledBackOtherActiveSavepoint = TRUE;
+            } else {
+                $rolled_back_other_active_savepoint = TRUE;
             }
         }
 
         $this->conn->rollBack();
 
-        if ($rolledBackOtherActiveSavepoint) {
+        if ($rolled_back_other_active_savepoint) {
             throw new \Exception(' 存在未处理的子事务');
         }
 
@@ -165,7 +167,8 @@ class Transaction {
      * 获取事务深度
      * @return int 返回事务嵌套层数
      */
-    public function getDepth() {
+    public function getDepth()
+    {
         return count($this->pdoTrans);
     }
 
@@ -173,23 +176,26 @@ class Transaction {
      * 获取事务名称
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
     /**
      * 析构方法
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         if (!$this->rolledBack) {
-            $this->pop($this->name);
+            $this->_pop($this->name);
         }
     }
 
     /**
      * 执行事务query
      */
-    protected function pop() {
+    protected function _pop()
+    {
         foreach (array_reverse($this->pdoTrans) as $name => $active) {
 
             if ($active) {
@@ -203,8 +209,7 @@ class Transaction {
                     throw new \Exception('commit failed.');
                 }
 
-            }
-            else {
+            } else {
                 $this->conn->query('RELEASE SAVEPOINT ' . $name);
             }
         }

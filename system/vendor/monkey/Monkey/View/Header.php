@@ -17,7 +17,8 @@ namespace Monkey\View;
  *
  * @package Monkey\View
  */
-class Header {
+class Header
+{
     /**
      * html头部数据
      *
@@ -49,7 +50,8 @@ class Header {
     /**
      * 私有化构造方法
      */
-    private function __construct() {
+    private function __construct()
+    {
     }
 
     /**
@@ -57,7 +59,8 @@ class Header {
      *
      * @return Header
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         static $self;
         !$self and $self = new self();
         return $self;
@@ -70,7 +73,8 @@ class Header {
      *
      * @return $this
      */
-    public function setCharset($charset = 'UTF-8') {
+    public function setCharset($charset = 'UTF-8')
+    {
         $this->charset = $charset;
         return $this;
     }
@@ -80,7 +84,8 @@ class Header {
      *
      * @return string
      */
-    public function get() {
+    public function get()
+    {
         $this->getKeywords();
         $this->getDescription();
 
@@ -99,11 +104,13 @@ class Header {
      *
      * @param $keywords
      */
-    public function keywords($keywords) {
+    public function keywords($keywords)
+    {
         $this->keywords[] = $this->htmlspecialchars($keywords);
     }
 
-    private function getKeywords() {
+    private function getKeywords()
+    {
         if (!$this->keywords) {
             return;
         }
@@ -121,11 +128,13 @@ class Header {
      *
      * @param $description
      */
-    public function description($description) {
+    public function description($description)
+    {
         $this->description[] = $this->htmlspecialchars($description);
     }
 
-    private function getDescription() {
+    private function getDescription()
+    {
         if (!$this->description) {
             return;
         }
@@ -143,7 +152,8 @@ class Header {
      *
      * @param $author
      */
-    public function author($author) {
+    public function author($author)
+    {
         $this->heads[3] = '<meta name="Author" content="' . $this->htmlspecialchars($author) . '" />';
     }
 
@@ -152,7 +162,8 @@ class Header {
      *
      * @param $copyright
      */
-    public function copyright($copyright) {
+    public function copyright($copyright)
+    {
         $copyright = $this->htmlspecialchars($copyright);
         $this->heads[4] = '<meta name="Copyright" content="' . $copyright . '" />';
     }
@@ -162,7 +173,8 @@ class Header {
      *
      * @param string $robots
      */
-    public function robots($robots = 'all') {
+    public function robots($robots = 'all')
+    {
         $robots = strtolower($robots);
 
         if (!preg_match('/^all|none|index|noindex|follow|nofollow$/', $robots)) {
@@ -178,7 +190,8 @@ class Header {
      * @param string $contentType 内容属性，默认为 'text/html' 类型
      * @param string|null $charset 页面编码，默认使用配置中的设置
      */
-    public function contentType($contentType = 'text/html', $charset = null) {
+    public function contentType($contentType = 'text/html', $charset = null)
+    {
         $charset === null and $charset = $this->charset;
         $this->heads[6] = '<meta http-equiv="Content-Type" content="' . $contentType . '; charset=' . $charset . '" />';
     }
@@ -188,7 +201,8 @@ class Header {
      *
      * @param $contentLanguage
      */
-    public function contentLanguage($contentLanguage) {
+    public function contentLanguage($contentLanguage)
+    {
         $this->heads[7] = '<meta http-equiv="Content-Language" content="' . $contentLanguage . '" />';
     }
 
@@ -198,7 +212,8 @@ class Header {
      * @param $n
      * @param null $url
      */
-    public function refresh($n, $url = null) {
+    public function refresh($n, $url = null)
+    {
         $url !== null and $url = '; url=' . $url;
         $this->heads[8] = '<meta http-equiv="Refresh" content="' . $n . $url . '" />';
     }
@@ -208,7 +223,8 @@ class Header {
      *
      * @param $unixTime
      */
-    public function expires($unixTime) {
+    public function expires($unixTime)
+    {
         $this->heads[9] = '<meta http-equiv="Expires" content="' . gmdate('r', $unixTime) . '" />';
     }
 
@@ -217,7 +233,8 @@ class Header {
      *
      * @param $pragma
      */
-    public function pragma($pragma) {
+    public function pragma($pragma)
+    {
         $this->heads[10] = '<meta http-equiv="Pragma" content="' . $pragma . '" />';
     }
 
@@ -226,7 +243,8 @@ class Header {
      *
      * @param $target 有_blank|_top|_self|_parent四种
      */
-    public function windowTarget($target) {
+    public function windowTarget($target)
+    {
         $target = strtolower($target);
 
         if (!preg_match('/^_blank|_top|_self|_parent$/', $target)) {
@@ -242,7 +260,8 @@ class Header {
      * @param $duration
      * @param $transition
      */
-    public function pageEnter($duration, $transition) {
+    public function pageEnter($duration, $transition)
+    {
         $this->heads[12] = '<meta http-equiv="Page-Enter" content="revealTrans(duration=' . $duration . ', transition=' . $transition . ')" />';
     }
 
@@ -252,7 +271,8 @@ class Header {
      * @param $duration
      * @param $transition
      */
-    public function pageExit($duration, $transition) {
+    public function pageExit($duration, $transition)
+    {
         $this->heads[13] = '<meta http-equiv="Page-Exit" content="revealTrans(duration=' . $duration . ', transition=' . $transition . ')" />';
     }
 
@@ -261,7 +281,8 @@ class Header {
      *
      * @param string $type
      */
-    public function scriptType($type = 'text/javascript') {
+    public function scriptType($type = 'text/javascript')
+    {
         $this->heads[14] = '<meta http-equiv="Content-Script-Type" content="' . $type . '" />';
     }
 
@@ -270,7 +291,8 @@ class Header {
      *
      * @param string $title
      */
-    public function title($title) {
+    public function title($title)
+    {
         $title = $this->htmlspecialchars($title);
         $this->heads[15] = '<title>' . $title . '</title>';
     }
@@ -281,7 +303,8 @@ class Header {
      * @param $url
      * @param $target
      */
-    public function base($url, $target) {
+    public function base($url, $target)
+    {
         $this->heads[16] = '<Base href="' . $url . '" target="' . $target . '" />';
     }
 
@@ -290,7 +313,8 @@ class Header {
      *
      * @param $icoFile
      */
-    public function faviconIco($icoFile) {
+    public function faviconIco($icoFile)
+    {
         $this->heads[17] = '<Link href="' . $icoFile . '" rel="Shortcut Icon">';
     }
 
@@ -299,7 +323,8 @@ class Header {
      *
      * @param $cssFile
      */
-    public function link($cssFile) {
+    public function link($cssFile)
+    {
         $this->heads[18][] = '<LINK href="' . $cssFile . '" rel="stylesheet" type="text/css">';
     }
 
@@ -308,7 +333,8 @@ class Header {
      *
      * @param $cssFile
      */
-    public function cssFile($cssFile) {
+    public function cssFile($cssFile)
+    {
         $this->link($cssFile);
     }
 
@@ -317,7 +343,8 @@ class Header {
      *
      * @param $jsFile
      */
-    public function jsFile($jsFile) {
+    public function jsFile($jsFile)
+    {
         $this->heads[19][] = '<script src="' . $jsFile . '" type="text/javascript"></script>';
     }
 
@@ -326,11 +353,13 @@ class Header {
      *
      * @param $jsText
      */
-    public function jsText($jsText) {
+    public function jsText($jsText)
+    {
         $this->heads[20][] = '<script type="text/javascript" >' . PHP_EOL . $jsText . PHP_EOL . '</script>';
     }
 
-    private function htmlspecialchars($value) {
+    private function htmlspecialchars($value)
+    {
         return htmlspecialchars($value, ENT_QUOTES, $this->charset);
     }
 

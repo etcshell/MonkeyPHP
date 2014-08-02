@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package Monkey\View
  */
-class Cache {
+class Cache
+{
     /**
      * 应用对象
      *
@@ -32,24 +33,25 @@ class Cache {
      *
      * @var string
      */
-    private $cacheFile;
+    private $cache_file;
 
     /**
      * 缓存有效期文件
      *
      * @var string
      */
-    private $expireFile;
+    private $expire_file;
 
     /**
      * 构造方法
      *
      * @param Monkey\App $app
-     * @param string|null $cacheFile 默认使用路由作为缓存文件名（不含后缀名，路径相对于应用程序目录）
+     * @param string|null $cache_file 默认使用路由作为缓存文件名（不含后缀名，路径相对于应用程序目录）
      */
-    public function __construct($app, $cacheFile = null) {
+    public function __construct($app, $cache_file = null)
+    {
         $this->app = $app;
-        $this->setFile($cacheFile ? $cacheFile : $app->router()->getPath());
+        $this->setFile($cache_file ? $cache_file : $app->router()->getPath());
     }
 
     /**
@@ -59,10 +61,11 @@ class Cache {
      *
      * @return $this
      */
-    public function setFile($file) {
-        $this->cacheFile = $this->app->DIR . '/temp/html' . $file . '.php';
-        $this->expireFile = $this->cacheFile . '_expire.php';
-        dir_check(dirname($this->cacheFile));
+    public function setFile($file)
+    {
+        $this->cache_file = $this->app->DIR . '/temp/html' . $file . '.php';
+        $this->expire_file = $this->cache_file . '_expire.php';
+        dir_check(dirname($this->cache_file));
 
         return $this;
     }
@@ -75,12 +78,13 @@ class Cache {
      *
      * @return bool
      */
-    public function store($html, $expire = 0) {
-        file_put_contents($this->cacheFile, $html, LOCK_EX);
+    public function store($html, $expire = 0)
+    {
+        file_put_contents($this->cache_file, $html, LOCK_EX);
 
         if ($expire != 0) {
             $expire = '<?php' . PHP_EOL . 'return ' . ($expire + $this->app->TIME) . ' ;';
-            file_put_contents($this->expireFile, $expire, LOCK_EX);
+            file_put_contents($this->expire_file, $expire, LOCK_EX);
         }
 
         return true;
@@ -91,13 +95,12 @@ class Cache {
      *
      * @return string
      */
-    public function fetch() {
-        if ($this->exists()) {
-            return require $this->cacheFile;
-        }
-        else {
+    public function fetch()
+    {
+        if ($this->_exists())
+            return require $this->cache_file;
+        else
             return '';
-        }
     }
 
     /**
@@ -107,12 +110,13 @@ class Cache {
      *
      * 成功返回true，失败返回false
      */
-    public function load() {
-        if (!$this->exists()) {
+    public function load()
+    {
+        if (!$this->_exists()) {
             return FALSE;
         }
 
-        require $this->cacheFile;
+        require $this->cache_file;
 
         return TRUE;
     }
@@ -124,13 +128,14 @@ class Cache {
      *
      * 成功返回true，失败返回false
      */
-    public function delete() {
-        if (file_exists($this->cacheFile)) {
-            unlink($this->cacheFile);
+    public function delete()
+    {
+        if (file_exists($this->cache_file)) {
+            unlink($this->cache_file);
         }
 
-        if (file_exists($this->expireFile)) {
-            unlink($this->expireFile);
+        if (file_exists($this->expire_file)) {
+            unlink($this->expire_file);
         }
     }
 
@@ -139,7 +144,8 @@ class Cache {
      *
      * @return boolean
      */
-    public function clear() {
+    public function clear()
+    {
         return dir_delete($this->app->DIR . '/temp/html');
     }
 
@@ -148,17 +154,18 @@ class Cache {
      *
      * @return bool|string
      */
-    private function exists() {
-        if (!file_exists($this->cacheFile)) {
+    private function _exists()
+    {
+        if (!file_exists($this->cache_file)) {
             $this->delete();
             return FALSE;
         }
 
-        if (!file_exists($this->expireFile)) {
+        if (!file_exists($this->expire_file)) {
             return TRUE;
         }
 
-        $expireTime = include $this->expireFile;
+        $expireTime = include $this->expire_file;
 
         if ($expireTime >= $this->app->TIME) {
             return TRUE;

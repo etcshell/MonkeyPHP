@@ -11,7 +11,6 @@
 namespace Monkey\Session;
 
 use Monkey;
-
 /**
  * Abstract Class Session
  *
@@ -19,7 +18,8 @@ use Monkey;
  *
  * @package Monkey
  */
-abstract class SessionAbstract {
+abstract class SessionAbstract
+{
     /**
      * 防冲突前缀
      *
@@ -53,14 +53,16 @@ abstract class SessionAbstract {
      *
      * @param App $app
      */
-    public function __construct($app) {
+    public function __construct($app)
+    {
 
     }
 
     /**
      * 启动Session
      */
-    protected function start() {
+    protected function start()
+    {
         //设置
         $config = $this->config;
         $this->prefix = (isset($config['prefix']) ? $config['prefix'] : $this->app->NAME) . '_session_';
@@ -68,7 +70,14 @@ abstract class SessionAbstract {
 
         //注册Session处理器
         ini_set('session.save_handler', 'user');
-        session_set_save_handler(array($this, 'open'), array($this, 'close'), array($this, 'read'), array($this, 'write'), array($this, 'destroy'), array($this, 'gc'));
+        session_set_save_handler(
+            array($this, 'open'),
+            array($this, 'close'),
+            array($this, 'read'),
+            array($this, 'write'),
+            array($this, 'destroy'),
+            array($this, 'gc')
+        );
 
         //修复apc的bug
         register_shutdown_function('session_write_close');
@@ -138,7 +147,8 @@ abstract class SessionAbstract {
      *
      * @return string
      */
-    protected function storageKey($sessionId) {
+    protected function _storageKey($sessionId)
+    {
         return $this->prefix . $sessionId;
     }
 }

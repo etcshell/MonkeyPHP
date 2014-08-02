@@ -17,7 +17,8 @@ namespace Monkey\Cache;
  *
  * @package Monkey
  */
-interface CacheInterface {
+interface CacheInterface
+{
 
     /**
      * 设置缓存

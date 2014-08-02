@@ -19,49 +19,49 @@ use Monkey;
  *
  * @package Monkey\Cache
  */
-final class File implements CacheInterface {
-    private $idxNodeSize = 40;
-    private $idxNodeBase;
-    private $dataBasePos = 262588; //40+20+24*16+16*16*16*16*4;
-    private $schemaItemSize = 24;
-    private $headerPadding = 20; //保留空间 放置php标记防止下载
-    private $infoSize = 20; //保留空间 4+16 maxsize|ver
+final class File implements CacheInterface
+{
+    private $_idx_node_size = 40;
+    private $_idx_node_base;
+    private $_data_base_pos = 262588; //40+20+24*16+16*16*16*16*4;
+    private $_schema_item_size = 24;
+    private $_header_padding = 20; //保留空间 放置php标记防止下载
+    private $_info_size = 20; //保留空间 4+16 maxsize|ver
     //40起 添加20字节保留区域
-    private $idxSeqPos = 40; //id 计数器节点地址
-    private $dFileCurPos = 44; //id 计数器节点地址
-    private $idxFreePos = 48; //id 空闲链表入口地址
-    private $idxBasePos = 444; //40+20+24*16
-    private $schemaStruct = array('size', 'free', 'lru_head', 'lru_tail', 'hits', 'miss');
-    private $ver = '$Rev: 3 $';
-    private $cacheSize = '15M'; //预设的缓存大小
-    private $existsFileLock = false; //是否存在文件锁，设置为false，将模拟文件锁
-    private $cachePath = ''; //存储缓存文件的目录
-    private $cacheFile = ''; //缓存的数据文件名
-    private $dataOnCheck = false; //是否验证数据
-    private $maxSize;
-    private $rs;
-    private $bsizeList;
-    private $blockSizeList;
-    private $nodeStruct;
-    private $expire = 3600;
+    private $_idx_seq_pos = 40; //id 计数器节点地址
+    private $_dfile_cur_pos = 44; //id 计数器节点地址
+    private $_idx_free_pos = 48; //id 空闲链表入口地址
+    private $_idx_base_pos = 444; //40+20+24*16
+    private $_schema_struct = array('size', 'free', 'lru_head', 'lru_tail', 'hits', 'miss');
+    private $_ver = '$Rev: 3 $';
+    private $_cache_size = '15M'; //预设的缓存大小
+    private $_exists_file_lock = false; //是否存在文件锁，设置为false，将模拟文件锁
+    private $_cache_path = ''; //存储缓存文件的目录
+    private $_cache_file = ''; //缓存的数据文件名
+    private $_data_onCheck = false; //是否验证数据
+    private $_max_size;
+    private $_rs;
+    private $_bsize_list;
+    private $_block_size_list;
+    private $_node_struct;
+    private $_expire = 3600;
     private $TIME;
 
     /**
      * @param Monkey\App $app
      */
-    public function __construct($app) {
+    public function __construct($app)
+    {
         $config = $app->config()->getComponentConfig('cache', 'file');
         $this->TIME = $app->TIME;
-        $this->expire = $config['expire'];
+        $this->_expire = $config['expire'];
 
-        $this->cachePath = dir_format($app->TEMP . ($config['dir'] ? $config['dir'] : '/fileCache'));
-        $this->cacheFile = $config['filename'] ? '/' . $config['filename'] : '/data';
-        $this->cacheSize = $config['filesize'] ? $config['filesize'] : '15M';
-        $this->dataOnCheck = $config['check'] ? $config['check'] : false; //是否验证数据
-        if (!dir_check($this->cachePath)) {
-            $this->error('缓存目录校验失败。');
-        }
-        $this->workat($this->cachePath . $this->cacheFile);
+        $this->_cache_path = dir_format($app->TEMP . ($config['dir'] ? $config['dir'] : '/fileCache'));
+        $this->_cache_file = $config['filename'] ? '/' . $config['filename'] : '/data';
+        $this->_cache_size = $config['filesize'] ? $config['filesize'] : '15M';
+        $this->_data_onCheck = $config['check'] ? $config['check'] : false; //是否验证数据
+        if (!dir_check($this->_cache_path)) $this->_error('缓存目录校验失败。');
+        $this->_workat($this->_cache_path . $this->_cache_file);
     }
 
     /**
@@ -70,28 +70,22 @@ final class File implements CacheInterface {
      * @param mixed &$result 要保存的结果地址
      * @return bool             成功返回true，失败返回false
      */
-    public function fetch($key, &$result) {
+    public function fetch($key, &$result)
+    {
         $result = null;
-        if (!$this->_fetch(md5($key), $content)) {
-            return false;
-        }
+        if (!$this->_fetch(md5($key), $content)) return false;
         $time = (int)substr($content, 0, 12);
-        if ($time != -1 && $this->TIME >= $time) {
-            return false;
-        }
-        if ($this->dataOnCheck) {
+        if ($time != -1 && $this->TIME >= $time) return false;
+        if ($this->_data_onCheck) {
             //开启数据校验
             $check = substr($content, 12, 32);
             $content = substr($content, 44);
-            if ($check != md5($content)) {
-                return false;
-            } //校验错误
-        }
-        else {
+            if ($check != md5($content)) return false; //校验错误
+        } else {
             $content = substr($content, 12);
         }
         $result = unserialize($content); //解序列化数据
-        return true;
+        return TRUE;
     }
 
     /**
@@ -101,20 +95,15 @@ final class File implements CacheInterface {
      * @param int $time 要设置的缓存项目的过期时长，默认保存时间为 -1，永久保存为 0
      * @return bool 保存是成功为true ，失败为false
      */
-    public function store($key, $value, $time = -1) {
+    public function store($key, $value, $time = -1)
+    {
         //数据为空，缓存时间为0,则不缓存
-        if (empty($key) || empty($value)) {
-            return false;
-        }
+        if (empty($key) || empty($value)) return false;
         $data = serialize($value); //将数据序列化
-        if ($time == -1) {
-            $time = $this->expire;
-        }
-        if ($time != 0) {
-            $time = $this->TIME + $time;
-        } //过期时间
+        if ($time == -1) $time = $this->_expire;
+        if ($time != 0) $time = $this->TIME + $time; //过期时间
         //是否开启数据校验
-        $check = $this->dataOnCheck ? md5($data) : '';
+        $check = $this->_data_onCheck ? md5($data) : '';
         $data = sprintf('%012d', $time) . $check . $data;
         return $this->_store(md5($key), $data); //存储数据
     }
@@ -123,10 +112,11 @@ final class File implements CacheInterface {
      * 清空缓存
      * @return bool
      */
-    public function clear() {
-        $this->format(true);
-        fclose($this->rs);
-        return unlink($this->cacheFile);
+    public function clear()
+    {
+        $this->_format(true);
+        fclose($this->_rs);
+        return unlink($this->_cache_file);
     }
 
     /**
@@ -134,82 +124,93 @@ final class File implements CacheInterface {
      * @param string $key 要删除的项目的key
      * @return bool
      */
-    public function delete($key) {
+    public function delete($key)
+    {
         return $this->_delete(md5($key));
     }
 
 
     //以下是辅助函数
-    private function allSchemas() {
+    private function _all_schemas()
+    {
         $schema = array();
         for ($i = 0; $i < 16; $i++) {
-            $this->seek(60 + $i * $this->schemaItemSize);
-            $info = unpack('V1' . implode('/V1', $this->schemaStruct), fread($this->rs, $this->schemaItemSize));
-            if (!$info['size']) {
-                return $schema;
-            }
+            $this->_seek(60 + $i * $this->_schema_item_size);
+            $info = unpack(
+                'V1' . implode('/V1', $this->_schema_struct),
+                fread($this->_rs, $this->_schema_item_size)
+            );
+            if (!$info['size']) return $schema;
             $info['id'] = $i;
             $schema[$i] = $info;
         }
         return $schema;
     }
 
-    private function allocIdx($data) {
-        $this->seek($this->idxFreePos);
-        list(, $listPos) = unpack('V', fread($this->rs, 4));
-        if ($listPos) {
-            $this->seek($listPos * $this->idxNodeSize + $this->idxNodeBase);
-            list(, $prevFreeNode) = unpack('V', fread($this->rs, 4));
-            $this->puts($this->idxFreePos, pack('V', $prevFreeNode));
+    private function _alloc_idx($data)
+    {
+        $this->_seek($this->_idx_free_pos);
+        list(, $list_pos) = unpack('V', fread($this->_rs, 4));
+        if ($list_pos) {
+            $this->_seek($list_pos * $this->_idx_node_size + $this->_idx_node_base);
+            list(, $prev_free_node) = unpack('V', fread($this->_rs, 4));
+            $this->_puts($this->_idx_free_pos, pack('V', $prev_free_node));
+        } else {
+            $this->_seek($this->_idx_seq_pos);
+            list(, $list_pos) = unpack('V', fread($this->_rs, 4));
+            $this->_puts($this->_idx_seq_pos, pack('V', $list_pos + 1));
         }
-        else {
-            $this->seek($this->idxSeqPos);
-            list(, $listPos) = unpack('V', fread($this->rs, 4));
-            $this->puts($this->idxSeqPos, pack('V', $listPos + 1));
-        }
-        return $this->createNode($listPos, $data);
+        return $this->_create_node($list_pos, $data);
     }
 
     /**
      * 建立缓存文件
      * @return bool
      */
-    private function create() {
-        $this->rs = @fopen($this->cacheFile, 'wb+');
-        fseek($this->rs, 0);
-        fputs($this->rs, '<' . '?php exit()?' . '>');
-        return $this->format();
+    private function _create()
+    {
+        $this->_rs = @fopen($this->_cache_file, 'wb+');
+        fseek($this->_rs, 0);
+        fputs($this->_rs, '<' . '?php exit()?' . '>');
+        return $this->_format();
     }
 
-    private function createNode($pos, $data) {
-        $this->puts($pos * $this->idxNodeSize + $this->idxNodeBase, pack('V1V1V1V1V1V1H*', $data['next'], $data['prev'], $data['data'], $data['size'], $data['lru_right'], $data['lru_left'], $data['key']));
+    private function _create_node($pos, $data)
+    {
+        $this->_puts($pos * $this->_idx_node_size + $this->_idx_node_base
+            , pack('V1V1V1V1V1V1H*',
+                $data['next'],
+                $data['prev'],
+                $data['data'],
+                $data['size'],
+                $data['lru_right'],
+                $data['lru_left'],
+                $data['key']
+            )
+        );
         return $pos;
     }
 
-    private function dalloc($schemaId, $lruFreed = false) {
-        $free = $this->getSchema($schemaId, 'free');
+    private function _dalloc($schema_id, $lru_freed = false)
+    {
+        $free = $this->_get_schema($schema_id, 'free');
         if ($free) { //如果lru里有链表
-            $this->seek($free);
-            list(, $next) = unpack('V', fread($this->rs, 4));
-            $this->setSchema($schemaId, 'free', $next);
+            $this->_seek($free);
+            list(, $next) = unpack('V', fread($this->_rs, 4));
+            $this->_set_schema($schema_id, 'free', $next);
             return $free;
-        }
-        elseif ($lruFreed) {
-            $this->error(__METHOD__ . ':弹出lru区（最少使用区），空间被释放了');
-        }
-        else {
-            $dsOffset = $this->getDcurPos();
-            $size = $this->getSchema($schemaId, 'size');
-            if ($size + $dsOffset > $this->maxSize) {
-                $info = $this->lruPop($schemaId);
-                if ($info) {
-                    return $this->dalloc($schemaId, $info);
-                }
-                $this->error(__METHOD__ . ':不能分配存储空间');
-            }
-            else {
-                $this->setDcurPos($dsOffset + $size);
-                return $dsOffset;
+        } elseif ($lru_freed) {
+            $this->_error(__METHOD__ . ':弹出lru区（最少使用区），空间被释放了');
+        } else {
+            $ds_offset = $this->_get_dcur_pos();
+            $size = $this->_get_schema($schema_id, 'size');
+            if ($size + $ds_offset > $this->_max_size) {
+                $info = $this->_lru_pop($schema_id);
+                if ($info) return $this->_dalloc($schema_id, $info);
+                $this->_error(__METHOD__ . ':不能分配存储空间');
+            } else {
+                $this->_set_dcur_pos($ds_offset + $size);
+                return $ds_offset;
             }
         }
         return $free;
@@ -217,77 +218,69 @@ final class File implements CacheInterface {
 
     /**
      * 删除缓存文件中指定的内容
-     * @param string $md5Key 要删除的项目的md5Key
+     * @param string $md5_key 要删除的项目的md5_key
      * @param int|bool $pos 要删除的项目的定位指针偏移量
      * @return bool
      */
-    private function _delete($md5Key, $pos = false) {
-        if (!$pos && !$this->search($md5Key, $pos)) {
-            return false;
-        }
-        $info = $this->getNode($pos);
-        if (!$info) {
-            return false;
-        }
+    private function _delete($md5_key, $pos = false)
+    {
+        if (!$pos && !$this->_search($md5_key, $pos)) return false;
+        $info = $this->_get_node($pos);
+        if (!$info) return false;
         //删除data区域
         if ($info['prev']) {
-            $this->setNode($info['prev'], 'next', $info['next']);
-            $this->setNode($info['next'], 'prev', $info['prev']);
+            $this->_set_node($info['prev'], 'next', $info['next']);
+            $this->_set_node($info['next'], 'prev', $info['prev']);
+        } else { //改入口位置
+            $this->_set_node($info['next'], 'prev', 0);
+            $this->_set_node_root($md5_key, $info['next']);
         }
-        else { //改入口位置
-            $this->setNode($info['next'], 'prev', 0);
-            $this->setNodeRoot($md5Key, $info['next']);
-        }
-        $this->freeDspace($info['size'], $info['data']);
-        $this->lruDelete($info);
-        $this->freeNode($pos);
+        $this->_free_dspace($info['size'], $info['data']);
+        $this->_lru_delete($info);
+        $this->_free_node($pos);
         return $info['prev'];
     }
 
-    private function dfollow($pos, &$c) {
+    private function _dfollow($pos, &$c)
+    {
         $c++;
-        $this->seek($pos);
-        list(, $next) = unpack('V1', fread($this->rs, 4));
-        if ($next) {
-            return $this->dfollow($next, $c);
-        }
+        $this->_seek($pos);
+        list(, $next) = unpack('V1', fread($this->_rs, 4));
+        if ($next) return $this->_dfollow($next, $c);
         return $pos;
     }
 
     /**
      * 提取缓存内容
-     * @param string $md5Key 提取缓存项目的键值，为md5数字串
+     * @param string $md5_key 提取缓存项目的键值，为md5数字串
      * @param mixed $return 存放提取缓存项目内容的指针，变量前加&，成功后结果为序列化数据，要反序列化后才能用
      * @return bool
      */
-    private function _fetch($md5Key, &$return) {
-        $locked = $this->lockCacheFile(false) ? true : false;
-        if (!$this->search($md5Key, $offset)) {
-            $locked && $this->unlockCacheFile();
+    private function _fetch($md5_key, &$return)
+    {
+        $locked = $this->_lock_cache_file(false) ? true : false;
+        if (!$this->_search($md5_key, $offset)) {
+            $locked && $this->_unlock_cache_file();
             return false;
         }
-        $info = $this->getNode($offset);
-        $schemaId = $this->getSizeSchemaId($info['size']);
-        if ($schemaId === false) {
-            if ($locked) {
-                $this->unlockCacheFile();
-            }
+        $info = $this->_get_node($offset);
+        $schema_id = $this->_get_size_schema_id($info['size']);
+        if ($schema_id === false) {
+            if ($locked) $this->_unlock_cache_file();
             return false;
         }
-        $this->seek($info['data']);
-        $return = fread($this->rs, $info['size']);
+        $this->_seek($info['data']);
+        $return = fread($this->_rs, $info['size']);
         if ($return === false) {
-            if ($locked) {
-                $this->unlockCacheFile();
-            }
+            if ($locked) $this->_unlock_cache_file();
             return false;
         }
-        if (!$locked) {
-            return true;
-        }
-        $this->lruPush($schemaId, $info['offset']);
-        $this->setSchema($schemaId, 'hits', $this->getSchema($schemaId, 'hits') + 1);
-        return $this->unlockCacheFile();
+        if (!$locked) return true;
+        $this->_lru_push($schema_id, $info['offset']);
+        $this->_set_schema($schema_id,
+            'hits',
+            $this->_get_schema($schema_id, 'hits') + 1);
+        return $this->_unlock_cache_file();
     }
 
     /**
@@ -295,61 +288,65 @@ final class File implements CacheInterface {
      * @param bool $truncate
      * @return bool
      */
-    private function format($truncate = false) {
-        !$this->lockCacheFile(true, true) && $this->error(__METHOD__ . ':不能锁定缓存文件');
+    private function _format($truncate = false)
+    {
+        !$this->_lock_cache_file(true, true) && $this->_error(__METHOD__ . ':不能锁定缓存文件');
         if ($truncate) {
-            $this->seek(0);
-            ftruncate($this->rs, $this->idxNodeBase);
+            $this->_seek(0);
+            ftruncate($this->_rs, $this->_idx_node_base);
         }
-        $this->maxSize = $this->parseStrSize($this->cacheSize, 15728640); //default:15m
-        $this->puts($this->headerPadding, pack('V1a*', $this->maxSize, $this->ver));
-        ksort($this->bsizeList);
-        $dsOffset = $this->dataBasePos;
+        $this->_max_size = $this->_parse_str_size($this->_cache_size, 15728640); //default:15m
+        $this->_puts($this->_header_padding, pack('V1a*', $this->_max_size, $this->_ver));
+        ksort($this->_bsize_list);
+        $ds_offset = $this->_data_base_pos;
         $i = 0;
-        foreach ($this->bsizeList as $size => $count) {
+        foreach ($this->_bsize_list as $size => $count) {
             //将预分配的空间注册到free链表里
-            $count *= min(3, floor($this->maxSize / 10485760));
-            $nextFreeNode = 0;
+            $count *= min(3, floor($this->_max_size / 10485760));
+            $next_free_node = 0;
             for ($j = 0; $j < $count; $j++) {
-                $this->puts($dsOffset, pack('V', $nextFreeNode));
-                $nextFreeNode = $dsOffset;
-                $dsOffset += intval($size);
+                $this->_puts($ds_offset, pack('V', $next_free_node));
+                $next_free_node = $ds_offset;
+                $ds_offset += intval($size);
             }
-            $code = pack(str_repeat('V1', count($this->schemaStruct)), $size, $nextFreeNode, 0, 0, 0, 0);
-            $this->puts(60 + $i * $this->schemaItemSize, $code);
+            $code = pack(str_repeat('V1', count($this->_schema_struct)), $size, $next_free_node, 0, 0, 0, 0);
+            $this->_puts(60 + $i * $this->_schema_item_size, $code);
             $i++;
         }
-        $this->setDcurPos($dsOffset);
-        $this->puts($this->idxBasePos, str_repeat("\0", 262144));
-        $this->puts($this->idxSeqPos, pack('V', 1));
-        $this->unlockCacheFile();
+        $this->_set_dcur_pos($ds_offset);
+        $this->_puts($this->_idx_base_pos, str_repeat("\0", 262144));
+        $this->_puts($this->_idx_seq_pos, pack('V', 1));
+        $this->_unlock_cache_file();
         return true;
     }
 
-    private function freeDspace($size, $pos) {
-        ($pos > $this->maxSize) && $this->error(__METHOD__ . ':释放缓存空间时溢出[' . $pos . ']');
-        $schemaId = $this->getSizeSchemaId($size);
-        $free = $this->getSchema($schemaId, 'free');
+    private function _free_dspace($size, $pos)
+    {
+        ($pos > $this->_max_size) && $this->_error(__METHOD__ . ':释放缓存空间时溢出[' . $pos . ']');
+        $schema_id = $this->_get_size_schema_id($size);
+        $free = $this->_get_schema($schema_id, 'free');
         if ($free) {
-            $this->puts($free, pack('V1', $pos));
+            $this->_puts($free, pack('V1', $pos));
+        } else {
+            $this->_set_schema($schema_id, 'free', $pos);
         }
-        else {
-            $this->setSchema($schemaId, 'free', $pos);
-        }
-        $this->puts($pos, pack('V1', 0));
+        $this->_puts($pos, pack('V1', 0));
     }
 
-    private function freeNode($pos) {
-        $this->seek($this->idxFreePos);
-        list(, $prevFreeNode) = unpack('V', fread($this->rs, 4));
-        $this->puts($pos * $this->idxNodeSize + $this->idxNodeBase, pack('V', $prevFreeNode) . str_repeat("\0", $this->idxNodeSize - 4));
-        return $this->puts($this->idxFreePos, pack('V', $pos));
+    private function _free_node($pos)
+    {
+        $this->_seek($this->_idx_free_pos);
+        list(, $prev_free_node) = unpack('V', fread($this->_rs, 4));
+        $this->_puts($pos * $this->_idx_node_size + $this->_idx_node_base,
+            pack('V', $prev_free_node) . str_repeat("\0", $this->_idx_node_size - 4));
+        return $this->_puts($this->_idx_free_pos, pack('V', $pos));
     }
 
-    private function getDcurPos() {
-        $this->seek($this->dFileCurPos);
-        list(, $dsOffset) = unpack('V', fread($this->rs, 4));
-        return $dsOffset;
+    private function _get_dcur_pos()
+    {
+        $this->_seek($this->_dfile_cur_pos);
+        list(, $ds_offset) = unpack('V', fread($this->_rs, 4));
+        return $ds_offset;
     }
 
     /**
@@ -357,21 +354,24 @@ final class File implements CacheInterface {
      * @param integer $offset 当前偏移量
      * @return array
      */
-    private function getNode($offset) {
-        $this->seek($offset * $this->idxNodeSize + $this->idxNodeBase);
-        $info = unpack('V1next/V1prev/V1data/V1size/V1lru_right/V1lru_left/H*key', fread($this->rs, $this->idxNodeSize));
+    private function _get_node($offset)
+    {
+        $this->_seek($offset * $this->_idx_node_size + $this->_idx_node_base);
+        $info = unpack('V1next/V1prev/V1data/V1size/V1lru_right/V1lru_left/H*key',
+            fread($this->_rs, $this->_idx_node_size));
         $info['offset'] = $offset;
         return $info;
     }
 
     /**
      * 取得键的索引值
-     * @param string $md5Key
+     * @param string $md5_key
      * @return mixed
      */
-    private function getNodeRoot($md5Key) {
-        $this->seek(hexdec(substr($md5Key, 0, 4)) * 4 + $this->idxBasePos);
-        $a = fread($this->rs, 4);
+    private function _get_node_root($md5_key)
+    {
+        $this->_seek(hexdec(substr($md5_key, 0, 4)) * 4 + $this->_idx_base_pos);
+        $a = fread($this->_rs, 4);
         list(, $offset) = unpack('V', $a);
         return $offset;
     }
@@ -379,25 +379,24 @@ final class File implements CacheInterface {
     /**
      * 取得内容的索引值
      * @param integer $offset 键的索引值
-     * @param string $md5Key
+     * @param string $md5_key
      * @param integer $pos 存储内容索引值的指针
      * @return bool
      */
-    private function getPosByKey($offset, $md5Key, &$pos) {
+    private function _get_pos_by_key($offset, $md5_key, &$pos)
+    {
         if (!$offset) {
             $pos = 0;
             return false;
         }
         for (; 1;) {
-            $info = $this->getNode($offset);
-            if ($info['key'] == $md5Key) {
+            $info = $this->_get_node($offset);
+            if ($info['key'] == $md5_key) {
                 $pos = $info['offset'];
                 return true;
-            }
-            elseif ($info['next'] && $info['next'] != $offset) {
+            } elseif ($info['next'] && $info['next'] != $offset) {
                 $offset = $info['next'];
-            }
-            else {
+            } else {
                 $pos = $offset;
                 return false;
             }
@@ -405,12 +404,14 @@ final class File implements CacheInterface {
         return true;
     }
 
-    private function getSchema($id, $md5Key) {
-        $info = array_flip($this->schemaStruct);
-        $this->seek(60 + $id * $this->schemaItemSize);
-        unpack('V1' . implode('/V1', $this->schemaStruct), fread($this->rs, $this->schemaItemSize));
-        $this->seek(60 + $id * $this->schemaItemSize + $info[$md5Key] * 4);
-        list(, $value) = unpack('V', fread($this->rs, 4));
+    private function _get_schema($id, $md5_key)
+    {
+        $info = array_flip($this->_schema_struct);
+        $this->_seek(60 + $id * $this->_schema_item_size);
+        unpack('V1' . implode('/V1', $this->_schema_struct),
+            fread($this->_rs, $this->_schema_item_size));
+        $this->_seek(60 + $id * $this->_schema_item_size + $info[$md5_key] * 4);
+        list(, $value) = unpack('V', fread($this->_rs, 4));
         return $value;
     }
 
@@ -419,119 +420,112 @@ final class File implements CacheInterface {
      * @param integer $size
      * @return mixed
      */
-    private function getSizeSchemaId($size) {
-        foreach ($this->blockSizeList as $k => $blockSize) {
-            if ($size <= $blockSize) {
-                return $k;
-            }
+    private function _get_size_schema_id($size)
+    {
+        foreach ($this->_block_size_list as $k => $block_size) {
+            if ($size <= $block_size) return $k;
         }
         return false;
     }
 
     /**
      * 锁定缓存文件
-     * @param bool $isBlock 如果文件已经锁定是否等待解锁并重新锁定
+     * @param bool $is_block 如果文件已经锁定是否等待解锁并重新锁定
      * @param bool $whatever 是否坚持等待直到解锁，然后锁定
      * @return bool
      */
-    private function lockCacheFile($isBlock, $whatever = false) {
-        if ($this->existsFileLock) {
-            return flock($this->rs, $isBlock ? LOCK_EX : LOCK_EX + LOCK_NB);
-        }
+    private function _lock_cache_file($is_block, $whatever = false)
+    {
+        if ($this->_exists_file_lock) return flock($this->_rs, $is_block ? LOCK_EX : LOCK_EX + LOCK_NB);
         ignore_user_abort(true);
-        $supportUsleep = version_compare(PHP_VERSION, 5, '>=') ? 20 : 1;
-        $lockfile = $this->cacheFile . '.lck';
+        $support_usleep = version_compare(PHP_VERSION, 5, '>=') ? 20 : 1;
+        $lockfile = $this->_cache_file . '.lck';
         if (file_exists($lockfile)) {
             if ($this->TIME - filemtime($lockfile) > 0) {
                 unlink($lockfile);
-            }
-            elseif (!$isBlock) {
+            } elseif (!$is_block) {
                 return false;
             }
         }
-        $lockEx = @fopen($lockfile, 'x');
-        for ($i = 0; ($lockEx === false) && ($whatever || $i < 10); $i++) {
+        $lock_ex = @fopen($lockfile, 'x');
+        for ($i = 0; ($lock_ex === false) && ($whatever || $i < 10); $i++) {
             clearstatcache();
-            if ($supportUsleep == 1) {
+            if ($support_usleep == 1) {
                 usleep(rand(9, 999));
-            }
-            else {
+            } else {
                 sleep(1);
             }
-            $lockEx = @fopen($lockfile, 'x');
+            $lock_ex = @fopen($lockfile, 'x');
         }
-        return ($lockEx !== false);
+        return ($lock_ex !== false);
     }
 
-    private function lruDelete($info) {
+    private function _lru_delete($info)
+    {
         if ($info['lru_right']) {
-            $this->setNode($info['lru_right'], 'lru_left', $info['lru_left']);
-        }
-        else {
-            $this->setSchema($this->getSizeSchemaId($info['size']), 'lru_tail', $info['lru_left']);
+            $this->_set_node($info['lru_right'], 'lru_left', $info['lru_left']);
+        } else {
+            $this->_set_schema($this->_get_size_schema_id($info['size']),
+                'lru_tail',
+                $info['lru_left']);
         }
         if ($info['lru_left']) {
-            $this->setNode($info['lru_left'], 'lru_right', $info['lru_right']);
-        }
-        else {
-            $this->setSchema($this->getSizeSchemaId($info['size']), 'lru_head', $info['lru_right']);
+            $this->_set_node($info['lru_left'], 'lru_right', $info['lru_right']);
+        } else {
+            $this->_set_schema($this->_get_size_schema_id($info['size']),
+                'lru_head',
+                $info['lru_right']);
         }
         return true;
     }
 
-    private function lruPop($schemaId) {
-        $node = $this->getSchema($schemaId, 'lru_tail');
-        if (!$node) {
-            return false;
-        }
-        $info = $this->getNode($node);
-        if (!$info['data']) {
-            return false;
-        }
+    private function _lru_pop($schema_id)
+    {
+        $node = $this->_get_schema($schema_id, 'lru_tail');
+        if (!$node) return false;
+        $info = $this->_get_node($node);
+        if (!$info['data']) return false;
         $this->_delete($info['key'], $info['offset']);
-        if (!$this->getSchema($schemaId, 'free')) {
-            $this->error(__METHOD__ . ':弹出lru区（最少使用区），但是空间没有被释放');
+        if (!$this->_get_schema($schema_id, 'free')) {
+            $this->_error(__METHOD__ . ':弹出lru区（最少使用区），但是空间没有被释放');
         }
         return $info;
     }
 
-    private function lruPush($schemaId, $offset) {
-        $lruHead = $this->getSchema($schemaId, 'lru_head');
-        $lruTail = $this->getSchema($schemaId, 'lru_tail');
-        if ((!$offset) || ($lruHead == $offset)) {
-            return true;
-        }
-        $info = $this->getNode($offset);
-        $this->setNode($info['lru_right'], 'lru_left', $info['lru_left']);
-        $this->setNode($info['lru_left'], 'lru_right', $info['lru_right']);
-        $this->setNode($offset, 'lru_right', $lruHead);
-        $this->setNode($offset, 'lru_left', 0);
-        $this->setNode($lruHead, 'lru_left', $offset);
-        $this->setSchema($schemaId, 'lru_head', $offset);
-        if ($lruTail == 0) {
-            $this->setSchema($schemaId, 'lru_tail', $offset);
-        }
-        elseif ($lruTail == $offset && $info['lru_left']) {
-            $this->setSchema($schemaId, 'lru_tail', $info['lru_left']);
+    private function _lru_push($schema_id, $offset)
+    {
+        $lru_head = $this->_get_schema($schema_id, 'lru_head');
+        $lru_tail = $this->_get_schema($schema_id, 'lru_tail');
+        if ((!$offset) || ($lru_head == $offset)) return true;
+        $info = $this->_get_node($offset);
+        $this->_set_node($info['lru_right'], 'lru_left', $info['lru_left']);
+        $this->_set_node($info['lru_left'], 'lru_right', $info['lru_right']);
+        $this->_set_node($offset, 'lru_right', $lru_head);
+        $this->_set_node($offset, 'lru_left', 0);
+        $this->_set_node($lru_head, 'lru_left', $offset);
+        $this->_set_schema($schema_id, 'lru_head', $offset);
+        if ($lru_tail == 0) {
+            $this->_set_schema($schema_id, 'lru_tail', $offset);
+        } elseif ($lru_tail == $offset && $info['lru_left']) {
+            $this->_set_schema($schema_id, 'lru_tail', $info['lru_left']);
         }
         return true;
     }
 
     /**
      * 设置缓存大小
-     * @param string $strSize 客户设置大小
+     * @param string $str_size 客户设置大小
      * @param integer $default 默认大小
      * @return integer
      */
-    private function parseStrSize($strSize, $default) {
-        if (!preg_match('/^([0-9]+)\s*([gmk]|)$/i', $strSize, $match)) {
+    private function _parse_str_size($str_size, $default)
+    {
+        if (!preg_match('/^([0-9]+)\s*([gmk]|)$/i', $str_size, $match)) {
             return $default;
         }
         switch (strtolower($match[2])) {
             case 'g':
-                if ($match[1] > 1) {
-                    $this->error(__METHOD__ . ':设置缓存大小时越界，最大只能支持【1G】');
-                }
+                if ($match[1] > 1) $this->_error(__METHOD__ . ':设置缓存大小时越界，最大只能支持【1G】');
                 $size = $match[1] << 30;
                 break;
             case 'm':
@@ -543,12 +537,8 @@ final class File implements CacheInterface {
             default:
                 $size = $match[1];
         }
-        if ($size <= 0) {
-            $this->error(__METHOD__ . ':设置缓存大小时越界，缓存文件大小为0则无意义！');
-        }
-        if ($size < 10485760) {
-            return 10485760;
-        }
+        if ($size <= 0) $this->_error(__METHOD__ . ':设置缓存大小时越界，缓存文件大小为0则无意义！');
+        if ($size < 10485760) return 10485760;
         return $size;
     }
 
@@ -558,19 +548,21 @@ final class File implements CacheInterface {
      * @param string $data 要写入的数据（序列化后的字符串）
      * @return bool
      */
-    private function puts($offset, $data) {
-        if ($offset >= $this->maxSize * 1.5) {
-            $this->error(__METHOD__ . ':向缓存文件中写入数据时，缓存数据的偏移量$offset【' . $offset . '】超出配额！');
+    private function _puts($offset, $data)
+    {
+        if ($offset >= $this->_max_size * 1.5) {
+            $this->_error(__METHOD__ . ':向缓存文件中写入数据时，缓存数据的偏移量$offset【' . $offset . '】超出配额！');
         }
-        $this->seek($offset);
-        return fwrite($this->rs, $data);
+        $this->_seek($offset);
+        return fwrite($this->_rs, $data);
     }
 
-    protected function schemaStatus() {
+    protected function _schemaStatus()
+    {
         $return = array();
-        foreach ($this->allSchemas() as $schemaItem) {
+        foreach ($this->_all_schemas() as $schemaItem) {
             if ($schemaItem['free']) {
-                $this->dfollow($schemaItem['free'], $schemaItem['freecount']);
+                $this->_dfollow($schemaItem['free'], $schemaItem['freecount']);
             }
             $return[] = $schemaItem;
         }
@@ -579,12 +571,13 @@ final class File implements CacheInterface {
 
     /**
      * 查找项目
-     * @param string $md5Key 要查找的项目的key （key为 md5 字符串）
+     * @param string $md5_key 要查找的项目的key （key为 md5 字符串）
      * @param int $pos 要查找的项目的定位指针偏移量 如果找到节点则$pos=节点本身 返回true 否则 $pos=树的末端 返回false
      * @return mixed
      */
-    private function search($md5Key, &$pos) {
-        return $this->getPosByKey($this->getNodeRoot($md5Key), $md5Key, $pos);
+    private function _search($md5_key, &$pos)
+    {
+        return $this->_get_pos_by_key($this->_get_node_root($md5_key), $md5_key, $pos);
     }
 
     /**
@@ -592,8 +585,9 @@ final class File implements CacheInterface {
      * @param int $offset 在缓存文件中定位的指针偏移量
      * @return int 定位成功为0 ，失败为-1
      */
-    private function seek($offset) {
-        return fseek($this->rs, $offset);
+    private function _seek($offset)
+    {
+        return fseek($this->_rs, $offset);
     }
 
     /**
@@ -601,37 +595,50 @@ final class File implements CacheInterface {
      * @param integer $pos
      * @return bool
      */
-    private function setDcurPos($pos) {
-        return $this->puts($this->dFileCurPos, pack('V', $pos));
+    private function _set_dcur_pos($pos)
+    {
+        return $this->_puts($this->_dfile_cur_pos, pack('V', $pos));
     }
 
-    private function setNode($pos, $md5Key, $value) {
+    private function _set_node($pos, $md5_key, $value)
+    {
         if (!$pos) {
             return false;
         }
-        if (isset($this->nodeStruct[$md5Key])) {
-            return $this->puts($pos * $this->idxNodeSize + $this->idxNodeBase + $this->nodeStruct[$md5Key][0], pack($this->nodeStruct[$md5Key][1], $value));
-        }
-        else {
+        if (isset($this->_node_struct[$md5_key])) {
+            return $this->_puts(
+                $pos * $this->_idx_node_size
+                + $this->_idx_node_base
+                + $this->_node_struct[$md5_key][0],
+                pack($this->_node_struct[$md5_key][1], $value)
+            );
+        } else {
             return false;
         }
     }
 
-    private function setNodeRoot($md5Key, $value) {
-        return $this->puts(hexdec(substr($md5Key, 0, 4)) * 4 + $this->idxBasePos, pack('V', $value));
+    private function _set_node_root($md5_key, $value)
+    {
+        return $this->_puts(
+            hexdec(substr($md5_key, 0, 4)) * 4 + $this->_idx_base_pos,
+            pack('V', $value)
+        );
     }
 
-    private function setSchema($schemaId, $md5Key, $value) {
-        $info = array_flip($this->schemaStruct);
-        return $this->puts(60 + $schemaId * $this->schemaItemSize + $info[$md5Key] * 4, pack('V', $value));
+    private function _set_schema($schema_id, $md5_key, $value)
+    {
+        $info = array_flip($this->_schema_struct);
+        return $this->_puts(60 + $schema_id * $this->_schema_item_size + $info[$md5_key] * 4,
+            pack('V', $value));
     }
 
-    protected function status(&$curBytes, &$totalBytes) {
+    protected function _status(&$curBytes, &$totalBytes)
+    {
         $totalBytes = $curBytes = 0;
         $hits = $miss = 0;
-        $schemaStatus = $this->schemaStatus();
-        $totalBytes = $this->maxSize;
-        $freeBytes = $this->maxSize - $this->getDcurPos();
+        $schemaStatus = $this->_schemaStatus();
+        $totalBytes = $this->_max_size;
+        $freeBytes = $this->_max_size - $this->_get_dcur_pos();
         foreach ($schemaStatus as $schema) {
             $freeBytes += $schema['freecount'] * $schema['size'];
             $miss += $schema['miss'];
@@ -645,62 +652,64 @@ final class File implements CacheInterface {
 
     /**
      * 存储缓存内容
-     * @param string $md5Key 存储缓存项目的键值，为md5数字串
+     * @param string $md5_key 存储缓存项目的键值，为md5数字串
      * @param mixed $data 存储缓存项目的内容，为已序列化的数据
      * @return bool
      */
-    private function _store($md5Key, $data) {
-        if (!$this->lockCacheFile(true)) {
-            $this->error(__METHOD__ . ':不能锁定文件!');
-        }
+    private function _store($md5_key, $data)
+    {
+        if (!$this->_lock_cache_file(true)) $this->_error(__METHOD__ . ':不能锁定文件!');
         $size = strlen($data);
         //get list_idx
-        $hasKey = $this->search($md5Key, $listIdxOffset);
-        $schemaId = $this->getSizeSchemaId($size);
-        if ($schemaId === false) {
-            $this->unlockCacheFile();
+        $has_key = $this->_search($md5_key, $list_idx_offset);
+        $schema_id = $this->_get_size_schema_id($size);
+        if ($schema_id === false) {
+            $this->_unlock_cache_file();
             return false;
         }
-        if ($hasKey) {
-            $hdseq = $listIdxOffset;
-            $info = $this->getNode($hdseq);
-            if ($schemaId == $this->getSizeSchemaId($info['size'])) {
+        if ($has_key) {
+            $hdseq = $list_idx_offset;
+            $info = $this->_get_node($hdseq);
+            if ($schema_id == $this->_get_size_schema_id($info['size'])) {
                 $dataoffset = $info['data'];
-            }
-            else {
+            } else {
                 //破掉原有lru
-                $this->lruDelete($info);
-                if (!($dataoffset = $this->dalloc($schemaId))) {
-                    $this->unlockCacheFile();
+                $this->_lru_delete($info);
+                if (!($dataoffset = $this->_dalloc($schema_id))) {
+                    $this->_unlock_cache_file();
                     return false;
                 }
-                $this->freeDspace($info['size'], $info['data']);
-                $this->setNode($hdseq, 'lru_left', 0);
-                $this->setNode($hdseq, 'lru_right', 0);
+                $this->_free_dspace($info['size'], $info['data']);
+                $this->_set_node($hdseq, 'lru_left', 0);
+                $this->_set_node($hdseq, 'lru_right', 0);
             }
-            $this->setNode($hdseq, 'size', $size);
-            $this->setNode($hdseq, 'data', $dataoffset);
-        }
-        else {
-            if (!($dataoffset = $this->dalloc($schemaId))) {
-                $this->unlockCacheFile();
+            $this->_set_node($hdseq, 'size', $size);
+            $this->_set_node($hdseq, 'data', $dataoffset);
+        } else {
+            if (!($dataoffset = $this->_dalloc($schema_id))) {
+                $this->_unlock_cache_file();
                 return false;
             }
-            $hdseq = $this->allocIdx(array('next' => 0, 'prev' => $listIdxOffset, 'data' => $dataoffset, 'size' => $size, 'lru_right' => 0, 'lru_left' => 0, 'key' => $md5Key,));
-            if ($listIdxOffset > 0) {
-                $this->setNode($listIdxOffset, 'next', $hdseq);
-            }
-            else {
-                $this->setNodeRoot($md5Key, $hdseq);
+            $hdseq = $this->_alloc_idx(array(
+                'next' => 0,
+                'prev' => $list_idx_offset,
+                'data' => $dataoffset,
+                'size' => $size,
+                'lru_right' => 0,
+                'lru_left' => 0,
+                'key' => $md5_key,
+            ));
+            if ($list_idx_offset > 0) {
+                $this->_set_node($list_idx_offset, 'next', $hdseq);
+            } else {
+                $this->_set_node_root($md5_key, $hdseq);
             }
         }
-        if ($dataoffset > $this->maxSize) {
-            $this->error(__METHOD__ . ':分配缓存空间时出错！');
-        }
-        $this->puts($dataoffset, $data);
-        $this->setSchema($schemaId, 'miss', $this->getSchema($schemaId, 'miss') + 1);
-        $this->lruPush($schemaId, $hdseq);
-        $this->unlockCacheFile();
+        if ($dataoffset > $this->_max_size) $this->_error(__METHOD__ . ':分配缓存空间时出错！');
+        $this->_puts($dataoffset, $data);
+        $this->_set_schema($schema_id, 'miss', $this->_get_schema($schema_id, 'miss') + 1);
+        $this->_lru_push($schema_id, $hdseq);
+        $this->_unlock_cache_file();
         return true;
     }
 
@@ -708,12 +717,11 @@ final class File implements CacheInterface {
      * 解除文件锁定
      * @return bool
      */
-    private function unlockCacheFile() {
-        if ($this->existsFileLock) {
-            return flock($this->rs, LOCK_UN);
-        }
+    private function _unlock_cache_file()
+    {
+        if ($this->_exists_file_lock) return flock($this->_rs, LOCK_UN);
         ignore_user_abort(false);
-        return @unlink($this->cacheFile . '.lck');
+        return @unlink($this->_cache_file . '.lck');
     }
 
     /**
@@ -721,31 +729,53 @@ final class File implements CacheInterface {
      * @param string $file 缓存文件名（含路径）
      * @return bool
      */
-    private function workat($file) {
-        $this->cacheFile = $file . '.php';
-        $this->bsizeList = array(512 => 10, 3 << 10 => 10, 8 << 10 => 10, 20 << 10 => 4, 30 << 10 => 2, 50 << 10 => 2, 80 << 10 => 2, 96 << 10 => 2, 128 << 10 => 2, 224 << 10 => 2, 256 << 10 => 2, 512 << 10 => 1, 1024 << 10 => 1,);
-        $this->nodeStruct = array('next' => array(0, 'V'), 'prev' => array(4, 'V'), 'data' => array(8, 'V'), 'size' => array(12, 'V'), 'lru_right' => array(16, 'V'), 'lru_left' => array(20, 'V'), 'key' => array(24, 'H*'),);
-        if (!file_exists($this->cacheFile)) {
-            $this->create();
-        }
-        else {
-            $this->rs = fopen($this->cacheFile, 'rb+') or $this->error(__METHOD__ . ':不能打开缓存文件[ ' . realpath($this->cacheFile) . ' ]');
-            $this->seek($this->headerPadding);
-            $info = unpack('V1max_size/a*ver', fread($this->rs, $this->infoSize));
-            if ($info['ver'] != $this->ver) {
-                $this->format(true);
+    private function _workat($file)
+    {
+        $this->_cache_file = $file . '.php';
+        $this->_bsize_list = array(
+            512 => 10,
+            3 << 10 => 10,
+            8 << 10 => 10,
+            20 << 10 => 4,
+            30 << 10 => 2,
+            50 << 10 => 2,
+            80 << 10 => 2,
+            96 << 10 => 2,
+            128 << 10 => 2,
+            224 << 10 => 2,
+            256 << 10 => 2,
+            512 << 10 => 1,
+            1024 << 10 => 1,
+        );
+        $this->_node_struct = array(
+            'next' => array(0, 'V'),
+            'prev' => array(4, 'V'),
+            'data' => array(8, 'V'),
+            'size' => array(12, 'V'),
+            'lru_right' => array(16, 'V'),
+            'lru_left' => array(20, 'V'),
+            'key' => array(24, 'H*'),
+        );
+        if (!file_exists($this->_cache_file)) {
+            $this->_create();
+        } else {
+            $this->_rs = fopen($this->_cache_file, 'rb+') or $this->_error(__METHOD__ . ':不能打开缓存文件[ ' . realpath($this->_cache_file) . ' ]');
+            $this->_seek($this->_header_padding);
+            $info = unpack('V1max_size/a*ver', fread($this->_rs, $this->_info_size));
+            if ($info['ver'] != $this->_ver) {
+                $this->_format(true);
+            } else {
+                $this->_max_size = $info['max_size'];
             }
-            else {
-                $this->maxSize = $info['max_size'];
-            }
         }
-        $this->idxNodeBase = $this->dataBasePos + $this->maxSize;
-        $this->blockSizeList = array_keys($this->bsizeList);
-        sort($this->blockSizeList);
+        $this->_idx_node_base = $this->_data_base_pos + $this->_max_size;
+        $this->_block_size_list = array_keys($this->_bsize_list);
+        sort($this->_block_size_list);
         return true;
     }
 
-    private function error($message) {
+    private function _error($message)
+    {
         throw new \Exception('文件缓存错误：' . $message);
     }
 }

@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package Monkey\Cache
  */
-class Memcache implements CacheInterface {
+class Memcache implements CacheInterface
+{
     /**
      * 缓存过期时间
      *
@@ -48,7 +49,8 @@ class Memcache implements CacheInterface {
      *
      * @throws \Exception
      */
-    public function __construct($app) {
+    public function __construct($app)
+    {
         if (!extension_loaded('memcache')) {
             throw new \Exception('没有安装memcache扩展,请先在php.ini中配置安装memcache。');
         }
@@ -72,7 +74,8 @@ class Memcache implements CacheInterface {
      *
      * @return bool 保存是成功为true ，失败为false
      */
-    public function store($key, $value, $time = -1) {
+    public function store($key, $value, $time = -1)
+    {
         if ($time == -1) {
             $time = $this->_expire;
         }
@@ -91,7 +94,8 @@ class Memcache implements CacheInterface {
      *
      * @return bool             成功返回true，失败返回false
      */
-    public function fetch($key, &$result) {
+    public function fetch($key, &$result)
+    {
         $result = NULL;
         $temp = $this->_connection->get($key);
 
@@ -109,7 +113,8 @@ class Memcache implements CacheInterface {
      *
      * @return bool
      */
-    public function clear() {
+    public function clear()
+    {
         $this->_connection->flush();
         return true;
     }
@@ -121,7 +126,8 @@ class Memcache implements CacheInterface {
      *
      * @return bool
      */
-    public function delete($key) {
+    public function delete($key)
+    {
         $this->_connection->delete($key);
         return true;
     }
@@ -129,7 +135,8 @@ class Memcache implements CacheInterface {
     /**
      * 获取Memcache的状态
      */
-    public function stats() {
+    public function stats()
+    {
         $this->_connection->getStats();
         return;
     }
@@ -141,7 +148,8 @@ class Memcache implements CacheInterface {
      *
      * @return void
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         $this->_connection->close();
     }
 }

@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package Monkey\Database
  */
-class Update {
+class Update
+{
     /**
      * 应用对象
      *
@@ -75,7 +76,8 @@ class Update {
      * @param Connection $connection
      * @param $table
      */
-    public function __construct(Connection $connection, $table) {
+    public function __construct(Connection $connection, $table)
+    {
         $this->app = $connection->app;
         $this->connection = $connection;
         $this->queryIdentifier = uniqid('', TRUE);
@@ -86,7 +88,8 @@ class Update {
     /**
      * 销毁方法
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         $this->condition = null;
         $this->fields = null;
         $this->expressionFields = null;
@@ -101,7 +104,8 @@ class Update {
      *
      * @return $this
      */
-    public function where($fieldName, $value = NULL, $operator = NULL) {
+    public function where($fieldName, $value = NULL, $operator = NULL)
+    {
         $this->condition->where($fieldName, $value, $operator);
         return $this;
     }
@@ -113,7 +117,8 @@ class Update {
      *
      * @return $this
      */
-    public function isNull($fieldName) {
+    public function isNull($fieldName)
+    {
         $this->condition->where($fieldName, NULL, 'IS NULL');
         return $this;
     }
@@ -125,7 +130,8 @@ class Update {
      *
      * @return $this
      */
-    public function isNotNull($fieldName) {
+    public function isNotNull($fieldName)
+    {
         $this->condition->where($fieldName, NULL, 'IS NOT NULL');
         return $this;
     }
@@ -138,7 +144,8 @@ class Update {
      *
      * @return $this
      */
-    public function condition($snippet, $args = array()) {
+    public function condition($snippet, $args = array())
+    {
         $this->condition->condition($snippet, $args);
         return $this;
     }
@@ -150,7 +157,8 @@ class Update {
      *
      * @return $this
      */
-    public function exists(Select $select) {
+    public function exists(Select $select)
+    {
         $this->condition->where('', $select, 'EXISTS');
         return $this;
     }
@@ -162,7 +170,8 @@ class Update {
      *
      * @return $this
      */
-    public function notExists(Select $select) {
+    public function notExists(Select $select)
+    {
         $this->condition->where('', $select, 'NOT EXISTS');
         return $this;
     }
@@ -174,7 +183,8 @@ class Update {
      *
      * @return $this
      */
-    public function addFieldsValue(array $fieldsValue) {
+    public function addFieldsValue(array $fieldsValue)
+    {
         $this->fields = array_merge($this->fields, $fieldsValue);
         return $this;
     }
@@ -186,7 +196,8 @@ class Update {
      *
      * @return $this
      */
-    public function setFieldsValue(array $fieldsValue) {
+    public function setFieldsValue(array $fieldsValue)
+    {
         $this->fields = $fieldsValue;
         return $this;
     }
@@ -200,8 +211,12 @@ class Update {
      *
      * @return $this
      */
-    public function addFieldsValueByExpression($field, $expression, array $arguments = NULL) {
-        $this->expressionFields[$field] = array('expression' => $expression, 'arguments' => $arguments,);
+    public function addFieldsValueByExpression($field, $expression, array $arguments = NULL)
+    {
+        $this->expressionFields[$field] = array(
+            'expression' => $expression,
+            'arguments' => $arguments,
+        );
         return $this;
     }
 
@@ -210,7 +225,8 @@ class Update {
      *
      * @return Statement
      */
-    public function execute() {
+    public function execute()
+    {
         $query = $this->compile();
         return $this->connection->query($query['sql'], $query['arguments']);
     }
@@ -220,38 +236,39 @@ class Update {
      *
      * @return array
      */
-    protected function compile() {
+    protected function compile()
+    {
         $fields = $this->fields;
-        $updateFields = array();
-        $updateValues = array();
+        $update_fields = array();
+        $update_values = array();
 
         foreach ($this->expressionFields as $field => $data) {
-            !empty($data['arguments']) and $updateValues += $data['arguments'];
+            !empty($data['arguments']) and $update_values += $data['arguments'];
 
             if ($data['expression'] instanceof Select) {
-                $updateValues += $data['expression']->getArguments($this->queryIdentifier);
+                $update_values += $data['expression']->getArguments($this->queryIdentifier);
                 $data['expression'] = ' (' . $data['expression']->getString($this->queryIdentifier) . ')';
             }
 
-            $updateFields[] = $field . '=' . $data['expression'];
+            $update_fields[] = $field . '=' . $data['expression'];
             unset($fields[$field]);
         }
-        $maxPlaceholder = $placeholder = 0;
+        $max_placeholder = $placeholder = 0;
 
         foreach ($fields as $field => $value) {
-            $placeholder = ':mk_update_placeholder_' . ($maxPlaceholder++);
-            $updateFields[] = $field . '=' . $placeholder;
-            $updateValues[$placeholder] = $value;
+            $placeholder = ':mk_update_placeholder_' . ($max_placeholder++);
+            $update_fields[] = $field . '=' . $placeholder;
+            $update_values[$placeholder] = $value;
         }
 
-        $query = 'UPDATE {:' . $this->table . ':} SET ' . implode(', ', $updateFields);
+        $query = 'UPDATE {:' . $this->table . ':} SET ' . implode(', ', $update_fields);
 
         if (count($this->condition)) {
             $query .= "\nWHERE " . $this->condition->getString($this->queryIdentifier);
-            $updateValues = array_merge($updateValues, $this->condition->getArguments($this->queryIdentifier));
+            $update_values = array_merge($update_values, $this->condition->getArguments($this->queryIdentifier));
         }
 
-        return array('sql' => $query, 'arguments' => $updateValues);
+        return array('sql' => $query, 'arguments' => $update_values);
     }
 
 }

@@ -17,7 +17,8 @@ namespace Monkey;
  *
  * @package Monkey
  */
-class Container {
+class Container
+{
 
     /**
      * 应用基类
@@ -43,7 +44,8 @@ class Container {
     /**
      * @param App $app
      */
-    public function __construct($app) {
+    public function __construct($app)
+    {
         self::$app = $app;
         self::$config = $app->config();
     }
@@ -55,11 +57,13 @@ class Container {
      * @param null|string|object|\Closure $handler 处理对象的类名、对象（要求已经初始化了）、甚至是匿名函数。
      * @param string $provider
      */
-    public function setter($name, $handler, $provider = null) {
+    public function setter($name, $handler, $provider = null)
+    {
         if (!isset(self::$components[$name])) {
             //添加组件组
             $comp = self::$config->getComponentProvider($name);
-            self::$components[$name] = !empty($comp) ? $comp : array('default_provider' => empty($provider) ? 'default' : $provider);
+            self::$components[$name] = !empty($comp) ? $comp :
+                array('default_provider' => empty($provider) ? 'default' : $provider);
         }
 
         //添加具体组件
@@ -75,7 +79,8 @@ class Container {
      *
      * @return object|\Closure
      */
-    public function getter($name, $provider = null) {
+    public function getter($name, $provider = null)
+    {
         if (!isset(self::$components[$name])) {
             //添加组件组
             self::$components[$name] = self::$config->getComponentProvider($name);

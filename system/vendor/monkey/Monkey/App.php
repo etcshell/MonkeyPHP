@@ -10,10 +10,10 @@
  */
 namespace Monkey;
 
-use Composer\Autoload;
-use Monkey\Exceptions;
 use Monkey\Request\Request;
 use Monkey\Response\Response;
+use Composer\Autoload;
+use Monkey\Exceptions;
 
 /**
  * Class App
@@ -23,7 +23,8 @@ use Monkey\Response\Response;
  *
  * @package Monkey
  */
-class App {
+class App
+{
     /**
      * 框架版本号
      */
@@ -146,7 +147,8 @@ class App {
      *
      * @param string $staticDir 静态资源目录
      */
-    public function __construct($staticDir) {
+    public function __construct($staticDir)
+    {
         //设置框架目录
         $this->MONKEY_DIR = strtr(__DIR__, DIRECTORY_SEPARATOR, '/');
 
@@ -197,7 +199,8 @@ class App {
     /**
      * 设置错误管理器
      */
-    protected function setError() {
+    protected function setError()
+    {
         Exceptions\Exception::$app = $this;
         Exceptions\Exception::$errorReporting = $this->errorReporting();
 
@@ -213,14 +216,17 @@ class App {
         //注册系统默认错误处理函数
         //set_error_handler(array($this, 'errorHandler'), $this->DEBUG);
         set_error_handler(function ($code = 0, $message = '', $file = null, $line = null) {
-            throw new Exceptions\Exception($message, $code, null, $file, $line);
-        }, $this->DEBUG);
+                throw new Exceptions\Exception($message, $code, null, $file, $line);
+            },
+            $this->DEBUG
+        );
     }
 
     /**
      * 启动Session
      */
-    protected function sessionStart() {
+    protected function sessionStart()
+    {
         $this->container->getter('session');
     }
 
@@ -229,7 +235,8 @@ class App {
      *
      * @return Request
      */
-    public function request() {
+    public function request()
+    {
         return $this->request;
     }
 
@@ -238,21 +245,24 @@ class App {
      *
      * @return Response
      */
-    public function response() {
+    public function response()
+    {
         return $this->response;
     }
 
     /**
      * 清除临时目录
      */
-    public function clearTempDir() {
+    public function clearTempDir()
+    {
         dir_delete($this->TEMP);
     }
 
     /**
      * 运行应用
      */
-    public function run() {
+    public function run()
+    {
         $this->dispatching();
     }
 
@@ -261,7 +271,8 @@ class App {
      *
      * @return Config
      */
-    public function config() {
+    public function config()
+    {
         return $this->config;
     }
 
@@ -272,7 +283,8 @@ class App {
      *
      * @return \Monkey\Cache\CacheInterface
      */
-    public function cache($provider = null) {
+    public function cache($provider = null)
+    {
         return $this->container->getter('cache', $provider);
     }
 
@@ -281,7 +293,8 @@ class App {
      *
      * @return \Monkey\Database\Database
      */
-    public function database() {
+    public function database()
+    {
         return $this->container->getter('database');
     }
 
@@ -290,7 +303,8 @@ class App {
      *
      * @return \Monkey\ErrorReporting\ErrorReporting
      */
-    public function errorReporting() {
+    public function errorReporting()
+    {
         return $this->container->getter('errorReporting');
     }
 
@@ -299,7 +313,8 @@ class App {
      *
      * @return \Monkey\Logger\Logger
      */
-    public function logger() {
+    public function logger()
+    {
         return $this->container->getter('logger');
     }
 
@@ -308,7 +323,8 @@ class App {
      *
      * @return \Monkey\Permission\Permission
      */
-    public function permission() {
+    public function permission()
+    {
         return $this->container->getter('permission');
     }
 
@@ -317,7 +333,8 @@ class App {
      *
      * @return \Monkey\Router\Router
      */
-    public function router() {
+    public function router()
+    {
         return $this->container->getter('router');
     }
 
@@ -326,7 +343,8 @@ class App {
      *
      * @return \Monkey\Shutdown\Shutdown
      */
-    public function shutdown() {
+    public function shutdown()
+    {
         return $this->container->getter('shutdown');
     }
 
@@ -335,7 +353,8 @@ class App {
      *
      * @return \Monkey\View\View
      */
-    public function view() {
+    public function view()
+    {
         return $this->container->getter('view');
     }
 
@@ -350,7 +369,8 @@ class App {
      *
      * @throws Exceptions\BreakException
      */
-    public function stop($message, $code = 0, $file = null, $line = null) {
+    public function stop($message, $code = 0, $file = null, $line = null)
+    {
         throw new Exceptions\BreakException($message, $code, $file, $line);
     }
 
@@ -360,13 +380,13 @@ class App {
      *
      * @throws \Exception
      */
-    public function dispatching() {
+    public function dispatching()
+    {
         static $isDispatching;
 
         if ($isDispatching) {
             return;
-        }
-        else {
+        } else {
             $isDispatching = true;
         }
 
@@ -376,10 +396,10 @@ class App {
 
             //启动路由钩子
             $router->startHook();
-            //            增加hook执行后的status判断和处理
-            //            if(isset($router->hook->status['denied'])){
-            //                //todo
-            //            }
+//            增加hook执行后的status判断和处理
+//            if(isset($router->hook->status['denied'])){
+//                //todo
+//            }
 
             //获取路由
             $route = $router->getRoute();
@@ -388,16 +408,16 @@ class App {
                 //路由不存在
                 throw new Exceptions\Http\NotFound('无法找到你访问的网页！');
             }
-
+            
             //实例化控制器
             if (Autoload\Initializer::getLoader()->findFile($route['controller']) == false) {
                 throw new Exceptions\Http\NotFound('访问的控制器[' . $route['controller'] . ']的类文件丢失！');
             }
 
             $controller = $route['controller'];
-            $controller = new $controller($this);
+            $controller = new $controller($this);            
             $action = 'action' . ucfirst($route['action']);
-
+            
             if (!method_exists($controller, $action)) {
                 //请求方法不存在
                 throw new Exceptions\Http\NotFound('访问的方法[' . $route['action'] . ']不存在！');
@@ -409,8 +429,7 @@ class App {
             $controller->$action();
             $controller->after($route['action']);
 
-        }
-        catch (Exceptions\BreakException $e) {
+        } catch (Exceptions\BreakException $e) {
             //正常中断
 
         }

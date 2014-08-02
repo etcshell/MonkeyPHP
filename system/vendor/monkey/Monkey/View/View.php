@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package Monkey\View
  */
-class View {
+class View
+{
     /**
      * 应用对象
      *
@@ -94,7 +95,8 @@ class View {
      *
      * @param Monkey\App $app
      */
-    public function __construct($app) {
+    public function __construct($app)
+    {
         $this->app = $app;
         $this->config = $app->config()->getComponentConfig('view', 'default');
         $this->themeUrlBase = $app->FRONT_ROOT_URL . $this->config['theme_url_base'];
@@ -109,7 +111,8 @@ class View {
      *
      * @return $this
      */
-    public function setVariable(array $data = array()) {
+    public function setVariable(array $data = array())
+    {
         $this->template->variable = $data;
         return $this;
     }
@@ -122,7 +125,8 @@ class View {
      *
      * @return $this
      */
-    public function assign($name, $value) {
+    public function assign($name, $value)
+    {
         $this->template->assign($name, $value);
         return $this;
     }
@@ -130,7 +134,8 @@ class View {
     /**
      * 清空已赋值变量
      */
-    public function clearAssigned() {
+    public function clearAssigned()
+    {
         $this->template->clearAssigned();
     }
 
@@ -140,7 +145,8 @@ class View {
      * @param $name
      * @param Widget $widget
      */
-    public function addWidget($name, Widget $widget) {
+    public function addWidget($name, Widget $widget)
+    {
         $this->widgets['widget_' . $name] = $widget;
     }
 
@@ -152,7 +158,8 @@ class View {
      *
      * @return string 直接输出后返回空字符串
      */
-    public function render($tplFilename, $outputNow = true) {
+    public function render($tplFilename, $outputNow = true)
+    {
         if (isset($this->widgets)) {
             foreach ($this->widgets as $name => $widget) {
                 $this->template->assign($name, $widget->getHtml());
@@ -170,7 +177,8 @@ class View {
      *
      * @return string 始终返回渲染结果
      */
-    public function renderWithCache($tplFilename, $expire = 0) {
+    public function renderWithCache($tplFilename, $expire = 0)
+    {
         $cache = $this->cache()->setFile('/template' . $tplFilename);
 
         if ($html = $cache->fetch()) {
@@ -188,7 +196,8 @@ class View {
      *
      * @return string
      */
-    public function getThemePath() {
+    public function getThemePath()
+    {
         return $this->themeUrlBase . $this->themeDirName;
     }
 
@@ -197,14 +206,16 @@ class View {
      *
      * @return Template
      */
-    public function template() {
+    public function template()
+    {
         return $this->template;
     }
 
     /**
      * 清空前模板的编译缓存
      */
-    public function clearTemplateCompiled() {
+    public function clearTemplateCompiled()
+    {
         $this->template->clearCompiled();
     }
 
@@ -213,7 +224,8 @@ class View {
      *
      * @return Header
      */
-    public function header() {
+    public function header()
+    {
         if ($this->header === null) {
             $this->header = Header::getInstance()->setCharset($this->config['charset']);
         }
@@ -226,10 +238,9 @@ class View {
      *
      * @return Cache
      */
-    public function cache() {
-        if (!$this->cache) {
-            $this->cache = new Cache($this->app);
-        }
+    public function cache()
+    {
+        if (!$this->cache) $this->cache = new Cache($this->app);
         return $this->cache;
     }
 
@@ -238,10 +249,9 @@ class View {
      *
      * @return Document
      */
-    public function document() {
-        if (!$this->document) {
-            $this->document = new Document();
-        }
+    public function document()
+    {
+        if (!$this->document) $this->document = new Document();
         return $this->document;
     }
 
@@ -250,10 +260,9 @@ class View {
      *
      * @return Page
      */
-    public function page() {
-        if (!$this->page) {
-            $this->page = new Page($this->app, $this->config);
-        }
+    public function page()
+    {
+        if (!$this->page) $this->page = new Page($this->app, $this->config);
         return $this->page;
     }
 
@@ -265,9 +274,14 @@ class View {
      *
      * @return string
      */
-    public function buildHtml($body = null, $head = null) {
+    public function buildHtml($body = null, $head = null)
+    {
         empty($head) and $head = $this->header()->get();
         //empty($body) and $body= $this->get();
-        return "<!DOCTYPE html>\n<html>" . "\n<head>\n" . $head . "\n</head>" . "\n<body>\n" . $body . "\n</body>" . "\n</html>";
+        return
+            "<!DOCTYPE html>\n<html>"
+            . "\n<head>\n" . $head . "\n</head>"
+            . "\n<body>\n" . $body . "\n</body>"
+            . "\n</html>";
     }
 } 

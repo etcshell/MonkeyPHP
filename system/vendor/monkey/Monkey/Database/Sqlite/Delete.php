@@ -19,14 +19,16 @@ use Monkey\Database as Query;
  *
  * @package Monkey\Database\Sqlite
  */
-class Delete extends Query\Delete {
+class Delete extends Query\Delete
+{
     /**
      * 构造方法
      *
      * @param Connection $connection
      * @param string $table
      */
-    public function __construct(Connection $connection, $table) {
+    public function __construct(Connection $connection, $table)
+    {
         $this->app = $connection->app;
         $this->queryIdentifier = uniqid('', TRUE);
         $this->connection = $connection;

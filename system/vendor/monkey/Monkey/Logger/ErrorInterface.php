@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package Monkey\Logger
  */
-interface ErrorInterface {
+interface ErrorInterface
+{
 
     /**
      * 构造方法

@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package Monkey\Database
  */
-class Delete {
+class Delete
+{
     /**
      * 应用对象
      *
@@ -61,7 +62,8 @@ class Delete {
      * @param Connection $connection
      * @param string $table
      */
-    public function __construct(Connection $connection, $table) {
+    public function __construct(Connection $connection, $table)
+    {
         $this->app = $connection->app;
         $this->queryIdentifier = uniqid('', TRUE);
         $this->connection = $connection;
@@ -69,7 +71,8 @@ class Delete {
         $this->condition = new Condition($this->app, 'AND');
     }
 
-    public function __destruct() {
+    public function __destruct()
+    {
         $this->condition = null;
     }
 
@@ -82,7 +85,8 @@ class Delete {
      *
      * @return $this
      */
-    public function where($fieldName, $value = NULL, $operator = NULL) {
+    public function where($fieldName, $value = NULL, $operator = NULL)
+    {
         $this->condition->where($fieldName, $value, $operator);
         return $this;
     }
@@ -94,7 +98,8 @@ class Delete {
      *
      * @return $this
      */
-    public function isNull($fieldName) {
+    public function isNull($fieldName)
+    {
         $this->condition->where($fieldName, NULL, 'IS NULL');
         return $this;
     }
@@ -106,7 +111,8 @@ class Delete {
      *
      * @return $this
      */
-    public function isNotNull($fieldName) {
+    public function isNotNull($fieldName)
+    {
         $this->condition->where($fieldName, NULL, 'IS NOT NULL');
         return $this;
     }
@@ -119,7 +125,8 @@ class Delete {
      *
      * @return $this
      */
-    public function condition($snippet, $args = array()) {
+    public function condition($snippet, $args = array())
+    {
         $this->condition->condition($snippet, $args);
         return $this;
     }
@@ -131,7 +138,8 @@ class Delete {
      *
      * @return $this
      */
-    public function exists(Select $select) {
+    public function exists(Select $select)
+    {
         $this->condition->where('', $select, 'EXISTS');
         return $this;
     }
@@ -143,7 +151,8 @@ class Delete {
      *
      * @return $this
      */
-    public function notExists(Select $select) {
+    public function notExists(Select $select)
+    {
         $this->condition->where('', $select, 'NOT EXISTS');
         return $this;
     }
@@ -153,7 +162,8 @@ class Delete {
      *
      * @return Statement
      */
-    public function execute() {
+    public function execute()
+    {
         $query = $this->compile();
         return $this->connection->query($query['sql'], $query['arguments']);
     }
@@ -163,7 +173,8 @@ class Delete {
      *
      * @return array
      */
-    protected function compile() {
+    protected function compile()
+    {
         $query = array();
         $query['sql'] = 'DELETE FROM {:' . $this->table . ':} ';
         $query['arguments'] = array();

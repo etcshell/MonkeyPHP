@@ -2,7 +2,8 @@
 namespace Uploader;
 
 
-class AjaxRequest {
+class AjaxRequest
+{
     /**
      * Save the file to the specified path
      *
@@ -16,7 +17,7 @@ class AjaxRequest {
         $realSize = stream_copy_to_stream($input, $temp);
         fclose($input);
 
-        if ($realSize != $this->get_size()) {
+        if ($realSize != $this->get_size()){
             return false;
         }
 
@@ -27,16 +28,13 @@ class AjaxRequest {
 
         return true;
     }
-
     public function get_name() {
         return $_GET['qqfile'];
     }
-
     public function get_size() {
-        if (isset($_SERVER["CONTENT_LENGTH"])) {
+        if (isset($_SERVER["CONTENT_LENGTH"])){
             return (int)$_SERVER["CONTENT_LENGTH"];
-        }
-        else {
+        } else {
             throw new \Exception('Getting content length is not supported.');
         }
     }

@@ -17,5 +17,6 @@ namespace Monkey\Exceptions;
  *
  * @package Monkey\Exceptions
  */
-class BreakException extends \Exception {
+class BreakException extends \Exception
+{
 }

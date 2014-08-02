@@ -19,7 +19,8 @@ use Monkey\Database as Query;
  *
  * @package Monkey\Database\Sqlite
  */
-class Transaction extends Query\Transaction {
+class Transaction extends Query\Transaction
+{
 
     /**
      * 构造方法
@@ -30,7 +31,8 @@ class Transaction extends Query\Transaction {
      *
      * @throws \Exception
      */
-    public function __construct(Connection $connection, $connectionName, $transName = null) {
+    public function __construct(Connection $connection, $connectionName, $transName = null)
+    {
         $this->conn = $connection;
         self::$transactionsTotal += array($connectionName => array());
         $this->pdoTrans = & self::$transactionsTotal[$connectionName];
@@ -53,8 +55,7 @@ class Transaction extends Query\Transaction {
 
         if ($this->conn->inTransaction()) {
             $this->conn->query('SAVEPOINT ' . $transName);
-        }
-        else {
+        } else {
             $this->conn->beginTransaction();
         }
 

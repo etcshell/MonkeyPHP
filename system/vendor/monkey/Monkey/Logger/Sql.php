@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package Monkey\Logger
  */
-class Sql implements ErrorInterface {
+class Sql implements ErrorInterface
+{
     /**
      * 应用对象
      *
@@ -47,7 +48,8 @@ class Sql implements ErrorInterface {
      * @param Monkey\App $app
      * @param mixed|null $config 配置
      */
-    public function __construct($app, $config) {
+    public function __construct($app, $config)
+    {
         $this->app = $app;
         self::$dir = dir_format($app->DIR . (isset($config['sql_dir']) ? $config['sql_dir'] : '/logs/sql'));
         self::$dir .= '/' . date("Y-m-d", $app->TIME) . '/' . date("H", $app->TIME);
@@ -59,7 +61,8 @@ class Sql implements ErrorInterface {
      *
      * @param string|array $data 日志信息
      */
-    public function put($data) {
+    public function put($data)
+    {
         self::$sqlErrors[] = $data;
     }
 
@@ -69,7 +72,8 @@ class Sql implements ErrorInterface {
      *
      * @return bool
      */
-    public function write() {
+    public function write()
+    {
         $temp = self::$dir;
 
         if (!dir_check($temp)) {
@@ -79,7 +83,8 @@ class Sql implements ErrorInterface {
         $file = $temp . '/' . date("Y-m-d-H-i", $this->app->TIME) . ".log.txt";
         $temp = date('Y-m-d H:i:s', $this->app->TIME);
         //写入文件，记录错误信息
-        $content = PHP_EOL . PHP_EOL . PHP_EOL . '===============[date: ' . $temp . ' ]===============' . PHP_EOL;
+        $content = PHP_EOL . PHP_EOL . PHP_EOL
+            . '===============[date: ' . $temp . ' ]===============' . PHP_EOL;
 
         foreach (self::$sqlErrors as $i => $sqlError) {
             $content .= PHP_EOL . '[ 第' . $i . '条 ]';
@@ -89,11 +94,8 @@ class Sql implements ErrorInterface {
                     $content .= PHP_EOL . $key . "\t\t : " . $value;
                 }
 
-            }
-            else {
-                if (is_string($sqlError)) {
-                    $content .= PHP_EOL . $sqlError;
-                }
+            } else if (is_string($sqlError)) {
+                $content .= PHP_EOL . $sqlError;
             }
         }
 

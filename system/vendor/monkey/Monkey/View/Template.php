@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package \Monkey\View
  */
-class Template {
+class Template
+{
     /**
      * 应用对象
      *
@@ -68,12 +69,16 @@ class Template {
      * @param Monkey\App $app
      * @param array $config
      */
-    public function __construct($app, array $config) {
+    public function __construct($app, array $config)
+    {
         if (!self::$replaceTag) {
             Tag::$appName = $app->NAME;
             self::$replaceTag = Tag::getReplaceTag();
             self::$callbackTag = Tag::getCallbackTag();
-            $config = $config + array('template_root' => '/template', 'compiled_root' => '/template_compiled');
+            $config = $config + array(
+                    'template_root' => '/template',
+                    'compiled_root' => '/template_compiled'
+                );
             self::$tplRoot = $app->DIR . $config['template_root'];
             self::$compiledRoot = $app->TEMP . $config['compiled_root'];
             dir_check(self::$compiledRoot);
@@ -88,14 +93,16 @@ class Template {
      * @param string $name 变量名
      * @param mixed $value 变量值
      */
-    public function assign($name, $value) {
+    public function assign($name, $value)
+    {
         $this->variable[$name] = $value;
     }
 
     /**
      * 清空已赋值变量
      */
-    public function clearAssigned() {
+    public function clearAssigned()
+    {
         $this->variable = null;
         $this->variable = array();
     }
@@ -108,7 +115,8 @@ class Template {
      *
      * @return void|string 当直接显示时无返回，关闭显示后返回字符串
      */
-    public function loading($tplFilename, $display = false) {
+    public function loading($tplFilename, $display = false)
+    {
         $tplFilename[0] !== '/' and $tplFilename = '/' . $tplFilename;
         $tplFile = self::$tplRoot . $tplFilename;
 
@@ -118,7 +126,9 @@ class Template {
 
         $compFile = self::$compiledRoot . $tplFilename;
 
-        if ($this->app->DEBUG || !file_exists($compFile) || (filemtime($compFile) < filemtime($tplFile))
+        if ($this->app->DEBUG
+            || !file_exists($compFile)
+            || (filemtime($compFile) < filemtime($tplFile))
         ) {
             $compiled = $this->_compile($tplFile); //获取经编译后的内容
             dir_check(dirname($compFile)); //保证编译后目录存在
@@ -132,8 +142,7 @@ class Template {
             include $compFile;
             return '';
 
-        }
-        else {
+        } else {
             ob_start();
             include $compFile;
             return ob_get_clean();
@@ -146,7 +155,8 @@ class Template {
      *
      * @return $this
      */
-    public function clearCompiled() {
+    public function clearCompiled()
+    {
         dir_delete(self::$compiledRoot);
         return $this;
     }
@@ -158,7 +168,8 @@ class Template {
      *
      * @return mixed|string
      */
-    private function _compile($tplFile) {
+    private function _compile($tplFile)
+    {
         if (!file_exists($tplFile)) {
             new \Exception(':模板文件【' . str_replace(self::$tplRoot, '', $tplFile) . '】不存在');
         }
@@ -177,7 +188,11 @@ class Template {
 
         //解析模板包含（两种方式）
         //{include="/template/login.html" type=style}
-        $template = preg_replace_callback('/{include=(\'|")(\S+)\1\s+type=(style|common)}/i', array($this, '_inc_tpl'), $template);
+        $template = preg_replace_callback(
+            '/{include=(\'|")(\S+)\1\s+type=(style|common)}/i',
+            array($this, '_inc_tpl'),
+            $template
+        );
 
         //去掉剩余的注释，提高加载速度
         if (!$this->app->DEBUG) {
@@ -187,7 +202,8 @@ class Template {
         return $template;
     }
 
-    private function _inc_tpl($matches) {
+    private function _inc_tpl($matches)
+    {
         $tplFilename = $matches[2];
         $tplFilename[0] == '/' and $tplFilename = '/' . $tplFilename;
 

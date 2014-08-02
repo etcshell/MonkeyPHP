@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package Monkey\Logger
  */
-class Error implements ErrorInterface {
+class Error implements ErrorInterface
+{
     /**
      * 应用对象
      *
@@ -47,7 +48,8 @@ class Error implements ErrorInterface {
      * @param Monkey\App $app
      * @param mixed|null $config 配置
      */
-    public function __construct($app, $config) {
+    public function __construct($app, $config)
+    {
         $this->app = $app;
         self::$logDir = dir_format($app->DIR . (isset($config['error_dir']) ? $config['error_dir'] : '/logs/error'));
         self::$logDir .= '/' . date("Y-m-d", $app->TIME) . '/' . date("H", $app->TIME);
@@ -59,7 +61,8 @@ class Error implements ErrorInterface {
      *
      * @param string|array $data 日志信息
      */
-    public function put($data) {
+    public function put($data)
+    {
         self::$logs[] = $data;
     }
 
@@ -69,7 +72,8 @@ class Error implements ErrorInterface {
      *
      * @return bool
      */
-    public function write() {
+    public function write()
+    {
         $temp = self::$logDir;
 
         if (!dir_check($temp)) {
@@ -86,8 +90,7 @@ class Error implements ErrorInterface {
 
             if (isset($log['code'])) {
                 $this->_write2($log, $temp . '/' . $log['code'] . ".log.txt");
-            }
-            else {
+            } else {
                 $this->_write2($log, $file);
             }
         }
@@ -95,14 +98,14 @@ class Error implements ErrorInterface {
         return true;
     }
 
-    private function _write2($log, $file) {
+    private function _write2($log, $file)
+    {
         $content = PHP_EOL . PHP_EOL . PHP_EOL;
 
         if (isset($log['time'])) {
             $content .= '----[ ' . $log['time'] . ' ]----';
             unset($log['time']);
-        }
-        else {
+        } else {
             $content .= '----[ ' . date('Y-m-d H:i:s', $this->app->TIME) . ' ]----';
         }
 
@@ -118,14 +121,12 @@ class Error implements ErrorInterface {
 
                     $content .= PHP_EOL . ')';
 
-                }
-                else {
+                } else {
                     $content .= PHP_EOL . '[' . $key . "] " . $value;
                 }
             }
 
-        }
-        else {
+        } else {
             $content .= PHP_EOL . $log;
         }
 

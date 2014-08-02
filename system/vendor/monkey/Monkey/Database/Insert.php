@@ -19,7 +19,8 @@ use Monkey;
  *
  * @package Monkey\Database
  */
-class Insert {
+class Insert
+{
 
     /**
      * 应用对象
@@ -76,7 +77,8 @@ class Insert {
      * @param Connection $connection
      * @param $table
      */
-    public function __construct(Connection $connection, $table) {
+    public function __construct(Connection $connection, $table)
+    {
         $this->app = $connection->app;
         $this->connection = $connection;
         $this->table = $table;
@@ -89,7 +91,8 @@ class Insert {
      *
      * @return $this
      */
-    public function setFields(array $fields) {
+    public function setFields(array $fields)
+    {
         if (is_numeric(key($fields))) {
             $this->insertFields = $fields;
         }
@@ -109,7 +112,8 @@ class Insert {
      *
      * @return $this
      */
-    public function setFieldsByQuery(Select $query) {
+    public function setFieldsByQuery(Select $query)
+    {
         $fields = array_merge(array_keys($query->getFields()), array_keys($query->getFieldOfExpressions()));
         return $this->setFields($fields);
     }
@@ -136,7 +140,8 @@ class Insert {
      *
      * @return $this
      */
-    public function addRow(array $values) {
+    public function addRow(array $values)
+    {
         if (is_numeric(key($values))) {
             $this->insertRow[] = $values;
         }
@@ -171,7 +176,8 @@ class Insert {
      *
      * @return $this
      */
-    public function fromSelect(Select $query = null) {
+    public function fromSelect(Select $query = null)
+    {
         $this->fromQuery = $query;
         return $this;
     }
@@ -183,7 +189,8 @@ class Insert {
      *
      * @throws \Exception
      */
-    public function execute() {
+    public function execute()
+    {
         $query = $this->compile();
         $return = $this->connection->query($query['sql'], $query['arguments']);
         $this->insertRow = array();
@@ -196,7 +203,8 @@ class Insert {
      *
      * @return string
      */
-    protected function compile() {
+    protected function compile()
+    {
         $query = array();
         $query['sql'] = '';
         $query['arguments'] = array();
@@ -215,7 +223,7 @@ class Insert {
         }
 
         $query['sql'] = 'INSERT INTO {:' . $this->table . ':} (' . implode(', ', $fields) . ') VALUES ';
-        $placeholderTotal = $placeholder = 0;
+        $placeholder_total = $placeholder = 0;
         $rowsPlaceholder = array();
 
         foreach ($this->insertRow as $rowValue) {
@@ -223,7 +231,7 @@ class Insert {
             $rowArgument = array();
 
             foreach ($rowValue as $value) {
-                $placeholder = ':mk_insert_placeholder_' . $placeholderTotal++;
+                $placeholder = ':mk_insert_placeholder_' . $placeholder_total++;
                 $placeholders[] = $placeholder;
                 $rowArgument[$placeholder] = $value;
             }

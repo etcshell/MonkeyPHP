@@ -6,7 +6,8 @@ namespace Library;
  * 唯一码生成类
  * @package Library
  */
-final class Unique {
+final class Unique
+{
     /**
      * @static
      * 获取定长的随机字符串
@@ -14,10 +15,9 @@ final class Unique {
      * @param string $str 基准字符串
      * @return string
      */
-    public static function getRand($len, $str = 'abcdefghijklmnopqrstuvwxyz') {
-        return substr(md5(uniqid(rand() * strval($str))), 0, (int)$len);
+    public static function getRand($len, $str='abcdefghijklmnopqrstuvwxyz') {
+        return substr(md5(uniqid(rand()*strval($str))),0, (int) $len);
     }
-
     /**
      * @static
      * 生成20位唯一的订单号(交易序列号)
@@ -33,11 +33,10 @@ final class Unique {
      * @return string
      */
     public static function getSerialByTime() {
-        $usec = substr(str_replace('0.', '', microtime(TRUE)), 0, 4);
-        $str = rand(10, 99);
-        return date("YmdHis") . $usec . $str;
+        $usec = substr(str_replace('0.', '',microtime(TRUE)), 0 ,4);
+        $str  = rand(10,99);
+        return date("YmdHis").$usec.$str;
     }
-
     /**
      * @static
      * 获取定长的随机Hash值
@@ -48,8 +47,8 @@ final class Unique {
         $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
         $max = strlen($chars) - 1;
         mt_srand((double)microtime() * 1000000);
-        $hash = '';
-        for ($i = 0; $i < $length; $i++) {
+        $hash='';
+        for ($i=0; $i<$length; $i++) {
             $hash .= $chars[mt_rand(0, $max)];
         }
         return $hash;
