@@ -16,6 +16,6 @@ namespace Monkey\Exceptions\Http;
  *
  * @package Monkey\Exceptions\Http
  */
-class InterServer extends Base
-{
-} 
+class InterServer extends Base {
+
+}

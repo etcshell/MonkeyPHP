@@ -14,6 +14,7 @@ use Monkey\Controller;
  * @package Test\Controller\Blog
  */
 class Blog extends Controller {
+
     public function action_index() {
         $this->writeLine('博客首页');
     }

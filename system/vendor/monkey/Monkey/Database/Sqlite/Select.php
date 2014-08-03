@@ -19,8 +19,8 @@ use Monkey\Database as Query;
  *
  * @package Monkey\Database\Sqlite
  */
-class Select extends Query\Select
-{
+class Select extends Query\Select {
+
     /**
      * 构造方法
      *
@@ -29,11 +29,10 @@ class Select extends Query\Select
      * @param null $alias
      * @param array $options
      */
-    public function __construct(Connection $connection, $table, $alias = NULL, $options = array())
-    {
+    public function __construct(Connection $connection, $table, $alias = NULL, $options = array()) {
         $this->app = $connection->app;
         $this->connection = $connection;
-        $this->queryIdentifier = uniqid('', TRUE);
+        $this->queryIdentifier = uniqid('', true);
         if (empty($alias)) {
             $alias = $table instanceof Select ? 'subquery' : '{:' . $table . ':}';
         }
@@ -51,8 +50,7 @@ class Select extends Query\Select
      *
      * @return $this
      */
-    public function forUpdate($set = TRUE)
-    {
+    public function forUpdate($set = true) {
         return $this;
     }
 
@@ -63,8 +61,7 @@ class Select extends Query\Select
      *
      * @return string
      */
-    public function getString($queryIdentifier = NULL)
-    {
+    public function getString($queryIdentifier = NULL) {
         $qi = $queryIdentifier ? $this->queryIdentifier = $queryIdentifier : $this->queryIdentifier;
         //!$this->compiled() and $this->compile($this);
         // SELECT
@@ -78,7 +75,8 @@ class Select extends Query\Select
         }
 
         foreach ($this->fields as $field) {
-            $fields[] = (isset($field['table']) ? $field['table'] . '.' : '') . $field['field'] . ' AS ' . $field['alias'];
+            $fields[] =
+                (isset($field['table']) ? $field['table'] . '.' : '') . $field['field'] . ' AS ' . $field['alias'];
         }
 
         foreach ($this->expressions as $expression) {
@@ -94,12 +92,13 @@ class Select extends Query\Select
             isset($table['join type']) and $query .= $table['join type'] . ' JOIN ';
 
             if ($table['table'] instanceof Select) {
-                $table_string = '(' . $table['table']->getString($qi) . ')';
-            } else {
-                $table_string = '{:' . $table['table'] . ':}';
+                $tableString = '(' . $table['table']->getString($qi) . ')';
+            }
+            else {
+                $tableString = '{:' . $table['table'] . ':}';
             }
 
-            $query .= $table_string . ' AS ' . $table['alias'];
+            $query .= $tableString . ' AS ' . $table['alias'];
             !empty($table['condition']) and $query .= ' ON ' . $table['condition'];
         }
         // WHERE
@@ -122,7 +121,8 @@ class Select extends Query\Select
         }
 
         // RANGE
-        !empty($this->range) and $query .= "\nLIMIT " . (int)$this->range['length'] . ' OFFSET ' . (int)$this->range['start'];
+        !empty($this->range) and
+        $query .= "\nLIMIT " . (int)$this->range['length'] . ' OFFSET ' . (int)$this->range['start'];
         //$this->forUpdate and $query .= ' FOR UPDATE' . ($this->forUpdate===true ? '' : $this->forUpdate) ;
 
         return $query;

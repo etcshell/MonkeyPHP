@@ -8,47 +8,54 @@ namespace Library;
  * @package Library
  */
 class ExporterCSV {
-    private static $_file;
-    private static $_limit=100;
-    private static $_i=0;
+
+    private static $file;
+    private static $limit = 100;
+    private static $i = 0;
+
     /**
      * 向浏览器输出cvs格式的Excel文件
-     * @param string $file_name
+     * @param string $fileName
      */
-    public function __construct($file_name) {
-        header('Content-Type: application/force-download');   
-        header('Content-Type: application/octet-stream');   
-        header('Content-Type: application/download');;   
-        header("Content-Type: application/vnd.ms-excel; name=\"".$file_name.".csv\"");
-        header("Content-Disposition: attachment; filename=\"" . $file_name . ".csv\"");
+    public function __construct($fileName) {
+        header('Content-Type: application/force-download');
+        header('Content-Type: application/octet-stream');
+        header('Content-Type: application/download');;
+        header("Content-Type: application/vnd.ms-excel; name=\"" . $fileName . ".csv\"");
+        header("Content-Disposition: attachment; filename=\"" . $fileName . ".csv\"");
         header('Cache-Control: max-age=0');
-        self::$_file = fopen('php://output', 'a');
+        self::$file = fopen('php://output', 'a');
     }
 
     /**
      * 添加表格行
      * @param $row
      */
-    public function addRow(&$row){
-        if (self::$_i == self::$_limit)   $this->push();
-        self::$_i++;
-        fputcsv(self::$_file, self::iconv($row));
+    public function addRow(&$row) {
+        if (self::$i == self::$limit) {
+            $this->push();
+        }
+        self::$i++;
+        fputcsv(self::$file, self::iconv($row));
     }
 
     /**
      * 向浏览器推送数据表
      */
-    public function push(){
+    public function push() {
         ob_flush();
         flush();
-        self::$_i = 0;
+        self::$i = 0;
     }
 
-    private static function iconv(&$data){
-        if(is_array($data)) return array_map(__METHOD__ , $data);
-        return $data=iconv('utf-8', 'gbk', $data);
+    private static function iconv(&$data) {
+        if (is_array($data)) {
+            return array_map(__METHOD__, $data);
+        }
+        return $data = iconv('utf-8', 'gbk', $data);
     }
+
     public function __destruct() {
-        self::$_i && $this->push();
+        self::$i && $this->push();
     }
 }

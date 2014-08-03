@@ -11,15 +11,14 @@
  * @link http://www.ec3s.com
  */
 namespace Monkey\Exceptions\Http;
-class NotFound extends Base
-{
+class NotFound extends Base {
+
     /**
      * @var int
      */
     protected $statusCode = 404;
 
-    public function showError($info)
-    {
+    public function showError($info) {
         if (self::$app->DEBUG) {
             parent::showError($info);
         }

@@ -6,6 +6,7 @@ namespace DefaultApp\LabelApi;
  */
 
 class Base {
+
     public static function copyright($params = null) {
         return 'Copyright By 2014 MonkeyPHP';
     }

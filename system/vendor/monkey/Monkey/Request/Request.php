@@ -19,8 +19,8 @@ use Monkey;
  *
  * @package Monkey\Request
  */
-class Request
-{
+class Request {
+
     /**
      * 请求头对象
      *
@@ -54,20 +54,19 @@ class Request
      *
      * @var string
      */
-    private $_documentRoot;
+    private $documentRoot;
 
     /**
      * 获取请求的相对网址
      *
      * @var string
      */
-    private $_requestUri;
+    private $requestUri;
 
     /**
      * 构造方法
      */
-    public function __construct()
-    {
+    public function __construct() {
         //去掉(还原)因为magic_quotes_gpc开启时加上的转义字符，
         //当 magic_quotes_gpc (GPC, Get/Post/Cookie) 打开时，
         //GPC所有的 ' (单引号), " (双引号), \ (反斜线) and 空字符会自动转为含有反斜线的转义字符。
@@ -84,16 +83,16 @@ class Request
         //当你确定你的 .htaccess 文件有这句时 RewriteRule ^(.*)$ index.php?/$1&%{QUERY_STRING} [L]
         //可以删除下面这个代码块
         //begin
-//        if (empty($_GET)) {
-//            $get = strstr($this->getUrl(), '?');
-//            if (!empty($get)) {
-//                $get = explode('&', substr($get,1));
-//                foreach ($get as $v){
-//                    $v = explode('=', $v);
-//                    $this->parameters[trim($v[0])] = trim($v[1]);
-//                }
-//            }
-//        }
+        //        if (empty($_GET)) {
+        //            $get = strstr($this->getUrl(), '?');
+        //            if (!empty($get)) {
+        //                $get = explode('&', substr($get,1));
+        //                foreach ($get as $v){
+        //                    $v = explode('=', $v);
+        //                    $this->parameters[trim($v[0])] = trim($v[1]);
+        //                }
+        //            }
+        //        }
         //end
     }
 
@@ -103,8 +102,7 @@ class Request
      * @param string $name 参数名
      * @param $value 参数值
      */
-    public function setParameter($name, $value)
-    {
+    public function setParameter($name, $value) {
         $this->parameters[$name] = $value;
     }
 
@@ -116,8 +114,7 @@ class Request
      *
      * @return string
      */
-    public function getParameter($name, $defaultValue = null)
-    {
+    public function getParameter($name, $defaultValue = null) {
         return isset($this->parameters[$name]) ? $this->parameters[$name] : $defaultValue;
     }
 
@@ -131,9 +128,8 @@ class Request
      *
      * @return array
      */
-    public function getParameters($names = null)
-    {
-        return $this->_getByNames($names, $this->parameters);
+    public function getParameters($names = null) {
+        return $this->getByNames($names, $this->parameters);
     }
 
     /**
@@ -141,8 +137,7 @@ class Request
      *
      * @return Header
      */
-    public function header()
-    {
+    public function header() {
         if ($this->header === null) {
             $this->header = new Header();
         }
@@ -156,8 +151,7 @@ class Request
      *
      * @return string 一般为'GET'或'POST'
      */
-    public function getMethod()
-    {
+    public function getMethod() {
         return isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
     }
 
@@ -167,20 +161,19 @@ class Request
      *
      * @return string
      */
-    public function getUrl()
-    {
-        if (empty($this->_requestUri)) {
+    public function getUrl() {
+        if (empty($this->requestUri)) {
 
             if (!isset($_SERVER['REQUEST_URI']) && isset($_SERVER['HTTP_X_REWRITE_URL'])) {
                 //修复IIS的原始URI
                 $_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_REWRITE_URL'];
             }
 
-            $this->_requestUri = $_SERVER['REQUEST_URI'];
+            $this->requestUri = $_SERVER['REQUEST_URI'];
 
         }
 
-        return $this->_requestUri;
+        return $this->requestUri;
     }
 
     /**
@@ -189,12 +182,13 @@ class Request
      *
      * @return string
      */
-    public function getUri()
-    {
-        if ($this->isAbsUri())
+    public function getUri() {
+        if ($this->isAbsUri()) {
             return $this->getUrl();
-        else
+        }
+        else {
             return $this->getUriPrefix() . $this->getUrl();
+        }
     }
 
     /**
@@ -202,11 +196,11 @@ class Request
      *
      * @return bool
      */
-    public function isHttps()
-    {
+    public function isHttps() {
         if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) and strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https') {
             return true;
-        } elseif (isset($_SERVER['HTTPS'])) {
+        }
+        elseif (isset($_SERVER['HTTPS'])) {
             return strtolower($_SERVER['HTTPS']) == 'on';
         }
 
@@ -218,8 +212,7 @@ class Request
      *
      * @return string
      */
-    public function getUriPrefix()
-    {
+    public function getUriPrefix() {
         if ($this->uriPrefix !== null) {
             return $this->uriPrefix;
         }
@@ -245,8 +238,7 @@ class Request
      *
      * @return array
      */
-    public function getProxy()
-    {
+    public function getProxy() {
         if (empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             return array();
         }
@@ -261,8 +253,7 @@ class Request
      *
      * @return bool
      */
-    public function isAbsUri()
-    {
+    public function isAbsUri() {
         return stripos($_SERVER['REQUEST_URI'], 'http/') === 0;
     }
 
@@ -271,8 +262,7 @@ class Request
      *
      * @return bool
      */
-    public function isCli()
-    {
+    public function isCli() {
         return php_sapi_name() == 'cli';
     }
 
@@ -283,12 +273,13 @@ class Request
      *
      * @return Boolean
      */
-    public function isAjax()
-    {
-        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']))
+    public function isAjax() {
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
             return $_SERVER['HTTP_ACCEPT'] == 'text/javascript, application/javascript, */*';
-        else
+        }
+        else {
             return strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+        }
     }
 
     /**
@@ -296,15 +287,11 @@ class Request
      *
      * @return bool
      */
-    public function isFlash()
-    {
-        return isset($_SERVER['HTTP_USER_AGENT'])
-        &&
-        (
-            stripos($_SERVER['HTTP_USER_AGENT'], 'Shockwave') !== false
-            ||
-            stripos($_SERVER['HTTP_USER_AGENT'], 'Flash') !== false
-        );
+    public function isFlash() {
+        return
+            isset($_SERVER['HTTP_USER_AGENT']) &&
+            (stripos($_SERVER['HTTP_USER_AGENT'], 'Shockwave') !== false ||
+                stripos($_SERVER['HTTP_USER_AGENT'], 'Flash') !== false);
     }
 
     /**
@@ -315,8 +302,7 @@ class Request
      *
      * @return string
      */
-    public function getEnvironment($name, $defaultValue = null)
-    {
+    public function getEnvironment($name, $defaultValue = null) {
         return isset($_ENV[$name]) ? $_ENV[$name] : $defaultValue;
     }
 
@@ -327,9 +313,8 @@ class Request
      *
      * @return array
      */
-    public function getEnvironments($name = null)
-    {
-        return $this->_getByNames($name, $_ENV);
+    public function getEnvironments($name = null) {
+        return $this->getByNames($name, $_ENV);
     }
 
     /**
@@ -339,8 +324,7 @@ class Request
      *
      * @return boolean
      */
-    public function isSpider()
-    {
+    public function isSpider() {
         if ($this->spider === null) {
             $this->spider = false;
             $agent = strtolower($_SERVER['HTTP_USER_AGENT']);
@@ -363,8 +347,7 @@ class Request
      *
      * @return mixed|null
      */
-    public function getCookie($name, $defaultValue = null)
-    {
+    public function getCookie($name, $defaultValue = null) {
         isset($_COOKIE[$name]) && ($defaultValue = $_COOKIE[$name]);
         return $defaultValue;
     }
@@ -374,8 +357,7 @@ class Request
      *
      * @return string
      */
-    public function getIP()
-    {
+    public function getIP() {
         static $ip = null;
 
         if ($ip) {
@@ -385,16 +367,23 @@ class Request
         if (getenv("HTTP_CLIENT_IP") && strcasecmp(getenv("HTTP_CLIENT_IP"), "unknown")) {
             $ip = getenv("HTTP_CLIENT_IP");
 
-        } elseif (getenv("HTTP_X_FORWARDED_FOR") && strcasecmp(getenv("HTTP_X_FORWARDED_FOR"), "unknown")) {
+        }
+        elseif (getenv("HTTP_X_FORWARDED_FOR") && strcasecmp(getenv("HTTP_X_FORWARDED_FOR"), "unknown")) {
             $ip = getenv("HTTP_X_FORWARDED_FOR");
 
-        } elseif (getenv("REMOTE_ADDR") && strcasecmp(getenv("REMOTE_ADDR"), "unknown")) {
+        }
+        elseif (getenv("REMOTE_ADDR") && strcasecmp(getenv("REMOTE_ADDR"), "unknown")) {
             $ip = getenv("REMOTE_ADDR");
 
-        } elseif (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], "unknown")) {
+        }
+        elseif (isset($_SERVER['REMOTE_ADDR']) &&
+            $_SERVER['REMOTE_ADDR'] &&
+            strcasecmp($_SERVER['REMOTE_ADDR'], "unknown")
+        ) {
             $ip = $_SERVER['REMOTE_ADDR'];
 
-        } else {
+        }
+        else {
             $ip = "unknown";
         }
 
@@ -411,8 +400,7 @@ class Request
      *
      * @return array
      */
-    private function _getByNames($names, &$data)
-    {
+    private function getByNames($names, &$data) {
         if (!$names) {
             return $data;
         }
@@ -420,10 +408,12 @@ class Request
         $result = array();
 
         foreach ($names as $key => $value) {
-            if (is_int($key))
+            if (is_int($key)) {
                 $result[$value] = isset($data[$value]) ? $data[$value] : null;
-            else
+            }
+            else {
                 $result[$key] = array_key_exists($key, $data) ? $data[$key] : $value;
+            }
         }
 
         return $result;
@@ -434,8 +424,7 @@ class Request
      *
      * @return string
      */
-    public function getDomain()
-    {
+    public function getDomain() {
         return $this->getHost();
     }
 
@@ -448,25 +437,25 @@ class Request
      * 指定请求的服务器的域名和端口号（80端口号可以省略）。
      * 如 Host：rss.sina.com.cn:8080
      */
-    public function getHost()
-    {
+    public function getHost() {
         if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
             //IIS
             $host = $_SERVER['HTTP_X_FORWARDED_HOST'];
-        } else {
+        }
+        else {
             //Other
             $host = $_SERVER['HTTP_HOST'];
         }
 
         return $host;
     }
+
     /**
      * 获取命令行方式请求的文件根目录
      *
      * @return string
      */
-    public function getRoot()
-    {
+    public function getRoot() {
         return getcwd();
     }
 
@@ -475,11 +464,10 @@ class Request
      *
      * @return string
      */
-    public function getDocumentRoot()
-    {
+    public function getDocumentRoot() {
 
-        if ($this->_documentRoot) {
-            return $this->_documentRoot;
+        if ($this->documentRoot) {
+            return $this->documentRoot;
         }
 
         //修复IIS服务器$_SERVER['DOCUMENT_ROOT']失效的情况
@@ -487,17 +475,18 @@ class Request
             if (isset($_SERVER['SCRIPT_FILENAME'])) {
 
                 $_SERVER['DOCUMENT_ROOT'] = substr(
-                        $_SERVER['SCRIPT_FILENAME'],
-                        0,
-                        0 - strlen($_SERVER['PHP_SELF'])
+                    $_SERVER['SCRIPT_FILENAME'],
+                    0,
+                    0 - strlen($_SERVER['PHP_SELF'])
                 );
 
-            } elseif (isset($_SERVER['PATH_TRANSLATED'])) {
+            }
+            elseif (isset($_SERVER['PATH_TRANSLATED'])) {
 
                 $_SERVER['DOCUMENT_ROOT'] = substr(
-                        str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']),
-                        0,
-                        0 - strlen($_SERVER['PHP_SELF'])
+                    str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']),
+                    0,
+                    0 - strlen($_SERVER['PHP_SELF'])
                 );
             }
 
@@ -506,9 +495,9 @@ class Request
         //修正DOCUMENT_ROOT末尾可能因为apache配置造成多余一个'/'。
         $_SERVER['DOCUMENT_ROOT'] = dir_format($_SERVER['DOCUMENT_ROOT']);
 
-        $this->_documentRoot = $_SERVER['DOCUMENT_ROOT'];
+        $this->documentRoot = $_SERVER['DOCUMENT_ROOT'];
 
-        return $this->_documentRoot;
+        return $this->documentRoot;
     }
 
     /**
@@ -516,8 +505,7 @@ class Request
      *
      * @return string
      */
-    public function getInput()
-    {
+    public function getInput() {
         return @(string)file_get_contents('php://input');
     }
 
@@ -526,8 +514,7 @@ class Request
      *
      * @return int
      */
-    public function getTime()
-    {
+    public function getTime() {
         return $_SERVER['REQUEST_TIME'];
     }
 
@@ -538,8 +525,7 @@ class Request
      *
      * @return string
      */
-    public function getLanguage($defaultLanguage = 'zh-cn')
-    {
+    public function getLanguage($defaultLanguage = 'zh-cn') {
         $lan = $this->getCookie('language', $defaultLanguage);
 
         if (empty($lan)) {

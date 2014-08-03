@@ -19,8 +19,8 @@ use Monkey;
  *
  * @package Monkey\Exceptions
  */
-class Exception extends \Exception
-{
+class Exception extends \Exception {
+
     /**
      * 应用对象
      *
@@ -38,7 +38,7 @@ class Exception extends \Exception
      *
      * @var array
      */
-    private static $_errorTitle = array(
+    private static $errorTitle = array(
         -1 => '致命错误(E_FATAL)',
         1 => '致命错误(E_ERROR)',
         2 => '警告(E_WARNING)',
@@ -55,19 +55,18 @@ class Exception extends \Exception
         2048 => '建议您改变代码，以提高代码的互用性和兼容性(E_STRICT)'
     );
 
-    public function __construct($message = '', $code = 0, $previous = null, $file = null, $line = null)
-    {
+    public function __construct($message = '', $code = 0, $previous = null, $file = null, $line = null) {
         parent::__construct($message, $code, $previous);
 
         !is_null($file) and $this->file = $file;
         !is_null($line) and $this->line = $line;
 
         $info = array();
-        $app = &self::$app;
+        $app = & self::$app;
 
         //设置错误信息
         $info['time'] = date('Y-m-d H:i:s', $app->TIME);
-        $info['title'] = isset(self::$_errorTitle[$this->getCode()]) ? self::$_errorTitle[$this->getCode()] : '应用程序错误';
+        $info['title'] = isset(self::$errorTitle[$this->getCode()]) ? self::$errorTitle[$this->getCode()] : '应用程序错误';
         $info['code'] = $this->getCode();
         $info['file'] = $this->file;
         $info['line'] = $this->line;
@@ -89,8 +88,8 @@ class Exception extends \Exception
      *
      * @param array $info
      */
-    public function showError($info){
-        self::$errorReporting->showError($info,true);
+    public function showError($info) {
+        self::$errorReporting->showError($info, true);
     }
 
 }

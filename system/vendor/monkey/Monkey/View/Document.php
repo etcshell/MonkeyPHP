@@ -17,8 +17,8 @@ namespace Monkey\View;
  *
  * @package Monkey\View
  */
-class Document
-{
+class Document {
+
     /**
      * 处理超级连接代码
      *
@@ -28,9 +28,10 @@ class Document
      *
      * @return string
      */
-    public function a($text, $href = '#', $options = array())
-    {
-        if (!empty($href)) $options['href'] = $href;
+    public function a($text, $href = '#', $options = array()) {
+        if (!empty($href)) {
+            $options['href'] = $href;
+        }
         if (empty($options['title']) && empty($options['TITLE'])) {
             $options['title'] = $text; //为了SEO效果,link的title处理.
         }
@@ -46,8 +47,7 @@ class Document
      *
      * @return string
      */
-    public function email($text, $email = null, $options = array())
-    {
+    public function email($text, $email = null, $options = array()) {
         $options['href'] = 'mailto:' . (is_null($email) ? $text : $email);
         return $this->tag('a', $options, $text);
     }
@@ -61,8 +61,7 @@ class Document
      *
      * @return string
      */
-    public function image($src, $alt = null, $options = array())
-    {
+    public function image($src, $alt = null, $options = array()) {
         if (!$src) {
             return false;
         }
@@ -85,15 +84,12 @@ class Document
      *
      * @return string
      */
-    public function cssFile($url, $media = null)
-    {
+    public function cssFile($url, $media = null) {
         if (!empty($media)) {
             $media = ' media="' . $media . '"';
         }
 
-        return '<link rel="stylesheet" type="text/css" href="'
-        . $this->toText($url)
-        . '"' . $media . ' />\r';
+        return '<link rel="stylesheet" type="text/css" href="' . $this->toText($url) . '"' . $media . ' />\r';
     }
 
     /**
@@ -103,11 +99,8 @@ class Document
      *
      * @return string
      */
-    public function jsFile($url)
-    {
-        return '<script type="text/javascript" src="'
-        . $this->toText($url)
-        . '"></script>\r';
+    public function jsFile($url) {
+        return '<script type="text/javascript" src="' . $this->toText($url) . '"></script>\r';
     }
 
     /**
@@ -117,8 +110,7 @@ class Document
      *
      * @return string
      */
-    public function tableBegin($options = array())
-    {
+    public function tableBegin($options = array()) {
         return $this->tag('table', $options, false, false);
     }
 
@@ -129,8 +121,7 @@ class Document
      *
      * @return string
      */
-    public function tableTR($row = array())
-    {
+    public function tableTR($row = array()) {
         $html = '';
 
         foreach ($row as $col) {
@@ -145,8 +136,7 @@ class Document
      *
      * @return string
      */
-    public function tableEnd()
-    {
+    public function tableEnd() {
         return '</table>';
     }
 
@@ -158,8 +148,7 @@ class Document
      *
      * @return string
      */
-    public function table($content = array(), $options = array())
-    {
+    public function table($content = array(), $options = array()) {
         if (!$content) {
             return false;
         }
@@ -188,12 +177,11 @@ class Document
      * @param string $action 提交的目的网址
      * @param array $options 属性设置
      * @param string $method 提交的方式，默认为post
-     * @param boolean $enctype_item 是否直接提交数据，如文件上传（TRUE），其它情况为FALSE
+     * @param boolean $enctypeItem 是否直接提交数据，如文件上传（TRUE），其它情况为FALSE
      *
      * @return string
      */
-    public function begin($action, $options = array(), $method = null, $enctype_item = false)
-    {
+    public function begin($action, $options = array(), $method = null, $enctypeItem = false) {
         if (!$action) {
             return false;
         }
@@ -201,7 +189,7 @@ class Document
         $options['action'] = $action;
         $options['method'] = empty($method) ? 'post' : $method;
 
-        if ($enctype_item === true) {
+        if ($enctypeItem === true) {
             $options['enctype'] = 'multipart/form-data';
         }
 
@@ -214,8 +202,7 @@ class Document
      *
      * @return string
      */
-    public function end()
-    {
+    public function end() {
         return '</form>';
     }
 
@@ -228,8 +215,7 @@ class Document
      *
      * @return string
      */
-    public function input($type, $name = null, $options = array())
-    {
+    public function input($type, $name = null, $options = array()) {
         if (!$type) {
             return false;
         }
@@ -243,14 +229,13 @@ class Document
      * 文本输入框text表单代码
      *
      * @param string $name
-     * @param string $default_value 默认值，这个属性也可以直接在$options设置
+     * @param string $defaultValue 默认值，这个属性也可以直接在$options设置
      * @param array $options
      *
      * @return string
      */
-    public function inputText($name, $default_value = null, $options = array())
-    {
-        !is_null($default_value) and $options['value'] = $default_value;
+    public function inputText($name, $defaultValue = null, $options = array()) {
+        !is_null($defaultValue) and $options['value'] = $defaultValue;
         return $this->input('text', $name, $options);
     }
 
@@ -263,8 +248,7 @@ class Document
      *
      * @return string
      */
-    public function inputPassword($name, $value = '', $options = array())
-    {
+    public function inputPassword($name, $value = '', $options = array()) {
         $options['value'] = $value;
         return $this->input('password', $name, $options);
     }
@@ -277,8 +261,7 @@ class Document
      *
      * @return string
      */
-    public function inputSubmit($value = '重置', $options = array())
-    {
+    public function inputSubmit($value = '重置', $options = array()) {
         $options['value'] = $value;
         return $this->input('submit', '', $options);
     }
@@ -291,8 +274,7 @@ class Document
      *
      * @return string
      */
-    public function inputReset($value = '重置', $options = array())
-    {
+    public function inputReset($value = '重置', $options = array()) {
         $options['value'] = $value;
         return $this->input('reset', '', $options);
     }
@@ -305,8 +287,7 @@ class Document
      *
      * @return string
      */
-    public function inputButton($value, $options = array())
-    {
+    public function inputButton($value, $options = array()) {
         $options['value'] = $value;
         return $this->input('button', '', $options);
     }
@@ -322,8 +303,7 @@ class Document
      *
      * @return string
      */
-    public function inputCheckbox($name, $label, $value, $selected = false, $options = array())
-    {
+    public function inputCheckbox($name, $label, $value, $selected = false, $options = array()) {
         $options['value'] = $value;
         $selected and $options['checked'] = 'checked';
         return '<label>' . $this->input('checkbox', $name, $options) . $label . '</label>';
@@ -333,34 +313,32 @@ class Document
      * 复选框HTML代码
      *
      * @param string $name
-     * @param array $content_array 二维数组，array( array(label,value,is_checked),array(label,value),...),有is_checked则该项选中
+     * @param array $contentArray 二维数组，array( array(label,value,is_checked),array(label,value),...),有is_checked则该项选中
      * @param array $options 设置统一的属性，如一组同名的复选框
      *
      * @return string
      */
-    public function inputCheckboxArray($name, $content_array, $options = array())
-    {
-        if (!$content_array || !is_array($content_array)) {
+    public function inputCheckboxArray($name, $contentArray, $options = array()) {
+        if (!$contentArray || !is_array($contentArray)) {
             return false;
         }
 
         $html = '';
 
-        foreach ($content_array as $item) {
+        foreach ($contentArray as $item) {
             $options['value'] = $item[1];
 
             if (isset($item[2])) {
                 $options['checked'] = 'checked';
 
-            } else {
+            }
+            else {
                 if (isset($options['checked'])) {
                     unset($options['checked']);
                 }
             }
 
-            $html .= '<label>'
-                . $this->input('checkbox', $name, $options) . $item[0]
-                . '</label>';
+            $html .= '<label>' . $this->input('checkbox', $name, $options) . $item[0] . '</label>';
         }
 
         return $html;
@@ -377,8 +355,7 @@ class Document
      *
      * @return string
      */
-    public function inputRadio($name, $label, $value, $selected = false, $options = array())
-    {
+    public function inputRadio($name, $label, $value, $selected = false, $options = array()) {
         $options['value'] = $value;
         $selected and $options['checked'] = 'checked';
         return '<label>' . $this->input('radio', $name, $options) . $label . '</label>';
@@ -388,30 +365,30 @@ class Document
      * 单选框HTML代码
      *
      * @param string $name
-     * @param array $content_array 二维数组，array( array(label,value,is_checked),array(label,value),...),有is_checked则该项选中
+     * @param array $contentArray 二维数组，array( array(label,value,is_checked),array(label,value),...),有is_checked则该项选中
      * @param array $options 设置统一的属性，如一组同名的单选框
      *
      * @return string
      */
-    public function inputRadioArray($name, $content_array, $options = array())
-    {
-        if (!$content_array || !is_array($content_array)) {
+    public function inputRadioArray($name, $contentArray, $options = array()) {
+        if (!$contentArray || !is_array($contentArray)) {
             return false;
         }
 
         $html = '';
-        foreach ($content_array as $item) {
+        foreach ($contentArray as $item) {
             $options['value'] = $item[1];
 
             if (isset($item[2])) {
                 $options['checked'] = 'checked';
-            } else {
-                if (isset($options['checked'])) unset($options['checked']);
+            }
+            else {
+                if (isset($options['checked'])) {
+                    unset($options['checked']);
+                }
             }
 
-            $html .= '<label>'
-                . $this->input('radio', $name, $options) . $item[0]
-                . '</label>';
+            $html .= '<label>' . $this->input('radio', $name, $options) . $item[0] . '</label>';
         }
 
         return $html;
@@ -424,19 +401,18 @@ class Document
      * @param array $options 属性
      * @return string
      */
-    public function textArea($name, $content = null, $options = array())
-    {
+    public function textArea($name, $content = null, $options = array()) {
         $name and $options['name'] = $name;
-        $option_str = '';
+        $optionStr = '';
 
         //当$options不为空或类型不为数组时
         if (!empty($options) && is_array($options)) {
             foreach ($options as $name => $value) {
-                $option_str .= ' ' . $name . '="' . $value . '"';
+                $optionStr .= ' ' . $name . '="' . $value . '"';
             }
         }
 
-        $html = '<textarea' . $option_str . '>';
+        $html = '<textarea' . $optionStr . '>';
         return ($content == true) ? $html . $content . '</textarea>' : $html . '</textarea>';
     }
 
@@ -448,8 +424,7 @@ class Document
      *
      * @return string
      */
-    public function selectBegin($name, $options = array())
-    {
+    public function selectBegin($name, $options = array()) {
         $name and $options['name'] = $name;
         return $this->tag('select', $options, false, false);
     }
@@ -463,11 +438,8 @@ class Document
      *
      * @return string
      */
-    public function selectOption($caption, $value, $selected = false)
-    {
-        return '<option value="' . $value . ($selected ? '" selected="selected">' : '">')
-        . $caption
-        . '</option>';
+    public function selectOption($caption, $value, $selected = false) {
+        return '<option value="' . $value . ($selected ? '" selected="selected">' : '">') . $caption . '</option>';
     }
 
     /**
@@ -475,8 +447,7 @@ class Document
      *
      * @return string
      */
-    public function selectEnd()
-    {
+    public function selectEnd() {
         return '</select>';
     }
 
@@ -484,29 +455,28 @@ class Document
      * 下拉框SELECT的HTML代码
      *
      * @param string $name
-     * @param array $content_array 菜单二维数组，array( array(caption,value,is_selected),array(caption,value),...),有is_selected则该项选中
+     * @param array $contentArray 菜单二维数组，array( array(caption,value,is_selected),array(caption,value),...),有is_selected则该项选中
      * @param array $options 整个菜单的属性
      *
      * @return string
      */
-    public function select($name, $content_array, $options = array())
-    {
+    public function select($name, $contentArray, $options = array()) {
         $name and $options['name'] = $name;
 
-        if (!$content_array || !is_array($content_array)) {
+        if (!$contentArray || !is_array($contentArray)) {
             return false;
         }
 
-        $option_str = '';
+        $optionStr = '';
 
-        foreach ($content_array as $item) {
-            $option_str .= '<option value="' . $item[1]
-                . (isset($item[2]) ? '" selected="selected">' : '">')
-                . $item[0]
-                . '</option>';
+        foreach ($contentArray as $item) {
+            $optionStr .=
+                '<option value="' . $item[1] . (isset($item[2]) ? '" selected="selected">' : '">') .
+                $item[0] .
+                '</option>';
         }
 
-        return $this->tag('select', $options, $option_str);
+        return $this->tag('select', $options, $optionStr);
     }
 
     /**
@@ -515,30 +485,28 @@ class Document
      * @param string $tag
      * @param array $options
      * @param  string $content
-     * @param boolean $close_tag
+     * @param boolean $closeTag
      *
      * @return string
      */
-    public function tag($tag, $options = array(), $content = null, $close_tag = true)
-    {
-        $option_str = '';
+    public function tag($tag, $options = array(), $content = null, $closeTag = true) {
+        $optionStr = '';
 
         //当$options不为空或类型不为数组时
         if (!empty($options) && is_array($options)) {
             foreach ($options as $name => $value) {
-                $option_str .= ' ' . $name . '="' . $value . '"';
+                $optionStr .= ' ' . $name . '="' . $value . '"';
             }
         }
 
-        $html = '<' . $tag . $option_str;
+        $html = '<' . $tag . $optionStr;
 
         if (!is_null($content)) {
-            return $close_tag
-                ? $html . '>' . $content . '</' . $tag . '>'
-                : $html . '>' . $content;
+            return $closeTag ? $html . '>' . $content . '</' . $tag . '>' : $html . '>' . $content;
 
-        } else {
-            return $close_tag ? $html . '/>' : $html . '>';
+        }
+        else {
+            return $closeTag ? $html . '/>' : $html . '>';
         }
     }
 
@@ -550,8 +518,7 @@ class Document
      *
      * @return string
      */
-    public function filterTag($str, $tags = NULL)
-    {
+    public function filterTag($str, $tags = NULL) {
         if (is_null($tags)) {
             return strip_tags($str);
         }
@@ -576,8 +543,7 @@ class Document
      *
      * @return string
      */
-    public function toText($data)
-    {
+    public function toText($data) {
         if (is_array($data)) {
             return array_map(__METHOD__, $data);
         }
@@ -597,8 +563,7 @@ class Document
      *
      * @return mixed
      */
-    private function delRedundancy($data)
-    {
+    private function delRedundancy($data) {
         $data = preg_replace('/\s+(\r?\n)/', '$1', $data); //去除恶意空格
         $data = preg_replace('/\s{8,}/', ' ', $data); //去除恶意空格
         $data = preg_replace('/(\r?\n){3,}/', '$1', $data); //去除恶意换行

@@ -17,8 +17,8 @@ namespace Monkey\Database;
  *
  * @package Monkey\Database
  */
-class Schema
-{
+class Schema {
+
     /**
      * 数据库连接对象
      *
@@ -46,8 +46,7 @@ class Schema
      * @param Connection $connection
      * @param string|null $databaseName 数据库名，默认使用连接中的数据库
      */
-    public function __construct(Connection $connection, $databaseName = null)
-    {
+    public function __construct(Connection $connection, $databaseName = null) {
         $this->connection = $connection;
         $this->dbConfig = $connection->getConfig();
 
@@ -61,32 +60,28 @@ class Schema
     /**
      * 获取数据表结构信息
      */
-    public function getSchema()
-    {
+    public function getSchema() {
         return $this->schema;
     }
 
     /**
      * 表是否存在
      */
-    public function existsTable($tableName)
-    {
+    public function existsTable($tableName) {
         return isset($this->schema[$this->prefix($tableName)]);
     }
 
     /**
      * 字段是否存在
      */
-    public function existsField($tableName, $columnName)
-    {
+    public function existsField($tableName, $columnName) {
         return isset($this->schema[$this->prefix($tableName)][$columnName]);
     }
 
     /**
      * 索引是否存在
      */
-    public function existsIndex($tableName, $indexName)
-    {
+    public function existsIndex($tableName, $indexName) {
         $sql = 'SHOW INDEX FROM {:' . $tableName . ':} WHERE key_name = ' . $indexName;
         $row = $this->connection->query($sql)->fetch();
         return isset($row['Key_name']);
@@ -100,8 +95,7 @@ class Schema
      *
      * @return bool
      */
-    public function createTable($tableName, $tableCreateSql)
-    {
+    public function createTable($tableName, $tableCreateSql) {
         if ($this->existsTable($tableName)) {
             return false;
         }
@@ -111,8 +105,7 @@ class Schema
     /**
      * 删除表
      */
-    public function dropTable($tableName)
-    {
+    public function dropTable($tableName) {
         if (!$this->existsTable($tableName)) {
             return true;
         }
@@ -122,12 +115,13 @@ class Schema
     /**
      * 修改表名
      */
-    public function renameTable($tableName, $newTableName)
-    {
+    public function renameTable($tableName, $newTableName) {
         if (!$this->existsTable($tableName) || $this->existsTable($newTableName)) {
             return false;
         }
-        return $this->connection->query('ALTER TABLE {:' . $tableName . ':} RENAME TO `{:' . $newTableName . ':}`')->isSuccess();
+        return $this->connection->query(
+            'ALTER TABLE {:' . $tableName . ':} RENAME TO `{:' . $newTableName . ':}`'
+        )->isSuccess();
     }
 
     /**
@@ -135,8 +129,7 @@ class Schema
      * @param string $tableName 表名称
      * @return boolean
      */
-    public function truncateTable($tableName)
-    {
+    public function truncateTable($tableName) {
         if (empty($tableName)) {
             return false;
         }
@@ -147,8 +140,7 @@ class Schema
     /**
      * 添加字段
      */
-    public function addField($tableName, $fieldName, $spec)
-    {
+    public function addField($tableName, $fieldName, $spec) {
         if (!$this->existsTable($tableName) || $this->existsField($tableName, $fieldName)) {
             return false;
         }
@@ -159,12 +151,13 @@ class Schema
     /**
      * 删除字段
      */
-    public function dropField($tableName, $fieldName)
-    {
+    public function dropField($tableName, $fieldName) {
         if (!$this->existsField($tableName, $fieldName)) {
-            return FALSE;
+            return false;
         }
-        return $this->connection->query('ALTER TABLE {:' . $tableName . ':} DROP COLUMN `' . $fieldName . '`')->isSuccess();
+        return $this->connection->query(
+            'ALTER TABLE {:' . $tableName . ':} DROP COLUMN `' . $fieldName . '`'
+        )->isSuccess();
     }
 
     /**
@@ -174,8 +167,7 @@ class Schema
      * @param string $newFieldName 新字段名称
      * @return bool
      */
-    public function renameField($tableName, $fieldName, $newFieldName)
-    {
+    public function renameField($tableName, $fieldName, $newFieldName) {
         if (!$this->existsField($tableName, $fieldName) ||
             (($fieldName != $newFieldName) && $this->existsField($tableName, $newFieldName))
         ) {
@@ -194,8 +186,7 @@ class Schema
      *
      * @return bool
      */
-    public function alertField($tableName, $fieldName, $spec)
-    {
+    public function alertField($tableName, $fieldName, $spec) {
         if (!$this->existsField($tableName, $fieldName)) {
             return false;
         }
@@ -206,145 +197,145 @@ class Schema
     /**
      * 设置字段默认值
      */
-    public function fieldSetDefault($tableName, $fieldName, $defaultValue = null)
-    {
+    public function fieldSetDefault($tableName, $fieldName, $defaultValue = null) {
         if (!$this->existsField($tableName, $fieldName)) {
             return false;
         }
-        $defaultValue = !$defaultValue ? 'NULL' : (is_string($defaultValue) ? '"' . $defaultValue . '"' : $defaultValue);
-        return $this->connection
-            ->query('ALTER TABLE {:' . $tableName . ':} ALTER COLUMN `' . $fieldName . '` SET DEFAULT ' . $defaultValue)
-            ->isSuccess();
+        $defaultValue =
+            !$defaultValue ? 'NULL' : (is_string($defaultValue) ? '"' . $defaultValue . '"' : $defaultValue);
+        return $this->connection->query(
+            'ALTER TABLE {:' . $tableName . ':} ALTER COLUMN `' . $fieldName . '` SET DEFAULT ' . $defaultValue
+        )->isSuccess();
     }
 
     /**
      * 删除字段默认值
      */
-    public function fieldSetNoDefault($tableName, $fieldName)
-    {
+    public function fieldSetNoDefault($tableName, $fieldName) {
         if (!$this->existsField($tableName, $fieldName)) {
             return false;
         }
-        return $this->connection
-            ->query('ALTER TABLE {:' . $tableName . ':} ALTER COLUMN `' . $fieldName . '` DROP DEFAULT')
-            ->isSuccess();
+        return $this->connection->query(
+            'ALTER TABLE {:' . $tableName . ':} ALTER COLUMN `' . $fieldName . '` DROP DEFAULT'
+        )->isSuccess();
     }
 
     /**
      * 添加主键
      */
-    public function addPrimaryKey($tableName, $fields)
-    {
+    public function addPrimaryKey($tableName, $fields) {
         if (!$this->existsTable($tableName) || $this->existsIndex($tableName, 'PRIMARY')) {
             return false;
         }
-        return $this->connection
-            ->query('ALTER TABLE {:' . $tableName . ':} ADD PRIMARY KEY (' . $this->createKeySql($fields) . ')')
-            ->isSuccess();
+        return $this->connection->query(
+            'ALTER TABLE {:' . $tableName . ':} ADD PRIMARY KEY (' . $this->createKeySql($fields) . ')'
+        )->isSuccess();
     }
 
     /**
      * 删除主键
      */
-    public function dropPrimaryKey($tableName)
-    {
+    public function dropPrimaryKey($tableName) {
         if (!$this->existsIndex($tableName, 'PRIMARY')) {
-            return FALSE;
+            return false;
         }
-        return $this->connection->query('ALTER TABLE {:' . $tableName . ':} DROP PRIMARY KEY')
-            ->isSuccess();
+        return $this->connection->query('ALTER TABLE {:' . $tableName . ':} DROP PRIMARY KEY')->isSuccess();
     }
 
     /**
      * 添加唯一索引
      */
-    public function addUniqueKey($tableName, $uniqueKeyName, $fieldName)
-    {
+    public function addUniqueKey($tableName, $uniqueKeyName, $fieldName) {
         if (!$this->existsTable($tableName) || $this->existsIndex($tableName, $uniqueKeyName)) {
             return false;
         }
-        return $this->connection
-            ->query('ALTER TABLE {:' . $tableName . ':} ADD UNIQUE KEY `' . $uniqueKeyName . '` (' . $this->createKeySql($fieldName) . ')')
-            ->isSuccess();
+        return $this->connection->query(
+            'ALTER TABLE {:' .
+            $tableName .
+            ':} ADD UNIQUE KEY `' .
+            $uniqueKeyName .
+            '` (' .
+            $this->createKeySql($fieldName) .
+            ')'
+        )->isSuccess();
     }
 
     /**
      * 删除唯一索引
      */
-    public function dropUniqueKey($tableName, $uniqueKeyName)
-    {
+    public function dropUniqueKey($tableName, $uniqueKeyName) {
         if (!$this->existsIndex($tableName, $uniqueKeyName)) {
-            return FALSE;
+            return false;
         }
-        return $this->connection
-            ->query('ALTER TABLE {:' . $tableName . ':} DROP KEY `' . $uniqueKeyName . '`')
-            ->isSuccess();
+        return $this->connection->query(
+            'ALTER TABLE {:' . $tableName . ':} DROP KEY `' . $uniqueKeyName . '`'
+        )->isSuccess();
     }
 
     /**
      * 添加索引
      */
-    public function addIndex($tableName, $indexName, $fieldName)
-    {
+    public function addIndex($tableName, $indexName, $fieldName) {
         if (!$this->existsTable($tableName) || $this->existsIndex($tableName, $indexName)) {
             return false;
         }
-        return $this->connection
-            ->query('ALTER TABLE {:' . $tableName . ':} ADD INDEX `' . $indexName . '` (' . $this->createKeySql($fieldName) . ')')
-            ->isSuccess();
+        return $this->connection->query(
+            'ALTER TABLE {:' .
+            $tableName .
+            ':} ADD INDEX `' .
+            $indexName .
+            '` (' .
+            $this->createKeySql($fieldName) .
+            ')'
+        )->isSuccess();
     }
 
     /**
      * 删除索引
      */
-    public function dropIndex($tableName, $indexName)
-    {
+    public function dropIndex($tableName, $indexName) {
         if (!$this->existsIndex($tableName, $indexName)) {
-            return FALSE;
+            return false;
         }
-        return $this->connection
-            ->query('ALTER TABLE {:' . $tableName . ':} DROP INDEX `' . $indexName . '`')
-            ->isSuccess();
+        return $this->connection->query(
+            'ALTER TABLE {:' . $tableName . ':} DROP INDEX `' . $indexName . '`'
+        )->isSuccess();
     }
 
     //拼缀索引SQL
-    protected function createKeySql($fields)
-    {
+    protected function createKeySql($fields) {
         $return = array();
         foreach ((array)$fields as $field) {
             if (is_array($field)) {
                 $return[] = '`' . $field[0] . '`(' . $field[1] . ')';
-            } else {
+            }
+            else {
                 $return[] = '`' . $field . '`';
             }
         }
         return implode(', ', $return);
     }
 
-    protected function prefix($table)
-    {
+    protected function prefix($table) {
         return $this->dbConfig['prefix'] . $table;
     }
 
     /**
      * 执行获取Schema
      */
-    protected function explainSchema($databaseName)
-    {
+    protected function explainSchema($databaseName) {
         $sqlSchema = 'SELECT table_name, column_name, column_default, is_nullable, data_type, column_comment ';
         $sqlSchema .= "\nFROM information_schema.columns ";
         $sqlSchema .= "\nWHERE table_schema = :database ";
 
-        $info = $this->connection
-            ->query($sqlSchema, array(':database' => $databaseName))
-            ->fetchAll(\PDO::FETCH_OBJ);
+        $info = $this->connection->query($sqlSchema, array(':database' => $databaseName))->fetchAll(\PDO::FETCH_OBJ);
 
         foreach ($info as $v) {
-            $this->schema[$v->table_name][$v->column_name] = array(
-                'description' => $v->column_comment,
-                'type' => $v->data_type,
-                'default' => $v->column_default,
-                'not null' => $v->is_nullable == 'NO',
+            $this->schema[$v->tableName][$v->columnName] = array(
+                'description' => $v->columnComment,
+                'type' => $v->dataType,
+                'default' => $v->columnDefault,
+                'not null' => $v->isNullable == 'NO',
             );
         }
         return $this;

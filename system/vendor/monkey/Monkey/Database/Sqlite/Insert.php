@@ -19,8 +19,7 @@ use Monkey\Database as Query;
  *
  * @package Monkey\Database\Insert
  */
-class Insert extends Query\Insert
-{
+class Insert extends Query\Insert {
 
     /**
      * 构造方法
@@ -28,8 +27,7 @@ class Insert extends Query\Insert
      * @param Connection $connection
      * @param $table
      */
-    public function __construct(Connection $connection, $table)
-    {
+    public function __construct(Connection $connection, $table) {
         $this->app = $connection->app;
         $this->connection = $connection;
         $this->table = $table;

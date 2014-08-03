@@ -17,8 +17,7 @@ namespace Monkey;
  *
  * @package Monkey
  */
-class Config
-{
+class Config {
 
     /**
      * 配置数据
@@ -32,14 +31,14 @@ class Config
      *
      * @var string
      */
-    private $_configFile;
+    private $configFile;
 
     /**
      * 配置文件编译后的保存位置
      *
      * @var string
      */
-    private $_compileFile;
+    private $compileFile;
 
     /**
      * 构造方法
@@ -47,38 +46,38 @@ class Config
      * @param $configFile
      * @param $tempDir
      */
-    public function __construct($configFile, $tempDir)
-    {
+    public function __construct($configFile, $tempDir) {
         //设置应用配置文件
-        $this->_configFile = $configFile;
+        $this->configFile = $configFile;
 
         //设置配置文件编译后的保存位置
-        $this->_compileFile = $tempDir . '/config/' . basename($configFile);
-        dir_check(dirname($this->_compileFile));
+        $this->compileFile = $tempDir . '/config/' . basename($configFile);
+        dir_check(dirname($this->compileFile));
 
         //加载配置
-        $this->_loadConfig();
+        $this->loadConfig();
     }
 
     /**
      * 加载配置
      */
-    private function _loadConfig()
-    {
-        $configFile = $this->_configFile;
-        $compileFile = $this->_compileFile;
+    private function loadConfig() {
+        $configFile = $this->configFile;
+        $compileFile = $this->compileFile;
 
         if (file_exists($compileFile) and filemtime($compileFile) > filemtime($configFile)) {
             //直接读取配置
             self::$data = unserialize(file_get_contents($compileFile));
 
-        } else {
+        }
+        else {
 
             //加载应用专有配置
             self::$data = (array)include($configFile);
 
             //加载框架默认配置
-            self::$data += include(dirname(strtr(__DIR__, DIRECTORY_SEPARATOR, '/')) . '/Globe/data/config.default.php');
+            self::$data += include(dirname(strtr(__DIR__, DIRECTORY_SEPARATOR, '/')) .
+                '/Globe/data/config.default.php');
 
             //编译并保存配置
             file_put_contents($compileFile, serialize(self::$data), LOCK_EX);
@@ -91,8 +90,7 @@ class Config
      * @param $key
      * @param $value
      */
-    public function set($key, $value)
-    {
+    public function set($key, $value) {
         self::$data[$key] = $value;
     }
 
@@ -104,43 +102,38 @@ class Config
      *
      * @return mixed 配置值
      */
-    public function get($key, $defaultValue = null)
-    {
-        return (isset(self::$data[$key]) || self::$data[$key] !== null) ?
-            self::$data[$key] : $defaultValue;
+    public function get($key, $defaultValue = null) {
+        return (isset(self::$data[$key]) || self::$data[$key] !== null) ? self::$data[$key] : $defaultValue;
     }
 
     /**
      * 获取组件提供者
      *
-     * @param $component_name
+     * @param $componentName
      *
      * @return array|null
      */
-    public function getComponentProvider($component_name)
-    {
-        return self::$data[$component_name];
+    public function getComponentProvider($componentName) {
+        return self::$data[$componentName];
     }
 
     /**
      * 获取组件提供者的配置
      *
-     * @param string $component_name
+     * @param string $componentName
      * @param string $provider 提供者
      *
      * @return array|null
      */
-    public function getComponentConfig($component_name, $provider)
-    {
-        return self::$data[$component_name . '_' . $provider];
+    public function getComponentConfig($componentName, $provider) {
+        return self::$data[$componentName . '_' . $provider];
     }
 
     /**
      * 更新源文件配置
      */
-    public function update()
-    {
-        file_save_variable($this->_configFile, self::$data);
+    public function update() {
+        file_save_variable($this->configFile, self::$data);
     }
 
 }

@@ -6,6 +6,7 @@ namespace Test\LabelApi;
  */
 
 class Base {
+
     public static function copyright($params = null) {
         return 'Copyright By 2012 MonkeyPHP';
     }

@@ -19,8 +19,7 @@ use Monkey;
  *
  * @package Monkey\Router
  */
-class Pattern
-{
+class Pattern {
 
     /**
      * 应用对象
@@ -34,14 +33,14 @@ class Pattern
      *
      * @var string
      */
-    private $map_file;
+    private $mapFile;
 
     /**
      * 编译好的路由映射匹配表的存储文件
      *
      * @var string
      */
-    private $pattern_file;
+    private $patternFile;
 
     /**
      * 编译好的路由映射匹配表
@@ -55,7 +54,7 @@ class Pattern
      *
      * @var array
      */
-    private $pattern_option = array();
+    private $patternOption = array();
 
     /**
      * 构造方法
@@ -63,12 +62,11 @@ class Pattern
      * @param Monkey\App $app
      * @param string $config 配置
      */
-    public function __construct($app, $config)
-    {
+    public function __construct($app, $config) {
         $this->app = $app;
-        $this->pattern_option = $config['pattern_option'];
-        $this->map_file = $app->DIR . ($config['map_file'] ? $config['map_file'] : '/data/router.map.php');
-        $this->pattern_file = $app->DIR . '/temp/router/pattern.php';
+        $this->patternOption = $config['pattern_option'];
+        $this->mapFile = $app->DIR . ($config['map_file'] ? $config['map_file'] : '/data/router.map.php');
+        $this->patternFile = $app->DIR . '/temp/router/pattern.php';
         $this->loadPattern();
     }
 
@@ -87,15 +85,14 @@ class Pattern
      *      )
      * )
      */
-    public function matchPath($method, $path)
-    {
+    public function matchPath($method, $path) {
         $method = strtolower($method);
         $path = '/' . trim($path, '/');
-        $_ext = array('.php' => '.php', '.html' => '.html');
+        $arrExt = array('.php' => '.php', '.html' => '.html');
         $ext = strtolower(strrchr($path, '.'));
 
-        if (isset($_ext[$ext])) {
-            $path = substr($path, 0, 0 - strlen($_ext[$ext]));
+        if (isset($arrExt[$ext])) {
+            $path = substr($path, 0, 0 - strlen($arrExt[$ext]));
         }
 
         if (isset($this->patterns['static'][$method . $path])) {
@@ -138,8 +135,7 @@ class Pattern
      *
      * @return string  /test/abc-en/blog/2014-4025
      */
-    public function packagePath($pattern, $parameters = null)
-    {
+    public function packagePath($pattern, $parameters = null) {
         $pattern = strstr($pattern, '/'); // /test/abc-{zh|en}/blog/{year}-([1-9]\d*):language:year:id
 
         if (!$parameters) {
@@ -147,16 +143,17 @@ class Pattern
         }
 
         if (strpos($pattern, ':') === false) {
-            $pattern = str_replace(array_keys($this->pattern_option), $this->pattern_option, $pattern);
+            $pattern = str_replace(array_keys($this->patternOption), $this->patternOption, $pattern);
 
             foreach ($parameters as $parameter) {
                 $pattern = preg_replace('/\([^\)]+\)/', $parameter, $pattern, 1);
             }
 
-        } else {
+        }
+        else {
             $names = explode(':', $pattern);
             $pattern = array_shift($names);
-            $pattern = str_replace(array_keys($this->pattern_option), $this->pattern_option, $pattern);
+            $pattern = str_replace(array_keys($this->patternOption), $this->patternOption, $pattern);
 
             foreach ($names as $name) {
                 $pattern = preg_replace('/\([^\)]+\)/', $parameters[$name], $pattern, 1);
@@ -169,26 +166,29 @@ class Pattern
     /**
      * 清除编译好的路由匹配表
      */
-    public function clearPatternCompiled()
-    {
-        file_exists($this->pattern_file) and unlink($this->pattern_file);
+    public function clearPatternCompiled() {
+        file_exists($this->patternFile) and unlink($this->patternFile);
     }
 
-    private function loadPattern()
-    {
-        if (file_exists($this->pattern_file) and filemtime($this->pattern_file) >= filemtime($this->map_file)) {
-            $this->patterns = unserialize(file_get_contents($this->pattern_file));
+    private function loadPattern() {
+        if (file_exists($this->patternFile) and filemtime($this->patternFile) >= filemtime($this->mapFile)) {
+            $this->patterns = unserialize(file_get_contents($this->patternFile));
 
-        } else {
-            //file_exists($this->pattern_file) and unlink($this->pattern_file);
-            $patterns = include($this->map_file);
+        }
+        else {
+            //file_exists($this->patternFile) and unlink($this->patternFile);
+            $patterns = include($this->mapFile);
 
             foreach ($patterns as $pattern => $router) {
                 $this->addPattern($pattern, $router);
             }
 
-            dir_check(dirname($this->pattern_file));
-            file_put_contents($this->pattern_file, serialize($this->patterns), LOCK_EX); //echo '<br/>保存扫描结果到缓存文件中...<br/>';
+            dir_check(dirname($this->patternFile));
+            file_put_contents(
+                $this->patternFile,
+                serialize($this->patterns),
+                LOCK_EX
+            ); //echo '<br/>保存扫描结果到缓存文件中...<br/>';
         }
     }
 
@@ -203,12 +203,11 @@ class Pattern
      *    含变量、固定变量、正则匹配： get/{zh|en}/blog/{year}-([1-9]\d*):language:year:id   每节括号内为正则表达示，括号不能嵌套，一个变量对应一对括号
      * @param string $router
      */
-    private function addPattern($pattern, $router)
-    {
+    private function addPattern($pattern, $router) {
         $pattern[0] == '/' and $pattern = 'get' . $pattern;
-//        如果路由映射表严格书写则不需要下面这两行
-//        $pattern=trim($pattern,'/');
-//        strpos($pattern,'/')===false  and $pattern.='/';
+        //        如果路由映射表严格书写则不需要下面这两行
+        //        $pattern=trim($pattern,'/');
+        //        strpos($pattern,'/')===false  and $pattern.='/';
 
         if (strpos($pattern, ':') === false) {
             $this->patterns['static'][$pattern] = $router; //get/article/list
@@ -225,7 +224,11 @@ class Pattern
         $prefix = explode('(', $prefix[0], 2); //    /test/abc-
         $prefix = substr($prefix[0], 0, strrpos($prefix[0], '/') + 1); //含开头和末尾的/   /test/
         $pattern = substr($pattern, strlen($prefix)); //  abc-{zh|en}/blog/{year}-([1-9]\d*)
-        $pattern = str_replace(array_keys($this->pattern_option), $this->pattern_option, $pattern); //{year}等简记名替换   abc-(zh|en)/blog/([1-2]\d{3})-([1-9]\d*)
+        $pattern = str_replace(
+            array_keys($this->patternOption),
+            $this->patternOption,
+            $pattern
+        ); //{year}等简记名替换   abc-(zh|en)/blog/([1-2]\d{3})-([1-9]\d*)
         strtolower(strrchr($pattern, '.')) == '.html' and $pattern = substr($pattern, 0, -5);
         //get/test/abc-{zh|en}/blog/{year}-([1-9]\d*):language:year:id
         //解析为以get-4为Key的二级数组：

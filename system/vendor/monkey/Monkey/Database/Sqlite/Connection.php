@@ -10,12 +10,12 @@
  */
 namespace Monkey\Database\Sqlite;
 
+use Monkey\App;
 use Monkey\Database as Query;
 use Monkey\Database\Statement;
 use Monkey\Exceptions\Sql\SqlEmptyException;
-use \PDO;
-use \PDOException;
-use Monkey\App;
+use PDO;
+use PDOException;
 
 //sqlite中所有表都有一个伪字段rowid，这个是自增的可以被Select语句选中，所以没有必要再人为设置主键了
 
@@ -26,8 +26,8 @@ use Monkey\App;
  *
  * @package Monkey\Database\Sqlite
  */
-class Connection extends PDO
-{
+class Connection extends PDO {
+
     /**
      * 应用对象
      *
@@ -100,8 +100,7 @@ class Connection extends PDO
      *
      * @throws PDOException
      */
-    public function __construct($app, $name, array $config = array())
-    {
+    public function __construct($app, $name, array $config = array()) {
         //设置配置
         $this->app = $app;
         $this->name = $name;
@@ -111,13 +110,14 @@ class Connection extends PDO
 
         if (isset($config['dsn'])) {
             $dsn = $config['dsn'];
-        } else {
+        }
+        else {
             $dsn = 'sqlite:' . $config['file'];
         }
 
         $options = $config['options'] + array(
-                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => TRUE,
-                PDO::ATTR_EMULATE_PREPARES => TRUE,
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+                PDO::ATTR_EMULATE_PREPARES => true,
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_PERSISTENT => false,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
@@ -129,7 +129,8 @@ class Connection extends PDO
         try {
             parent::__construct($dsn, $config['username'], $config['password'], $options);
 
-        } catch (\PDOException $e) {
+        }
+        catch (\PDOException $e) {
             //处理连接错误，并记录日志
             $error = array(
                 'error_title' => '连接到PDO时出错。',
@@ -148,13 +149,13 @@ class Connection extends PDO
             $this->exec($sql);
         }
 
-        $init_commands = isset($config['init_commands']) ? $config['init_commands'] : array();
+        $initCommands = isset($config['init_commands']) ? $config['init_commands'] : array();
 
-        $init_commands = $init_commands + array('sql_mode' =>
-                "SET sql_mode = 'ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'"
+        $initCommands = $initCommands + array(
+                'sql_mode' => "SET sql_mode = 'ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'"
             );
 
-        $this->exec(implode('; ', $init_commands));
+        $this->exec(implode('; ', $initCommands));
 
         if (!empty($this->statementClass)) {
             $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array($this->statementClass, array($this)));
@@ -165,8 +166,7 @@ class Connection extends PDO
     /**
      * 销毁这个连接对象
      */
-    public function __destruct()
-    {
+    public function __destruct() {
         $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('PDOStatement', array()));
         $this->stmt = null;
         $this->oSchema = NULL;
@@ -179,8 +179,7 @@ class Connection extends PDO
      *
      * @return Condition
      */
-    public function newCondition($conjunction = 'AND')
-    {
+    public function newCondition($conjunction = 'AND') {
         return new Condition($this->app, $conjunction);
     }
 
@@ -189,8 +188,7 @@ class Connection extends PDO
      *
      * @return string
      */
-    public function getType()
-    {
+    public function getType() {
         return 'sqlite';
     }
 
@@ -199,8 +197,7 @@ class Connection extends PDO
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -209,8 +206,7 @@ class Connection extends PDO
      *
      * @return array
      */
-    public function getConfig()
-    {
+    public function getConfig() {
         return $this->config;
     }
 
@@ -228,8 +224,7 @@ class Connection extends PDO
      *   ->query('SELECT id FROM table WHERE id = :id' ,array(':id'=>1))
      *   ->fetchAll();
      */
-    public function query($sql, array $args = array())
-    {
+    public function query($sql, array $args = array()) {
         //清理上一个预处理对象
         $this->stmt = null;
         $this->expandArguments($sql, $args);
@@ -241,7 +236,8 @@ class Connection extends PDO
             //执行预处理语句
             $this->stmt->execute($args);
 
-        } catch (\PDOException $e) {
+        }
+        catch (\PDOException $e) {
             //处理错误，并记录日志
             $error = array(
                 'code' => $e->getCode(),
@@ -264,14 +260,13 @@ class Connection extends PDO
      * 独立预处理
      *
      * @param string $sql
-     * @param array $driver_options
+     * @param array $driverOptions
      *
      * @return Statement
      *
      * @throws SqlEmptyException
      */
-    public function prepareQuery($sql, array $driver_options = array())
-    {
+    public function prepareQuery($sql, array $driverOptions = array()) {
         //效验sql语句
         if (!$sql) {
             $error = array(
@@ -291,7 +286,7 @@ class Connection extends PDO
         //保存预处理sql
         $this->prepareSQL = $sql;
 
-        return  parent::prepare($sql, $driver_options);
+        return parent::prepare($sql, $driverOptions);
     }
 
     /**
@@ -309,8 +304,7 @@ class Connection extends PDO
      *   ->execute()
      *   ->fetchAll();
      */
-    public function select($table, $alias = NULL, array $options = array())
-    {
+    public function select($table, $alias = NULL, array $options = array()) {
         return new Select($this, $table, $alias, $options);
     }
 
@@ -328,8 +322,7 @@ class Connection extends PDO
      *   ->execute()
      *   ->lastInsertId();
      */
-    public function insert($table)
-    {
+    public function insert($table) {
         return new Insert($this, $table);
     }
 
@@ -348,8 +341,7 @@ class Connection extends PDO
      *   ->execute()
      *   ->affected();
      */
-    public function update($table)
-    {
+    public function update($table) {
         return new Update($this, $table);
     }
 
@@ -365,8 +357,7 @@ class Connection extends PDO
      *   ->execute()
      *   ->affected();
      */
-    public function delete($table)
-    {
+    public function delete($table) {
         return new Delete($this, $table);
     }
 
@@ -375,8 +366,7 @@ class Connection extends PDO
      *
      * @return Schema
      */
-    public function schema()
-    {
+    public function schema() {
         empty($this->oSchema) and $this->oSchema = new Schema($this);
         return $this->oSchema;
     }
@@ -392,8 +382,7 @@ class Connection extends PDO
      *
      * @return CreateTable
      */
-    public function createTable($tableName, $comment = '', $engine = null, $characterSet = null, $collation = null)
-    {
+    public function createTable($tableName, $comment = '', $engine = null, $characterSet = null, $collation = null) {
         return new CreateTable($this, $tableName, $comment, $engine, $characterSet, $collation);
     }
 
@@ -412,16 +401,15 @@ class Connection extends PDO
      *      'fields_type'   =>array,
      * );
      */
-    public function getTableMate($tableName)
-    {
+    public function getTableMate($tableName) {
         if (empty($tableName)) {
-            return FALSE;
+            return false;
         }
 
         $sql = 'PRAGMA table_info({:' . $tableName . ':})';
 
         if (!$this->query($sql)->isSuccess()) {
-            return FALSE;
+            return false;
         }
 
         $tableMate = $this->stmt->fetchAll();
@@ -445,8 +433,7 @@ class Connection extends PDO
      *
      * @return Statement
      */
-    public function stmt()
-    {
+    public function stmt() {
         return $this->stmt;
     }
 
@@ -455,8 +442,7 @@ class Connection extends PDO
      *
      * @return string
      */
-    public function getPrepareSQL()
-    {
+    public function getPrepareSQL() {
         return $this->prepareSQL;
     }
 
@@ -467,13 +453,22 @@ class Connection extends PDO
      *
      * @return string|array
      */
-    public function quoteParameters($data)
-    {
-        if (is_array($data)) return array_map(__METHOD__, $data); //array($this, 'quoteParameters')
-        if (is_null($data)) return 'NULL';
-        if (is_bool($data)) return $data ? '1' : '0';
-        if (is_int($data)) return (int)$data;
-        if (is_float($data)) return (float)$data;
+    public function quoteParameters($data) {
+        if (is_array($data)) {
+            return array_map(__METHOD__, $data);
+        } //array($this, 'quoteParameters')
+        if (is_null($data)) {
+            return 'NULL';
+        }
+        if (is_bool($data)) {
+            return $data ? '1' : '0';
+        }
+        if (is_int($data)) {
+            return (int)$data;
+        }
+        if (is_float($data)) {
+            return (float)$data;
+        }
         return $this->quote($data);
     }
 
@@ -482,16 +477,14 @@ class Connection extends PDO
      *
      * implements PDO
      */
-    public function version()
-    {
+    public function version() {
         return $this->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
     /**
      * 转义LIKE时的一些特殊字符
      */
-    public function escapeLike($string)
-    {
+    public function escapeLike($string) {
         return addcslashes($string, '\%_');
     }
 
@@ -504,8 +497,7 @@ class Connection extends PDO
      *
      * @throws \Exception
      */
-    public function transactionLite($type)
-    {
+    public function transactionLite($type) {
         if (!$this->transactionSupport) {
             throw new \Exception('当前数据库不支持事务处理！');
         }
@@ -513,10 +505,12 @@ class Connection extends PDO
         if ($type === 0 or $type == 'begin') {
             $this->beginTransaction();
 
-        } elseif ($type === 1 or $type == 'commit') {
+        }
+        elseif ($type === 1 or $type == 'commit') {
             $this->commit();
 
-        } elseif ($type === -1 or $type == 'rollback') {
+        }
+        elseif ($type === -1 or $type == 'rollback') {
             $this->rollBack();
         }
 
@@ -533,8 +527,7 @@ class Connection extends PDO
      *
      * @throws \Exception
      */
-    public function transactionNested($transName = null)
-    {
+    public function transactionNested($transName = null) {
         if (!$this->transactionSupport) {
             throw new \Exception('当前数据库不支持事务处理！');
         }
@@ -549,21 +542,20 @@ class Connection extends PDO
      *
      * @return bool
      */
-    protected function expandArguments(&$sql, &$args)
-    {
-        $modified = FALSE;
+    protected function expandArguments(&$sql, &$args) {
+        $modified = false;
         //为子层生成占位符
         foreach (array_filter($args, 'is_array') as $key => $data) {
-            $new_keys = array();
+            $newKeys = array();
 
             foreach ($data as $i => $value) {
-                $new_keys[$key . '_' . $i] = $value;
+                $newKeys[$key . '_' . $i] = $value;
             }
 
-            $sql = preg_replace('/' . $key . '\b/', implode(', ', array_keys($new_keys)), $sql);
+            $sql = preg_replace('/' . $key . '\b/', implode(', ', array_keys($newKeys)), $sql);
             unset($args[$key]);
-            $args += $new_keys;
-            $modified = TRUE;
+            $args += $newKeys;
+            $modified = true;
         }
 
         return $modified;

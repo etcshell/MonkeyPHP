@@ -19,8 +19,8 @@ use Monkey;
  *
  * @package Monkey\Logger
  */
-class Logger
-{
+class Logger {
+
     /**
      * 应用对象
      *
@@ -54,8 +54,7 @@ class Logger
      *
      * @param Monkey\App $app
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
         $this->app = $app;
         $this->config = $config = $app->config()->getComponentConfig('logger', 'default');
         $config['error_dir'] = $app->DIR . $config['error_dir'];
@@ -69,9 +68,10 @@ class Logger
      *
      * @param string|array $data 单条日志信息
      */
-    public function error($data)
-    {
-        if ($this->error) $this->error->put($data);
+    public function error($data) {
+        if ($this->error) {
+            $this->error->put($data);
+        }
     }
 
     /**
@@ -79,9 +79,10 @@ class Logger
      *
      * @param string|array $data 单条日志信息
      */
-    public function sql($data)
-    {
-        if ($this->sql) $this->sql->put($data);
+    public function sql($data) {
+        if ($this->sql) {
+            $this->sql->put($data);
+        }
     }
 
 }

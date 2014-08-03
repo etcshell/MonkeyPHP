@@ -19,8 +19,8 @@ use Monkey;
  *
  * @package Monkey\Shutdown
  */
-class Shutdown
-{
+class Shutdown {
+
     /**
      * 应用对象
      *
@@ -47,8 +47,7 @@ class Shutdown
      *
      * @param Monkey\App $app
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
         $this->app = $app;
         register_shutdown_function(array($this, 'execute'), $this->calledByMe);
         $config = $app->config()->getComponentConfig('shutdown', 'default');
@@ -69,8 +68,7 @@ class Shutdown
      * 3. $shutdown->register( array('myclass', 'method') );
      * 4. $shutdown->register( array( $myObject, 'method') );
      */
-    public function register($Callback)
-    {
+    public function register($Callback) {
         $this->callbacks[] = $Callback;
     }
 
@@ -79,16 +77,14 @@ class Shutdown
      *
      * @return array
      */
-    public function getCallbacks()
-    {
+    public function getCallbacks() {
         return $this->callbacks;
     }
 
     /**
      * 不建议使用，框架内部方法
      */
-    public function execute()
-    {
+    public function execute() {
         if (func_get_arg(0) != $this->calledByMe) {
             return;
         }

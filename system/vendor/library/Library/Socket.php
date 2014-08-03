@@ -1,147 +1,147 @@
 <?php
 namespace Library;
 
-/**
- +------------------------------------------------------------------------------
- * Socket 基本操作
- * <code>
- * <?php
- * $config = array(
- *		'host'			=> 'localhost',
- *		'protocol'		=> 'tcp',
- *		'port'			=> 80,
- *		'timeout'		=> 30,
- *		'persistent'	=> false,//持久
- *	);
- * $socket = new Socket($config);
- * $socket->read(1023);
- * </code>
- +------------------------------------------------------------------------------
- * @version 3.2
- * @author WangXian
- * @email admin@loopx.cn
- * @package  libraries
- * @creation_date 2010-10-17
- * @last_modified 2010-12-25 19:18:47
- +------------------------------------------------------------------------------
- */
+    /**
+     * +------------------------------------------------------------------------------
+     * Socket 基本操作
+     * <code>
+     * <?php
+     * $config = array(
+     *        'host'            => 'localhost',
+     *        'protocol'        => 'tcp',
+     *        'port'            => 80,
+     *        'timeout'        => 30,
+     *        'persistent'    => false,//持久
+     *    );
+     * $socket = new Socket($config);
+     * $socket->read(1023);
+     * </code>
+     * +------------------------------------------------------------------------------
+     * @version 3.2
+     * @author WangXian
+     * @email admin@loopx.cn
+     * @package  libraries
+     * @creation_date 2010-10-17
+     * @last_modified 2010-12-25 19:18:47
+     * +------------------------------------------------------------------------------
+     */
 
 /**
  * Socket
  * Socket客户端类
  * @package Library
  */
-class Socket
-{
-	protected $_config = array(
-		'host'			=> 'localhost',
-		'protocol'		=> 'tcp',
-		'port'			=> 80,
-		'timeout'		=> 30,
-		'persistent'	=> false,//持久
-	);
+class Socket {
 
-	private $config = array();
-	private $connection = null;
-	private $connected = false;
-	private $error = array();
+    protected $defaultConfig = array(
+        'host' => 'localhost',
+        'protocol' => 'tcp',
+        'port' => 80,
+        'timeout' => 30,
+        'persistent' => false, //持久
+    );
 
-	public function __construct($config = array())
-	{
-		$this->config =	array_merge($this->_config,$config);
-		if (!is_numeric($this->config['protocol'])) $this->config['protocol'] = getprotobyname($this->config['protocol']);
-	}
+    private $config = array();
+    private $connection = null;
+    private $connected = false;
+    private $error = array();
 
-	/**
-	 * 连接
-	 * @return object
-	 */
-	public function connect()
-	{
-		if ($this->connection != null) $this->disconnect();
+    public function __construct($config = array()) {
+        $this->config = array_merge($this->defaultConfig, $config);
+        if (!is_numeric($this->config['protocol'])) {
+            $this->config['protocol'] = getprotobyname($this->config['protocol']);
+        }
+    }
 
-		if ($this->config['persistent'] == true)
-		{
-			$tmp = null;
-			$this->connection = @pfsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
-		}
-		else
-		{
-			$this->connection = fsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
-		}
+    /**
+     * 连接
+     * @return object
+     */
+    public function connect() {
+        if ($this->connection != null) {
+            $this->disconnect();
+        }
 
-		if (!empty($errNum) || !empty($errStr))
-		{
-			$this->error = array('errorStr'=>$errStr,'errorNum'=>$errNum);
-		}
+        if ($this->config['persistent'] == true) {
+            $tmp = null;
+            $this->connection =
+                @pfsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+        }
+        else {
+            $this->connection =
+                fsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+        }
 
-		$this->connected = is_resource($this->connection);
+        if (!empty($errNum) || !empty($errStr)) {
+            $this->error = array('errorStr' => $errStr, 'errorNum' => $errNum);
+        }
 
-		return $this->connected;
-	}
+        $this->connected = is_resource($this->connection);
 
-	/**
-	 * 错误信息
-	 * @return string
-	 */
-	public function error()
-	{
-		return $this->error;
-	}
+        return $this->connected;
+    }
 
-	/**
-	 * 写数据
-	 * @param string $data
-	 * @return boolean
-	 */
-	public function write($data)
-	{
-		if (!$this->connected)
-		{
-			if (!$this->connect()) return false;
-		}
-		return fwrite($this->connection, $data, strlen($data));
-	}
+    /**
+     * 错误信息
+     * @return string
+     */
+    public function error() {
+        return $this->error;
+    }
 
-	/**
-	 * 读取数据
-	 * @param integer $length
-	 */
-	public function read($length=1024)
-	{
-		if (!$this->connected)
-		{
-			if (!$this->connect()) return false;
-		}
+    /**
+     * 写数据
+     * @param string $data
+     * @return boolean
+     */
+    public function write($data) {
+        if (!$this->connected) {
+            if (!$this->connect()) {
+                return false;
+            }
+        }
+        return fwrite($this->connection, $data, strlen($data));
+    }
 
-		if (!feof($this->connection)) return fread($this->connection, $length);
-		else return false;
-	}
+    /**
+     * 读取数据
+     * @param integer $length
+     */
+    public function read($length = 1024) {
+        if (!$this->connected) {
+            if (!$this->connect()) {
+                return false;
+            }
+        }
 
-	/**
-	 * 断掉socket连接
-	 * @return boolean
-	 */
-	public function disconnect()
-	{
-		if (!is_resource($this->connection))
-		{
-			$this->connected = false;
-			return true;
-		}
-		$this->connected = !fclose($this->connection);
+        if (!feof($this->connection)) {
+            return fread($this->connection, $length);
+        }
+        else {
+            return false;
+        }
+    }
 
-		if (!$this->connected)
-		{
-			$this->connection = null;
-		}
-		return !$this->connected;
-	}
+    /**
+     * 断掉socket连接
+     * @return boolean
+     */
+    public function disconnect() {
+        if (!is_resource($this->connection)) {
+            $this->connected = false;
+            return true;
+        }
+        $this->connected = !fclose($this->connection);
 
- 	public function __destruct()
- 	{
- 		$this->disconnect();
- 	}
+        if (!$this->connected) {
+            $this->connection = null;
+        }
+        return !$this->connected;
+    }
+
+    public function __destruct() {
+        $this->disconnect();
+    }
 }
 /* End of file Socket.class.php */
 /* Location: ./_framework/libraries/Socket.class.php */

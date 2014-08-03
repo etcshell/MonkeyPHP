@@ -7,8 +7,7 @@
  *
  * @return string
  */
-function dir_format($dir)
-{
+function dir_format($dir) {
     DIRECTORY_SEPARATOR != '/' and $dir = strtr($dir, DIRECTORY_SEPARATOR, '/');
     return rtrim($dir, '/');
 }
@@ -18,8 +17,7 @@ function dir_format($dir)
  *
  * @param mixed $var
  */
-function pre($var)
-{
+function pre($var) {
     echo '<pre>';
     print_r($var);
     echo '</pre>';
@@ -37,17 +35,18 @@ function pre($var)
  *
  * @return string|void
  */
-function dump($var, $echo = true, $label = null, $strict = true)
-{
+function dump($var, $echo = true, $label = null, $strict = true) {
     $label = ($label === null) ? '' : rtrim($label) . ' ';
     if (!$strict) {
         if (ini_get('html_errors')) {
             $output = print_r($var, true);
             $output = "<pre>" . $label . htmlspecialchars($output, ENT_QUOTES) . "</pre>";
-        } else {
+        }
+        else {
             $output = $label . " : " . print_r($var, true);
         }
-    } else {
+    }
+    else {
         ob_start();
         var_dump($var);
         $output = ob_get_clean();
@@ -59,7 +58,8 @@ function dump($var, $echo = true, $label = null, $strict = true)
     if ($echo) {
         echo($output);
         return null;
-    } else {
+    }
+    else {
         return $output;
     }
 }
@@ -73,8 +73,7 @@ function dump($var, $echo = true, $label = null, $strict = true)
  *
  * @return array
  */
-function notice($status, $data, $msg = '')
-{
+function notice($status, $data, $msg = '') {
     return array('status' => (bool)$status, 'msg' => $msg, 'data' => $data);
 }
 
@@ -84,17 +83,20 @@ if (!function_exists('json_encode')) {
      * @param $value
      * @return string
      */
-    function format_json_value(&$value)
-    {
+    function format_json_value(&$value) {
         if (is_bool($value)) {
             $value = $value ? 'true' : 'false';
-        } else if (is_int($value)) {
+        }
+        else if (is_int($value)) {
             $value = intval($value);
-        } else if (is_float($value)) {
+        }
+        else if (is_float($value)) {
             $value = floatval($value);
-        } else if (defined($value) && $value === null) {
+        }
+        else if (defined($value) && $value === null) {
             $value = strval(constant($value));
-        } else if (is_string($value)) {
+        }
+        else if (is_string($value)) {
             $value = '"' . addslashes($value) . '"';
         }
         return $value;
@@ -104,17 +106,18 @@ if (!function_exists('json_encode')) {
      * @param $data
      * @return string
      */
-    function json_encode($data)
-    {
+    function json_encode($data) {
         if (is_object($data)) {
             $data = get_object_vars($data); //对象转换成数组
-        } else if (!is_array($data)) {
+        }
+        else if (!is_array($data)) {
             return format_json_value($data); // 普通格式直接输出
         }
         // 判断是否关联数组
         if (empty($data) || is_numeric(implode('', array_keys($data)))) {
             $assoc = false;
-        } else {
+        }
+        else {
             $assoc = true;
         }
         // 组装 Json字符串
@@ -123,7 +126,8 @@ if (!function_exists('json_encode')) {
             if (!is_null($val)) {
                 if ($assoc) {
                     $json .= '"' . $key . '":' . json_encode($val) . ',';
-                } else {
+                }
+                else {
                     $json .= json_encode($val) . ',';
                 }
             }
@@ -145,28 +149,33 @@ if (!function_exists('json_encode')) {
  * @param array|string $data
  * @return array|string
  */
-function unescape_js_cn($data)
-{
-    if (is_array($data)) return array_map(__FUNCTION__, $data);
+function unescape_js_cn($data) {
+    if (is_array($data)) {
+        return array_map(__FUNCTION__, $data);
+    }
     $ret = '';
     $len = strlen($data);
     for ($i = 0; $i < $len; $i++) {
         if ($data[$i] == '%' && $data[$i + 1] == 'u') {
             $val = hexdec(substr($data, $i + 2, 4));
-            if ($val < 0x7f)
+            if ($val < 0x7f) {
                 $ret .= chr($val);
-            else if ($val < 0x800)
-                $ret .= chr(0xc0 | ($val >> 6))
-                    . chr(0x80 | ($val & 0x3f));
-            else
-                $ret .= chr(0xe0 | ($val >> 12))
-                    . chr(0x80 | (($val >> 6) & 0x3f))
-                    . chr(0x80 | ($val & 0x3f));
+            }
+            else if ($val < 0x800) {
+                $ret .= chr(0xc0 | ($val >> 6)) . chr(0x80 | ($val & 0x3f));
+            }
+            else {
+                $ret .= chr(0xe0 | ($val >> 12)) . chr(0x80 | (($val >> 6) & 0x3f)) . chr(0x80 | ($val & 0x3f));
+            }
             $i += 5;
-        } else if ($data[$i] == '%') {
+        }
+        else if ($data[$i] == '%') {
             $ret .= urldecode(substr($data, $i, 3));
             $i += 2;
-        } else $ret .= $data[$i];
+        }
+        else {
+            $ret .= $data[$i];
+        }
     }
     return $ret;
 }
@@ -178,8 +187,7 @@ function unescape_js_cn($data)
  *
  * @return array|string
  */
-function addslashes_deep($data)
-{
+function addslashes_deep($data) {
     return is_array($data) ? array_map(__FUNCTION__, $data) : addslashes($data);
 }
 
@@ -190,8 +198,7 @@ function addslashes_deep($data)
  *
  * @return array|string
  */
-function stripslashes_deep($data)
-{
+function stripslashes_deep($data) {
     return is_array($data) ? array_map(__FUNCTION__, $data) : stripslashes($data);
 }
 
@@ -230,12 +237,12 @@ function date_format($timestamp, $format = 'rfc1123')
  *
  * @return boolean
  */
-function dir_check_writable($targetDir)
-{
+function dir_check_writable($targetDir) {
     //检查缓存目录是否可写，不可写则修改它的属性
     if (!is_dir($targetDir)) {
         return false;
-    } elseif (!is_writable($targetDir) && !@chmod($targetDir, 0777)) {
+    }
+    elseif (!is_writable($targetDir) && !@chmod($targetDir, 0777)) {
         return false;
     }
 
@@ -250,46 +257,45 @@ function dir_check_writable($targetDir)
  *
  * @return boolean
  */
-function dir_check($targetDir)
-{
+function dir_check($targetDir) {
     //$targetDir=dir_format($targetDir);
     if (is_dir($targetDir)) {
         return true;
     }
-//
-//    if ($targetDir[0] == '.') {
-//        return false;
-//    }
+    //
+    //    if ($targetDir[0] == '.') {
+    //        return false;
+    //    }
 
     return @mkdir($targetDir, 0777, true);
 
-//    $tempDir = explode('/', $targetDir);
-//    $subDir = $tempDir[0];
-//    array_shift($tempDir);
-//
-//    foreach ($tempDir as $value) {
-//
-//        if ($value == '') {
-//            continue;
-//        }
-//
-//        if ($value == '.' || $value == '..') {
-//            return false;
-//        }
-//
-//        $subDir = $subDir . '/' . $value;
-//
-//        if (is_dir($subDir)) {
-//            continue;
-//        }
-//
-//        //创建目录
-//        if (!@mkdir($subDir, 0777)) {
-//            return false;
-//        }
-//    }
-//
-//    return true;
+    //    $tempDir = explode('/', $targetDir);
+    //    $subDir = $tempDir[0];
+    //    array_shift($tempDir);
+    //
+    //    foreach ($tempDir as $value) {
+    //
+    //        if ($value == '') {
+    //            continue;
+    //        }
+    //
+    //        if ($value == '.' || $value == '..') {
+    //            return false;
+    //        }
+    //
+    //        $subDir = $subDir . '/' . $value;
+    //
+    //        if (is_dir($subDir)) {
+    //            continue;
+    //        }
+    //
+    //        //创建目录
+    //        if (!@mkdir($subDir, 0777)) {
+    //            return false;
+    //        }
+    //    }
+    //
+    //    return true;
 }
 
 /**
@@ -299,8 +305,7 @@ function dir_check($targetDir)
  *
  * @return boolean
  */
-function dir_delete($targetDir)
-{
+function dir_delete($targetDir) {
     if (!is_dir($targetDir)) {
         return true;
     }
@@ -319,7 +324,8 @@ function dir_delete($targetDir)
 
             if (is_dir($itemFile)) {
                 dir_delete($itemFile);
-            } else {
+            }
+            else {
                 unlink($itemFile);
             }
         }
@@ -336,12 +342,11 @@ function dir_delete($targetDir)
  *
  * @param string $source 源文件夹名
  * @param string $target 目标文件夹
- * @param boolean $delete_source 是否删除源文件夹（是则相当于移动，否则相当于复制）
+ * @param boolean $deleteSource 是否删除源文件夹（是则相当于移动，否则相当于复制）
  *
  * @return boolean
  */
-function dir_copy($source, $target, $delete_source = false)
-{
+function dir_copy($source, $target, $deleteSource = false) {
     $source = dir_format($source);
     $target = dir_format($target);
 
@@ -360,7 +365,7 @@ function dir_copy($source, $target, $delete_source = false)
         return false;
     }
 
-    $source_path = $target_path = '';
+    $sourcePath = $targetPath = '';
 
     while (($item = readdir($handle)) !== false) {
 
@@ -368,20 +373,21 @@ function dir_copy($source, $target, $delete_source = false)
             continue;
         }
 
-        $source_path = $source . '/' . $item;
-        $target_path = $target . '/' . $item;
+        $sourcePath = $source . '/' . $item;
+        $targetPath = $target . '/' . $item;
 
-        if (is_dir($source_path)) {
-            dir_copy($source_path, $target_path, $delete_source);
-            if ($delete_source) {
-                rmdir($source_path);
+        if (is_dir($sourcePath)) {
+            dir_copy($sourcePath, $targetPath, $deleteSource);
+            if ($deleteSource) {
+                rmdir($sourcePath);
             }
 
-        } else {
-            copy($source_path, $target_path);
+        }
+        else {
+            copy($sourcePath, $targetPath);
 
-            if ($delete_source) {
-                unlink($source_path);
+            if ($deleteSource) {
+                unlink($sourcePath);
             }
         }
     }
@@ -398,8 +404,7 @@ function dir_copy($source, $target, $delete_source = false)
  * @param string $file 文件名
  * @param string|array $variable 变量内容
  */
-function file_save_variable($file, $variable)
-{
+function file_save_variable($file, $variable) {
     $variable = '<?php' . PHP_EOL . 'return ' . var_export($variable, true) . ' ;';
     file_put_contents($file, $variable, LOCK_EX); //echo '<br/>保存扫描结果到缓存文件中...<br/>';
 }
@@ -410,8 +415,7 @@ function file_save_variable($file, $variable)
  * @param string $file 文件名
  * @param string|array $variable 变量内容
  */
-function file_save_serialize($file, $variable)
-{
+function file_save_serialize($file, $variable) {
     file_put_contents($file, serialize($variable), LOCK_EX); //echo '<br/>保存扫描结果到缓存文件中...<br/>';
 }
 
@@ -422,8 +426,7 @@ function file_save_serialize($file, $variable)
  *
  * @return mixed
  */
-function file_read_serialize($file)
-{
+function file_read_serialize($file) {
     return unserialize(file_get_contents($file));
 }
 
@@ -434,8 +437,7 @@ function file_read_serialize($file)
  *
  * @return string
  */
-function file_basename($filename)
-{
+function file_basename($filename) {
     $pathinfo = pathinfo($filename);
     //return $pathinfo['filename']; //理论上这行也可以，但没验证过。
     $extLen = 1 + strlen($pathinfo['extension']);
@@ -448,27 +450,29 @@ function file_basename($filename)
  * @param string $filename 文件名
  * @return string  失败为''（空字符串）
  */
-function file_real_type($filename){
-    static $typeMap=array(
-        '-48-49'=>'doc|xls',
-        '7790'=>'exe',
-        '7784'=>'midi',
-        '8075'=>'zip',
-        '8297'=>'rar',
-        '7173'=>'gif',
-        '255216'=>'jpg',
-        '6677'=>'bmp',
-        '13780'=>'png',
-        '104116'=>'txt',
+function file_real_type($filename) {
+    static $typeMap = array(
+        '-48-49' => 'doc|xls',
+        '7790' => 'exe',
+        '7784' => 'midi',
+        '8075' => 'zip',
+        '8297' => 'rar',
+        '7173' => 'gif',
+        '255216' => 'jpg',
+        '6677' => 'bmp',
+        '13780' => 'png',
+        '104116' => 'txt',
     );
-    if(!file_exists($filename)) return '';
-    $file=  fopen($filename, 'rb');
-    $bin = fread($file,2);
+    if (!file_exists($filename)) {
+        return '';
+    }
+    $file = fopen($filename, 'rb');
+    $bin = fread($file, 2);
     fclose($file);
     $strInfo = @unpack("C2chars", $bin);
-    $code = $strInfo['chars1'].''.$strInfo['chars2'];
-    $code == '-1-40' and $code='255216';
-    $code == '-11980' and $code='13780';
+    $code = $strInfo['chars1'] . '' . $strInfo['chars2'];
+    $code == '-1-40' and $code = '255216';
+    $code == '-11980' and $code = '13780';
     return (string)$typeMap[$code];
 }
 
@@ -479,8 +483,7 @@ function file_real_type($filename){
  *
  * @return string
  */
-function bit_to_size($bit)
-{
+function bit_to_size($bit) {
     if (!preg_match('/^[0-9]+$/', $bit)) {
         return 0;
     }
@@ -508,8 +511,7 @@ function bit_to_size($bit)
  *
  * @return int
  */
-function size_to_bit($size)
-{
+function size_to_bit($size) {
     $size = strtoupper($size);
 
     if (!preg_match('/^([1-9]\d+\.?\d*)(B|KB|MB|GB|TB|PB)?$/', $size, $matches)) {
@@ -521,7 +523,8 @@ function size_to_bit($size)
 
     if ($matches[0] == $matches[1]) {
         $i = 0;
-    } else {
+    }
+    else {
         $i = $type[$matches[2]];
     }
 
@@ -538,21 +541,20 @@ function size_to_bit($size)
 /**
  * 生成客户端可访问的路径（前端绝对路径）
  *
- * @param string $real_path 实际路径
+ * @param string $realPath 实际路径
  *
  * @return string
  */
-function file_to_url($real_path)
-{
+function file_to_url($realPath) {
     $www = strtolower($_SERVER['DOCUMENT_ROOT']) . '/';
     $wwwLen = strlen($www);
-    $real_path = strtolower($real_path);
+    $realPath = strtolower($realPath);
 
-    if (substr($real_path, 0, $wwwLen) != $www) {
+    if (substr($realPath, 0, $wwwLen) != $www) {
         return '';
     }
 
-    return '/' . substr($real_path, $wwwLen);
+    return '/' . substr($realPath, $wwwLen);
 }
 
 /**
@@ -562,8 +564,7 @@ function file_to_url($real_path)
  *
  * @return string 实际路径
  */
-function url_to_file($url)
-{
+function url_to_file($url) {
     if ($url[0] = '/') {
         return $_SERVER['DOCUMENT_ROOT'] . $url;
     }
@@ -576,30 +577,42 @@ function url_to_file($url)
  * ddos拦截防御
  * 作者未知
  */
-function intercept_DDOS()
-{
+function intercept_DDOS() {
     static $isrun;
-    if ($isrun) return;
+    if ($isrun) {
+        return;
+    }
     $isrun = true;
-//查询禁止IP
+    //查询禁止IP
     $ip = $_SERVER['REMOTE_ADDR'];
     $fileht = ".htaccess2";
-    if (!file_exists($fileht)) file_put_contents($fileht, "");
+    if (!file_exists($fileht)) {
+        file_put_contents($fileht, "");
+    }
     $filehtarr = @file($fileht);
-    if (in_array($ip . "\r\n", $filehtarr)) exit("Warning:" . "<br>" . "Your IP address are forbided by some reason, IF you have any question Pls emill to shop@mydalle.com!");
-//加入禁止IP
+    if (in_array($ip . "\r\n", $filehtarr)) {
+        exit("Warning:" .
+            "<br>" .
+            "Your IP address are forbided by some reason, IF you have any question Pls emill to shop@mydalle.com!");
+    }
+    //加入禁止IP
     $time = time();
     $fileforbid = "log/forbidchk.dat";
     if (file_exists($fileforbid)) {
-        if ($time - filemtime($fileforbid) > 60) unlink($fileforbid);
+        if ($time - filemtime($fileforbid) > 60) {
+            unlink($fileforbid);
+        }
         else {
             $fileforbidarr = @file($fileforbid);
             if ($ip == substr($fileforbidarr[0], 0, strlen($ip))) {
-                if ($time - substr($fileforbidarr[1], 0, strlen($time)) > 600) unlink($fileforbid);
+                if ($time - substr($fileforbidarr[1], 0, strlen($time)) > 600) {
+                    unlink($fileforbid);
+                }
                 elseif ($fileforbidarr[2] > 600) {
                     file_put_contents($fileht, $ip . "\r\n", FILE_APPEND);
                     unlink($fileforbid);
-                } else {
+                }
+                else {
                     $fileforbidarr[2]++;
                     file_put_contents($fileforbid, $fileforbidarr);
                 }
@@ -607,11 +620,15 @@ function intercept_DDOS()
             unset($fileforbidarr);
         }
     }
-//防刷新
+    //防刷新
     $str = "";
     $file = "log/ipdate.dat";
-    if (!file_exists("log") && !is_dir("log")) mkdir("log", 0777);
-    if (!file_exists($file)) file_put_contents($file, "");
+    if (!file_exists("log") && !is_dir("log")) {
+        mkdir("log", 0777);
+    }
+    if (!file_exists($file)) {
+        file_put_contents($file, "");
+    }
     $allowTime = 120; //防刷新时间
     $allowNum = 10; //防刷新次数
     $uri = $_SERVER['REQUEST_URI'];
@@ -625,24 +642,40 @@ function intercept_DDOS()
         $timetem = substr($v, 64, 10);
         $numtem = substr($v, 74);
         if ($time - $timetem < $allowTime) {
-            if ($iptem != $checkip) $str .= $v;
+            if ($iptem != $checkip) {
+                $str .= $v;
+            }
             else {
                 $yesno = false;
-                if ($uritem != $checkuri) $str .= $iptem . $checkuri . $time . "1\r\n";
-                elseif ($numtem < $allowNum) $str .= $iptem . $uritem . $timetem . ($numtem + 1) . "\r\n";
+                if ($uritem != $checkuri) {
+                    $str .= $iptem . $checkuri . $time . "1\r\n";
+                }
+                elseif ($numtem < $allowNum) {
+                    $str .= $iptem . $uritem . $timetem . ($numtem + 1) . "\r\n";
+                }
                 else {
                     if (!file_exists($fileforbid)) {
                         $addforbidarr = array($ip . "\r\n", time() . "\r\n", 1);
                         file_put_contents($fileforbid, $addforbidarr);
                     }
-                    file_put_contents("log/forbided_ip.log", $ip . "--" . date("Y-m-d H:i:s", time()) . "--" . $uri . "\r\n", FILE_APPEND);
+                    file_put_contents(
+                        "log/forbided_ip.log",
+                        $ip . "--" . date("Y-m-d H:i:s", time()) . "--" . $uri . "\r\n",
+                        FILE_APPEND
+                    );
                     $timepass = $timetem + $allowTime - $time;
-                    exit("Warning:" . "<br>" . "Sorry,you are forbided by refreshing frequently too much, Pls wait for " . $timepass . " seconds to continue!");
+                    exit("Warning:" .
+                        "<br>" .
+                        "Sorry,you are forbided by refreshing frequently too much, Pls wait for " .
+                        $timepass .
+                        " seconds to continue!");
                 }
             }
         }
     }
-    if ($yesno) $str .= $checkip . $checkuri . $time . "1\r\n";
+    if ($yesno) {
+        $str .= $checkip . $checkuri . $time . "1\r\n";
+    }
     file_put_contents($file, $str);
 }
 
@@ -651,8 +684,7 @@ function intercept_DDOS()
  *
  * @return bool
  */
-function isOr()
-{
+function isOr() {
     $last = false;
 
     foreach (func_get_args() as $arg) {
@@ -672,8 +704,7 @@ function isOr()
  *
  * @return bool
  */
-function isAnd()
-{
+function isAnd() {
     $last = false;
 
     foreach (func_get_args() as $arg) {
@@ -691,12 +722,11 @@ function isAnd()
 /**
  * 开启gzip压缩网页
  */
-function gz_start()
-{
-    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== false
-        && !ini_get('zlib.output_compression')
-        && extension_loaded("zlib")
-        && function_exists('gzencode')
+function gz_start() {
+    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== false &&
+        !ini_get('zlib.output_compression') &&
+        extension_loaded("zlib") &&
+        function_exists('gzencode')
     ) {
         ob_start("ob_gzhandler");
     }

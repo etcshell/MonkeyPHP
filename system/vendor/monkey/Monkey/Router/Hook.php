@@ -19,8 +19,8 @@ use Monkey;
  *
  * @package Monkey\Router
  */
-class Hook
-{
+class Hook {
+
     /**
      * 应用对象
      *
@@ -68,8 +68,7 @@ class Hook
      *
      * @param Monkey\App $app
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
         $this->app = $app;
     }
 
@@ -83,8 +82,7 @@ class Hook
      * 例如：
      * $hook->add('/user', function($app,$hook){ ...; $hook->next(); }, 'get');
      */
-    public function add($subPath, \Closure $handle, $requestMethod = 'all')
-    {
+    public function add($subPath, \Closure $handle, $requestMethod = 'all') {
         $subPath = '/' . trim(strtolower($subPath), '/');
         $requestMethod = strtolower($requestMethod);
         $this->hooks[$requestMethod][$subPath] = $handle;
@@ -96,8 +94,7 @@ class Hook
      * @param string $requestPath 请求路径
      * @param string $requestMethod 请求方法
      */
-    public function start($requestPath, $requestMethod = 'get')
-    {
+    public function start($requestPath, $requestMethod = 'get') {
         if ($this->started) {
             return;
         }
@@ -116,8 +113,7 @@ class Hook
         $this->next();
     }
 
-    private function matchHook($requestMethod, $requestPath, $extension)
-    {
+    private function matchHook($requestMethod, $requestPath, $extension) {
         $_ = '';
         foreach ($this->hooks[$requestMethod] as $subPath => $handle) {
 
@@ -144,8 +140,7 @@ class Hook
      *     $hook->next();
      * }
      */
-    public function next()
-    {
+    public function next() {
         if (empty($this->select)) {
             return;
         }
@@ -160,8 +155,7 @@ class Hook
      *
      * @return mixed
      */
-    public function getCalled()
-    {
+    public function getCalled() {
         return $this->called;
     }
 }

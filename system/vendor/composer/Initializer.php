@@ -2,17 +2,16 @@
 namespace Composer\Autoload;
 
 class Initializer {
+
     private static $loader;
 
-    public static function loadClassLoader($class)
-    {
+    public static function loadClassLoader($class) {
         if ('Composer\Autoload\ClassLoader' === $class) {
             require __DIR__ . '/ClassLoader.php';
         }
     }
 
-    public static function getLoader()
-    {
+    public static function getLoader() {
         if (null !== self::$loader) {
             return self::$loader;
         }

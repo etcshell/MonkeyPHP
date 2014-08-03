@@ -19,8 +19,8 @@ use Monkey;
  *
  * @package Monkey\Router
  */
-class Router
-{
+class Router {
+
     /**
      * 应用对象
      *
@@ -96,8 +96,7 @@ class Router
      *
      * @param Monkey\App $app
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
         $this->app = $app;
         $config = $app->config()->getComponentConfig('router', 'default');
         $this->config = $config;
@@ -108,9 +107,9 @@ class Router
         $match = $this->pattern->matchPath($this->requestMethod, $this->path);
         $this->params = isset($match['params']) ? $match['params'] : null;
         $route = array();
-
         if (isset($match['router_name'])) {
-            $config['router_class_auto_prefix'] and $match['router_name'] = '\\' . $this->app->NAME . '\\Controller\\' . $match['router_name'];
+            $config['router_class_auto_prefix'] and
+            $match['router_name'] = '\\' . $this->app->NAME . '\\Controller\\' . $match['router_name'];
             list($route['controller'], $route['action']) = explode(':', $match['router_name'], 2);
         }
 
@@ -123,9 +122,10 @@ class Router
      *
      * @return Map
      */
-    public function map()
-    {
-        if (!$this->map) $this->map = new Map($this->app, $this->config);
+    public function map() {
+        if (!$this->map) {
+            $this->map = new Map($this->app, $this->config);
+        }
         return $this->map;
     }
 
@@ -134,16 +134,14 @@ class Router
      *
      * @return Hook
      */
-    public function getHook()
-    {
+    public function getHook() {
         return $this->hook;
     }
 
     /**
      * 启动路由hook
      */
-    public function startHook()
-    {
+    public function startHook() {
         $this->hook->start($this->path, $this->requestMethod);
     }
 
@@ -152,8 +150,7 @@ class Router
      *
      * @return string。
      */
-    public function getPath()
-    {
+    public function getPath() {
         return $this->path;
     }
 
@@ -162,8 +159,7 @@ class Router
      *
      * @return array|null 存在时候为array；不存在则为空值。
      */
-    public function getRoute()
-    {
+    public function getRoute() {
         return $this->route;
     }
 
@@ -174,9 +170,8 @@ class Router
      *
      * @return string|null
      */
-    public function getParameter($name, $default = null)
-    {
-        if (is_string($name) and isset($this->params[$name])){
+    public function getParameter($name, $default = null) {
+        if (is_string($name) and isset($this->params[$name])) {
             return $this->params[$name];
         }
         else {
@@ -189,8 +184,7 @@ class Router
      *
      * @return array|null
      */
-    public function getParameterAll()
-    {
+    public function getParameterAll() {
         return $this->params;
     }
 
@@ -203,8 +197,7 @@ class Router
      *
      * @return string  /test/abc-en/blog/2014-4025
      */
-    public function toPath($pattern, $parameters = null)
-    {
+    public function toPath($pattern, $parameters = null) {
         return $this->pattern->packagePath($pattern, $parameters);
     }
 
@@ -218,8 +211,7 @@ class Router
      *
      * @return string  /.../test/abc-en/blog/2014-4025
      */
-    public function toURL($pattern, $parameters = null, $fixExtend = true)
-    {
+    public function toURL($pattern, $parameters = null, $fixExtend = true) {
         if ($parameters or strpos($pattern, ':') !== false) {
             $pattern = $this->pattern->packagePath($pattern, $parameters);
         }
@@ -236,8 +228,11 @@ class Router
             return $this->indexRoot . '/' . basename($_SERVER['SCRIPT_NAME']) . $pattern;
         }
 
-        return $this->indexRoot . '/' . basename($_SERVER['SCRIPT_NAME']) . '?' .
-            $this->config['search_get'] . '=' . $pattern;
+        return
+            $this->indexRoot . '/' . basename($_SERVER['SCRIPT_NAME']) . '?' .
+            $this->config['search_get'] .
+            '=' .
+            $pattern;
     }
 
     /**
@@ -250,8 +245,7 @@ class Router
      *
      * @return string  http://www.host.com/.../test/abc-en/blog/2014-4025
      */
-    public function toAbsURL($pattern, $parameters = null, $forceHttps = false)
-    {
+    public function toAbsURL($pattern, $parameters = null, $forceHttps = false) {
         $uri = $this->toURL($pattern, $parameters);
         $uri = $this->app->request()->getUriPrefix() . $uri;
         $forceHttps and $uri = 'https' . strstr($uri, ':');
@@ -261,31 +255,31 @@ class Router
     /**
      * 清除编译好的路由匹配表
      */
-    public function clearPatternCompiled()
-    {
+    public function clearPatternCompiled() {
         $this->pattern->clearPatternCompiled();
     }
 
-    private function loadPath()
-    {
+    private function loadPath() {
         $config = $this->config;
 
         if (php_sapi_name() == 'cli') {
             $this->path = $_SERVER["argv"][1];
 
-        } else if ($config['search_mode'] === 'rewrite' or $config['search_mode'] === 'pathinfo') {
-            $this->path = $_SERVER['REQUEST_URI'] ? $this->_getParams($_SERVER['REQUEST_URI']) : '';
+        }
+        else if ($config['search_mode'] === 'rewrite' or $config['search_mode'] === 'pathinfo') {
+            $this->path = $_SERVER['REQUEST_URI'] ? $this->getParams($_SERVER['REQUEST_URI']) : '';
 
-        } else if (isset($_GET[$config['search_get']])) {
+        }
+        else if (isset($_GET[$config['search_get']])) {
             $this->path = $_GET[$config['search_get']];
 
-        } else {
+        }
+        else {
             $this->path = '';
         }
     }
 
-    private function _getParams($url)
-    {
+    private function getParams($url) {
         $temp = strstr($url, '?', true);
         $temp !== false and $url = $temp;
         //默认认为REQUEST_URI包含了子目录，那么就要去除网址偏移量
@@ -296,16 +290,15 @@ class Router
         return $url;
     }
 
-    private function fixToUrl($url)
-    {
-        if (substr($url,-1) == '/') {
+    private function fixToUrl($url) {
+        if (substr($url, -1) == '/') {
             return $url;
         }
 
-        $_ext = array('.php' => '.php', '.html' => '.html');
+        $arrExt = array('.php' => '.php', '.html' => '.html');
         $ext = strtolower(strrchr($url, '.'));
 
-        if (!$ext or !isset($_ext[$ext])) {
+        if (!$ext or !isset($arrExt[$ext])) {
             $url .= '.html';
         }
 

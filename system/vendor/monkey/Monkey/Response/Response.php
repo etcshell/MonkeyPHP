@@ -26,8 +26,8 @@ use Monkey;
  * 4xx：客户端错误，请求包含语法错误或者请求无法实现
  * 5xx：服务器错误，服务器不能实现一种明显无效的请求
  */
-class Response
-{
+class Response {
+
     /**
      * 应用对象
      *
@@ -172,8 +172,7 @@ class Response
      *
      * @param Monkey\App $app
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
         $this->app = $app;
 
         if ('HEAD' == $app->request()->getMethod()) {
@@ -193,14 +192,15 @@ class Response
             $this->setJson();
         }
 
-        if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== FALSE
-            && !ini_get('zlib.output_compression')
-            && extension_loaded("zlib")
-            && function_exists('gzencode')
+        if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'gzip') !== false &&
+            !ini_get('zlib.output_compression') &&
+            extension_loaded("zlib") &&
+            function_exists('gzencode')
         ) {
             ob_start("ob_gzhandler");
 
-        } else {
+        }
+        else {
             ob_start();
         }
     }
@@ -210,8 +210,7 @@ class Response
      *
      * @param string|array $content 内容
      */
-    public function addBody($content)
-    {
+    public function addBody($content) {
         if (is_array($content)) {
             $this->body = array_merge((array)$this->body, $content);
         }
@@ -225,8 +224,7 @@ class Response
      *
      * @param string|array $content 内容
      */
-    public function setBody($content)
-    {
+    public function setBody($content) {
         $this->body = $content;
     }
 
@@ -237,8 +235,7 @@ class Response
      *
      * @return $this
      */
-    public function setJson(array $data = array())
-    {
+    public function setJson(array $data = array()) {
         $this->setContentType('application/json');
         $this->isJson = true;
         $data and $this->body = $data;
@@ -250,8 +247,7 @@ class Response
      *
      * @return mixed
      */
-    public function getBody()
-    {
+    public function getBody() {
         $body = $this->body;
         $this->body = null;
         return $body;
@@ -260,8 +256,7 @@ class Response
     /**
      * 清除Html正文Body内容
      */
-    public function clearBody()
-    {
+    public function clearBody() {
         $this->body = null;
     }
 
@@ -271,8 +266,7 @@ class Response
      * @param string $url 重定向的地址
      * @param bool $exitNow 立即退出，默认为否
      */
-    public function redirect($url, $exitNow = false)
-    {
+    public function redirect($url, $exitNow = false) {
         $this->httpHeaderOnly = true;
         $this->redirectUrl = $url; //header('Location:'.$url,true,302);
 
@@ -284,8 +278,7 @@ class Response
     /**
      * 发送响应内容
      */
-    public function send()
-    {
+    public function send() {
         if ($this->isSend) {
             return;
         }
@@ -299,11 +292,12 @@ class Response
         }
 
         if (function_exists('fastcgi_finish_request')) {
-            $httpHeaderOnly and $this->ob_end_flush(false);
+            $httpHeaderOnly and $this->obEndFlush(false);
             fastcgi_finish_request();
 
-        } elseif ('cli' !== PHP_SAPI) {
-            $this->ob_end_flush(!$httpHeaderOnly);
+        }
+        elseif ('cli' !== PHP_SAPI) {
+            $this->obEndFlush(!$httpHeaderOnly);
 
         }
     }
@@ -313,8 +307,7 @@ class Response
      *
      * @return bool
      */
-    public function sendHeaders()
-    {
+    public function sendHeaders() {
         if (headers_sent()) {
             return false;
         }
@@ -328,7 +321,8 @@ class Response
 
         if ($this->redirectUrl) {
             header('Location:' . $this->redirectUrl, true, 302);
-        } else {
+        }
+        else {
             foreach ($this->getAllHeaders() as $name => $value) {
                 header($name . ': ' . $value);
             }
@@ -337,14 +331,21 @@ class Response
         $cookies = $this->newCookies;
 
         foreach ($cookies as $name => $ck) {
-            setrawcookie($name, $ck['value'], $ck['expire'], $ck['path'], $ck['domain'], $ck['secure'], $ck['httpOnly']);
+            setrawcookie(
+                $name,
+                $ck['value'],
+                $ck['expire'],
+                $ck['path'],
+                $ck['domain'],
+                $ck['secure'],
+                $ck['httpOnly']
+            );
         }
 
         return true;
     }
 
-    private function ob_end_flush($flush = true)
-    {
+    private function obEndFlush($flush = true) {
         // ob_get_level() never returns 0 on some Windows configurations, so if
         // the level is the same two times in a row, the loop should be stopped.
         $previous = null;
@@ -356,11 +357,14 @@ class Response
             if ($obStatus[$level - 1]) {
 
                 if (version_compare(PHP_VERSION, '5.4', '>=')) {
-                    if (isset($obStatus[$level - 1]['flags']) && ($obStatus[$level - 1]['flags'] & PHP_OUTPUT_HANDLER_REMOVABLE)) {
+                    if (isset($obStatus[$level - 1]['flags']) &&
+                        ($obStatus[$level - 1]['flags'] & PHP_OUTPUT_HANDLER_REMOVABLE)
+                    ) {
                         $flush ? ob_end_flush() : ob_end_clean();
                     }
 
-                } else {
+                }
+                else {
                     if (isset($obStatus[$level - 1]['del']) && $obStatus[$level - 1]['del']) {
                         $flush ? ob_end_flush() : ob_end_clean();
                     }
@@ -377,10 +381,10 @@ class Response
      * @param $code
      * @param null $note 状态码说明
      */
-    public function setStatus($code, $note = null)
-    {
+    public function setStatus($code, $note = null) {
         $this->statusCode = $code;
-        $this->statusText = null !== $note ? $note : isset($this->statusTexts[$code]) ? $this->statusTexts[$code] : 'unknow';
+        $this->statusText =
+            null !== $note ? $note : isset($this->statusTexts[$code]) ? $this->statusTexts[$code] : 'unknow';
     }
 
     /**
@@ -389,8 +393,7 @@ class Response
      *
      * @param bool $isHeaderOnly
      */
-    public function setHttpHeaderOnly($isHeaderOnly = true)
-    {
+    public function setHttpHeaderOnly($isHeaderOnly = true) {
         $this->httpHeaderOnly = (boolean)$isHeaderOnly;
     }
 
@@ -399,16 +402,14 @@ class Response
      *
      * @return bool
      */
-    public function isHttpHeaderOnly()
-    {
+    public function isHttpHeaderOnly() {
         return $this->httpHeaderOnly;
     }
 
     /**
      * 设置强制浏览器不缓存
      */
-    public function setNoCache()
-    {
+    public function setNoCache() {
         $this->headers['Expires'] = gmdate('r', $this->app->TIME);
         $this->setCacheControl('no-cache');
         $this->setCacheControl('max-age', 0);
@@ -422,8 +423,7 @@ class Response
      * @param int $expiresTime 时间戳 缓存过期时间点
      * @param int $lastModified 时间戳 最后修改的时间点，默认使用缓存过期时间点
      */
-    public function setCache($eTag, $expiresTime, $lastModified = null)
-    {
+    public function setCache($eTag, $expiresTime, $lastModified = null) {
         $expires = gmdate('r', $expiresTime + $this->app->TIME);
         $this->headers['Expires'] = $expires; //将响应内容缓存到浏览器中
         $this->headers['Last-Modified'] = $lastModified ? gmdate('r', $lastModified) : $expires; //防止浏览器自动刷新
@@ -436,14 +436,13 @@ class Response
     /**
      * 设置文件下载
      *
-     * @param string $mime_type 文件的mime类型，请查表设置
+     * @param string $mimeType 文件的mime类型，请查表设置
      * @param string $filename 文件名，含扩展名
      * @param string $charset 文件字符集，一般在Response里配置了，这里就不再配置了。
      */
-    public function setDownload($mime_type, $filename, $charset = '')
-    {
+    public function setDownload($mimeType, $filename, $charset = '') {
         ob_clean();
-        $this->setContentType($mime_type);
+        $this->setContentType($mimeType);
         $charset and $charset = '; charset=' . $charset;
         $this->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '" ' . $charset);
         //header('Content-Disposition: attachment; filename="' . $filename . '.xls"; charset=utf-8');
@@ -456,10 +455,9 @@ class Response
      * @param string $value 响应头的字段取值
      * @param boolean $replace 是否是替换方式设置
      */
-    public function setHeader($name, $value, $replace = true)
-    {
+    public function setHeader($name, $value, $replace = true) {
         $name = $this->formatName($name);
-        $this->_setHeader($name, $value, $replace);
+        $this->actionSetHeader($name, $value, $replace);
     }
 
     /**
@@ -470,9 +468,8 @@ class Response
      *
      * @return mixed
      */
-    public function getHeader($name, $default = null)
-    {
-        return $this->_getHeader($this->formatName($name), $default);
+    public function getHeader($name, $default = null) {
+        return $this->actionGetHeader($this->formatName($name), $default);
     }
 
     /**
@@ -480,8 +477,7 @@ class Response
      *
      * @return array HTTP headers
      */
-    public function getAllHeaders()
-    {
+    public function getAllHeaders() {
         !isset($this->headers['Content-Type']) and $this->setContentType();
         return $this->headers;
     }
@@ -489,8 +485,7 @@ class Response
     /**
      * 清除全部headers响应头信息
      */
-    public function clearHeaders()
-    {
+    public function clearHeaders() {
         $this->headers = null;
         $this->headers = array();
     }
@@ -502,9 +497,8 @@ class Response
      *
      * @return boolean
      */
-    public function hasHeader($name)
-    {
-        return $this->_hasHeader($this->formatName($name));
+    public function hasHeader($name) {
+        return $this->actionHasHeader($this->formatName($name));
     }
 
     /**
@@ -512,8 +506,7 @@ class Response
      *
      * @param string $charset
      */
-    public function setCharset($charset = 'UTF-8')
-    {
+    public function setCharset($charset = 'UTF-8') {
         $this->charset = $charset;
     }
 
@@ -523,9 +516,8 @@ class Response
      * @param string $name
      * @param string $value
      */
-    public function setCacheControl($name, $value = null)
-    {
-        $cacheControl = $this->_getHeader('Cache-Control');
+    public function setCacheControl($name, $value = null) {
+        $cacheControl = $this->actionGetHeader('Cache-Control');
         $currentHeaders = array();
 
         if ($cacheControl) {
@@ -551,8 +543,7 @@ class Response
      *
      * @param bool $isKeepAlive 保持连接为TRUE，响应结束后断开为FALSE
      */
-    public function setConnection($isKeepAlive = true)
-    {
+    public function setConnection($isKeepAlive = true) {
         $this->headers['Connection'] = $isKeepAlive ? 'Keep-Alive' : 'close';
     }
 
@@ -561,8 +552,7 @@ class Response
      *
      * @param $unixTime
      */
-    public function setDate($unixTime)
-    {
+    public function setDate($unixTime) {
         $this->headers['Date'] = gmdate('r', $unixTime);
     }
 
@@ -571,8 +561,7 @@ class Response
      *
      * @param string $value
      */
-    public function setPragma($value = 'no-cache')
-    {
+    public function setPragma($value = 'no-cache') {
         $this->headers['Pragma'] = $value;
     }
 
@@ -582,8 +571,7 @@ class Response
      *
      * @param string $url
      */
-    public function setLocation($url)
-    {
+    public function setLocation($url) {
         $this->redirect($url, false);
         $this->headers = null;
         //$this->headers['Location']=$url;
@@ -594,8 +582,7 @@ class Response
      *
      * @param $value
      */
-    public function setServer($value)
-    {
+    public function setServer($value) {
         $this->setHeader('Server', $value);
     }
 
@@ -604,8 +591,7 @@ class Response
      *
      * @param string $encoding 如 gzip | none
      */
-    public function setContentEncoding($encoding = 'none')
-    {
+    public function setContentEncoding($encoding = 'none') {
         $this->headers['Content-Encoding'] = $encoding;
     }
 
@@ -614,8 +600,7 @@ class Response
      *
      * @param string $language en 或 zh-cn 等
      */
-    public function setContentLanguage($language)
-    {
+    public function setContentLanguage($language) {
         $this->headers['Content-Language'] = $language;
     }
 
@@ -625,8 +610,7 @@ class Response
      *
      * @param int $length
      */
-    public function setContentLength($length)
-    {
+    public function setContentLength($length) {
         $this->headers['Content-Length'] = $length;
         $this->setConnection(true);
     }
@@ -637,8 +621,7 @@ class Response
      *
      * @param $md5
      */
-    public function setContentMD5($md5)
-    {
+    public function setContentMD5($md5) {
         $this->headers['Content-MD5'] = $md5;
     }
 
@@ -651,8 +634,7 @@ class Response
      * @param null $length 发送长度
      * @param int $total 文档总字节数
      */
-    public function setContentRange($unit = 'bytes', $begin = 0, $length = null, $total = 0)
-    {
+    public function setContentRange($unit = 'bytes', $begin = 0, $length = null, $total = 0) {
         $this->setHeader('Content-Range', $unit . ' ' . (string)$begin . '-' . ($begin + $length) . '/' . $total);
     }
 
@@ -661,10 +643,11 @@ class Response
      *
      * @param string
      */
-    public function setContentType($value = 'text/html')
-    {
+    public function setContentType($value = 'text/html') {
         // add charset if needed (only on text content)
-        if (false === stripos($value, 'charset') && (0 === stripos($value, 'text/') || strlen($value) - 3 === strripos($value, 'xml'))) {
+        if (false === stripos($value, 'charset') &&
+            (0 === stripos($value, 'text/') || strlen($value) - 3 === strripos($value, 'xml'))
+        ) {
             $value .= '; charset=' . $this->charset;
         }
 
@@ -679,8 +662,7 @@ class Response
      * @param string|null $type 类型 attachment | inline ，为空时自动填充为 attachment
      * @param string|null $charset 文档的字符集
      */
-    public function setContentDisposition($filename, $type = null, $charset = null)
-    {
+    public function setContentDisposition($filename, $type = null, $charset = null) {
         $charset and $charset = '; charset=' . $charset;
         !$type and $type = 'attachment';
         $this->headers['Content-Disposition'] = $type . '; filename="' . $filename . '"' . $charset;
@@ -692,8 +674,7 @@ class Response
      *
      * @param string $etag 标志
      */
-    public function setEtag($etag)
-    {
+    public function setEtag($etag) {
         $this->headers['Etag'] = $etag;
     }
 
@@ -702,8 +683,7 @@ class Response
      *
      * @param int $unixTime
      */
-    public function setExpires($unixTime)
-    {
+    public function setExpires($unixTime) {
         $this->headers['Expires'] = gmdate('r', $unixTime);
     }
 
@@ -716,8 +696,7 @@ class Response
      * 到期刷新时，如果服务器响应状态为304（Not Modified）则不会发生真的刷新请求。
      * 即刷新前可以用这个时间做一个判断刷新是否有必要。
      */
-    public function setLastModified($unixTime)
-    {
+    public function setLastModified($unixTime) {
         $this->headers['Last-Modified'] = gmdate('r', $unixTime);
     }
 
@@ -727,8 +706,7 @@ class Response
      *
      * @param $extension
      */
-    public function setExtensionHeader($extension)
-    {
+    public function setExtensionHeader($extension) {
         $this->headers['Extension-Header'] = $extension;
     }
 
@@ -737,8 +715,7 @@ class Response
      *
      * @param string $method 单个设置 如 "GET"； 多个设置 如 "GET, POST" 等中间用逗号隔开即可
      */
-    public function setAllow($method)
-    {
+    public function setAllow($method) {
         $allow = $this->headers['Allow'];
         $this->headers['Allow'] = $allow ? $allow . ', ' . $method : $method;
     }
@@ -748,8 +725,7 @@ class Response
      *
      * @param string $type bytes：表示支持发送以字节为单位的片段，none：表示不支持片段发送。
      */
-    public function setAcceptRanges($type = 'bytes')
-    {
+    public function setAcceptRanges($type = 'bytes') {
         $this->headers['Accept-Ranges'] = $type; //none表示不支持发送片段
     }
 
@@ -761,8 +737,7 @@ class Response
      * @param int $time 秒数
      * @param string|null $url 为空时表示刷新本页，非空时表示跳转到该页面。
      */
-    public function setRefresh($time, $url = null)
-    {
+    public function setRefresh($time, $url = null) {
         $url and $url = '; URL=' . $url;
         $this->headers['Refresh'] = $time . $url;
     }
@@ -773,9 +748,8 @@ class Response
      *
      * @param string $value
      */
-    public function setVary($value)
-    {
-        $vary = $this->_getHeader('Vary');
+    public function setVary($value) {
+        $vary = $this->actionGetHeader('Vary');
         $currentHeaders = array();
 
         if ($vary) {
@@ -795,8 +769,7 @@ class Response
      *
      * @param int $unixTime
      */
-    public function setCookieExpires($unixTime)
-    {
+    public function setCookieExpires($unixTime) {
         $this->headers['Set-Cookie'] = gmdate('r', $unixTime);
     }
 
@@ -805,8 +778,7 @@ class Response
      *
      * @param string $need
      */
-    public function setAuthenticate($need)
-    {
+    public function setAuthenticate($need) {
         $this->headers['WWW-Authenticate'] = $need; // 如 BASIC realm=＼"executives＼"
     }
 
@@ -815,8 +787,7 @@ class Response
      *
      * @param int $time 当小于 2592000（一个月） 表示多少秒后刷新，当大于或等于 2592000 表示精确的格林威治时间之时刷新
      */
-    public function setRetryAfter($time)
-    {
+    public function setRetryAfter($time) {
         $this->headers['Retry-After'] = $time < 2592000 ? $time : gmdate('r', $time);
     }
 
@@ -825,8 +796,7 @@ class Response
      *
      * @param $msg
      */
-    public function setWarning($msg)
-    {
+    public function setWarning($msg) {
         $this->headers['Warning'] = $msg;
     }
 
@@ -836,8 +806,7 @@ class Response
      * @param string $language 设置用户选择的语言，为空则表示读取用户选择的语言
      * @param int|null $expire 设置持续的有效时间；设置为0相当于删除它
      */
-    public function setLanguage($language, $expire = 2592000)
-    {
+    public function setLanguage($language, $expire = 2592000) {
         $this->setCookie('language', $language, $expire);
     }
 
@@ -853,12 +822,14 @@ class Response
      * @param bool $secure 是否是https协议才能使用
      * @param bool $httpOnly 是否只允许服务器使用这个Cookie值，为真时浏览器中的js不能访问
      */
-    public function setCookie($name, $value, $expire = 2592000, $path = '/', $domain = '', $secure = false, $httpOnly = false)
-    {
+    public function setCookie(
+        $name, $value, $expire = 2592000, $path = '/', $domain = '', $secure = false, $httpOnly = false
+    ) {
         if (isset($this->newCookies[$name]) && $expire < 1) {
             unset($this->newCookies[$name]);
 
-        } else {
+        }
+        else {
             $this->newCookies[$name] = array(
                 'name' => $name,
                 'value' => $value,
@@ -878,13 +849,13 @@ class Response
      *
      * @return void
      */
-    public function deleteCookie($name = null)
-    {
+    public function deleteCookie($name = null) {
         if (!$name) {
             $this->newCookies = null;
             $this->newCookies = array();
             unset($_COOKIE);
-        } else {
+        }
+        else {
             $this->setCookie($name, '', 0);
             unset($_COOKIE[$name]);
         }
@@ -897,16 +868,14 @@ class Response
      *
      * @return string
      */
-    private function formatName($name)
-    {
+    private function formatName($name) {
         return preg_replace('/\-(.)/e', "'-'.strtoupper('\\1')", strtr(ucfirst(strtolower($name)), '_', '-'));
     }
 
-    private function _setHeader($name, $value, $replace = true)
-    {
+    private function actionSetHeader($name, $value, $replace = true) {
         if ('Content-Type' == $name) {
 
-            if ($replace || !$this->_getHeader('Content-Type', null)) {
+            if ($replace || !$this->actionGetHeader('Content-Type', null)) {
                 $this->setContentType($value);
             }
 
@@ -914,20 +883,18 @@ class Response
         }
 
         if (!$replace) {
-            $current = $this->_getHeader($name, '');
+            $current = $this->actionGetHeader($name, '');
             $value = ($current ? $current . ', ' : '') . $value;
         }
 
         $this->headers[$name] = $value;
     }
 
-    private function _getHeader($name, $default = null)
-    {
-        return $this->_hasHeader($name) ? $this->headers[$name] : $default;
+    private function actionGetHeader($name, $default = null) {
+        return $this->actionHasHeader($name) ? $this->headers[$name] : $default;
     }
 
-    private function _hasHeader($name)
-    {
+    private function actionHasHeader($name) {
         return array_key_exists($name, $this->headers);
     }
 }

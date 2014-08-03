@@ -19,28 +19,28 @@ use Monkey;
  *
  * @package Monkey\Cache
  */
-class Memcache implements CacheInterface
-{
+class Memcache implements CacheInterface {
+
     /**
      * 缓存过期时间
      *
      * @var int
      */
-    private $_expire = 3600;
+    private $expire = 3600;
 
     /**
      * 缓存管理对象
      *
      * @var \Memcache
      */
-    private $_connection;
+    private $connection;
 
     /**
      * MEMCACHE_COMPRESSED参数
      *
      * @var boolean
      */
-    private $_compressed = false;
+    private $compressed = false;
 
     /**
      * 构造方法
@@ -49,17 +49,16 @@ class Memcache implements CacheInterface
      *
      * @throws \Exception
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
         if (!extension_loaded('memcache')) {
             throw new \Exception('没有安装memcache扩展,请先在php.ini中配置安装memcache。');
         }
 
         $config = $app->config()->getComponentConfig('cache', 'memcache');
-        isset($config['expire']) and $this->_expire = $config['expire'];
-        $this->_compressed = isset($config['compressed']) ? $config['compressed'] : FALSE;
-        $this->_connection = new \Memcache();
-        if (!$this->_connection->addserver($config['host'], $config['port'], $config['persistent'])) {
+        isset($config['expire']) and $this->expire = $config['expire'];
+        $this->compressed = isset($config['compressed']) ? $config['compressed'] : false;
+        $this->connection = new \Memcache();
+        if (!$this->connection->addserver($config['host'], $config['port'], $config['persistent'])) {
             throw new \Exception('连接memcache服务器时失败，请确认你的连接参数是否正确。');
         }
 
@@ -74,16 +73,15 @@ class Memcache implements CacheInterface
      *
      * @return bool 保存是成功为true ，失败为false
      */
-    public function store($key, $value, $time = -1)
-    {
+    public function store($key, $value, $time = -1) {
         if ($time == -1) {
-            $time = $this->_expire;
+            $time = $this->expire;
         }
         $sValue = serialize($value);
-        if (!$this->_connection->add($key, $sValue, $this->_compressed, $time)) {
-            return $this->_connection->set($key, $sValue, $this->_compressed, $time);
+        if (!$this->connection->add($key, $sValue, $this->compressed, $time)) {
+            return $this->connection->set($key, $sValue, $this->compressed, $time);
         }
-        return TRUE;
+        return true;
     }
 
     /**
@@ -94,18 +92,17 @@ class Memcache implements CacheInterface
      *
      * @return bool             成功返回true，失败返回false
      */
-    public function fetch($key, &$result)
-    {
+    public function fetch($key, &$result) {
         $result = NULL;
-        $temp = $this->_connection->get($key);
+        $temp = $this->connection->get($key);
 
-        if ($temp === FALSE) {
-            return FALSE;
+        if ($temp === false) {
+            return false;
         }
 
         $result = unserialize($temp);
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -113,9 +110,8 @@ class Memcache implements CacheInterface
      *
      * @return bool
      */
-    public function clear()
-    {
-        $this->_connection->flush();
+    public function clear() {
+        $this->connection->flush();
         return true;
     }
 
@@ -126,18 +122,16 @@ class Memcache implements CacheInterface
      *
      * @return bool
      */
-    public function delete($key)
-    {
-        $this->_connection->delete($key);
+    public function delete($key) {
+        $this->connection->delete($key);
         return true;
     }
 
     /**
      * 获取Memcache的状态
      */
-    public function stats()
-    {
-        $this->_connection->getStats();
+    public function stats() {
+        $this->connection->getStats();
         return;
     }
 
@@ -148,8 +142,7 @@ class Memcache implements CacheInterface
      *
      * @return void
      */
-    public function __destruct()
-    {
-        $this->_connection->close();
+    public function __destruct() {
+        $this->connection->close();
     }
 }

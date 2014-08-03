@@ -19,8 +19,8 @@ use Monkey;
  *
  * @package Monkey\Router
  */
-class Map
-{
+class Map {
+
     /**
      * 应用对象
      *
@@ -40,7 +40,7 @@ class Map
      *
      * @var string
      */
-    private $map_file;
+    private $mapFile;
 
     /**
      * 是否已更新映射表
@@ -55,11 +55,10 @@ class Map
      * @param Monkey\App $app
      * @param string $config 配置
      */
-    public function __construct($app, $config)
-    {
+    public function __construct($app, $config) {
         $this->app = $app;
-        $this->map_file = $app->DIR . ($config['map_file'] ? $config['map_file'] : '/data/router.map.php');
-        $this->map = include($this->map_file);
+        $this->mapFile = $app->DIR . ($config['map_file'] ? $config['map_file'] : '/data/router.map.php');
+        $this->map = include($this->mapFile);
     }
 
     /**
@@ -67,8 +66,7 @@ class Map
      *
      * @return array
      */
-    public function getAllMap()
-    {
+    public function getAllMap() {
         return $this->map;
     }
 
@@ -79,12 +77,13 @@ class Map
      *
      * @return string
      */
-    public function get($pattern)
-    {
-        if ($pattern = $this->find($pattern))
+    public function get($pattern) {
+        if ($pattern = $this->find($pattern)) {
             return $this->map[$pattern];
-        else
+        }
+        else {
             return '';
+        }
     }
 
     /**
@@ -100,8 +99,7 @@ class Map
      * @param string $controller
      * @param string $action
      */
-    public function add($pattern, $controller, $action)
-    {
+    public function add($pattern, $controller, $action) {
         $pattern[0] == '/' and $pattern = 'get' . $pattern;
         $pattern = trim($pattern, '/');
         $pos = strpos($controller, '\\Controller\\');
@@ -115,8 +113,7 @@ class Map
      *
      * @param $pattern
      */
-    public function delete($pattern)
-    {
+    public function delete($pattern) {
         if ($pattern = $this->find($pattern)) {
             unset($this->map[$pattern]);
             $this->update = true;
@@ -126,8 +123,7 @@ class Map
     /**
      * 清空路由映射表
      */
-    public function clear()
-    {
+    public function clear() {
         $this->map = null;
         $this->map = array();
         $this->update = true;
@@ -136,18 +132,16 @@ class Map
     /**
      * 保存路由映射表
      */
-    public function saveMap()
-    {
-        $content = '<?php' . PHP_EOL . 'return ' . var_export($this->map, TRUE) . ' ;';
-        file_put_contents($this->map_file, $content, LOCK_EX); //echo '<br/>保存扫描结果到缓存文件中...<br/>';
+    public function saveMap() {
+        $content = '<?php' . PHP_EOL . 'return ' . var_export($this->map, true) . ' ;';
+        file_put_contents($this->mapFile, $content, LOCK_EX); //echo '<br/>保存扫描结果到缓存文件中...<br/>';
         $this->update = false;
     }
 
     /**
      * 销毁方法
      */
-    public function destroy()
-    {
+    public function destroy() {
         $this->update and $this->saveMap();
     }
 
@@ -157,8 +151,7 @@ class Map
      * @param $pattern
      * @return string
      */
-    private function find($pattern)
-    {
+    private function find($pattern) {
         $pattern[0] == '/' and $pattern = 'get' . $pattern;
 
         if (isset($this->map[$pattern])) {

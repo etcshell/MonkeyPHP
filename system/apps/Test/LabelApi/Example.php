@@ -4,14 +4,17 @@ namespace Test\LabelApi;
 /**
  * 自定义标签示例
  */
-class Example{
-    public static function copyright($params=null){
+class Example {
+
+    public static function copyright($params = null) {
         return 'Copyright By 2012 MonkeyPHP';
     }
-    public static function icp($params=null){
+
+    public static function icp($params = null) {
         return 'MonkeyPHP 备案号：00000000';
     }
-    public static function colorTitle($params=null) {
+
+    public static function colorTitle($params = null) {
         return array(
             array('0039b6', 'M'),
             array('c41200', 'o'),
@@ -24,7 +27,8 @@ class Example{
             array('0039b6', 'P'),
         );
     }
-    public static function menu($params=null) {
+
+    public static function menu($params = null) {
         return array(
             array('#', '首页'),
             array('#', '新闻'),

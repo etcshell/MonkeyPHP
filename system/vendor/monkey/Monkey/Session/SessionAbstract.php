@@ -11,6 +11,7 @@
 namespace Monkey\Session;
 
 use Monkey;
+
 /**
  * Abstract Class Session
  *
@@ -18,8 +19,8 @@ use Monkey;
  *
  * @package Monkey
  */
-abstract class SessionAbstract
-{
+abstract class SessionAbstract {
+
     /**
      * 防冲突前缀
      *
@@ -53,16 +54,14 @@ abstract class SessionAbstract
      *
      * @param App $app
      */
-    public function __construct($app)
-    {
+    public function __construct($app) {
 
     }
 
     /**
      * 启动Session
      */
-    protected function start()
-    {
+    protected function start() {
         //设置
         $config = $this->config;
         $this->prefix = (isset($config['prefix']) ? $config['prefix'] : $this->app->NAME) . '_session_';
@@ -147,8 +146,7 @@ abstract class SessionAbstract
      *
      * @return string
      */
-    protected function _storageKey($sessionId)
-    {
+    protected function storageKey($sessionId) {
         return $this->prefix . $sessionId;
     }
 }

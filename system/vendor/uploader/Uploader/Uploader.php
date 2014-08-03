@@ -23,88 +23,98 @@ namespace Uploader;
  */
 
 class Uploader {
-    private $_allowedExtensions = array();
-    private $_sizeLimit = 10485760;
+
+    private $allowedExtensions = array();
+    private $sizeLimit = 10485760;
     /**
      * @var FormRequest
      */
-    private $_file;
-    private $_system_charset='GB2312';
+    private $file;
+    private $systemCharset = 'GB2312';
+
     /**
      * QQ上传
      * @param array $allowedExtensions 允许的扩展名
      * @param integer $sizeLimit 最大字节数，这是要和ini设置配合的，php.ini是全局的，可以设置大一点，这里是细化到每个具体上传点，设置小一点，倒过来不行哈
      */
-    public function __construct(array $allowedExtensions = array(),$sizeLimit = 10485760){
-        $this->_system_charset = DIRECTORY_SEPARATOR=='\\'?'GB2312':'utf-8';
+    public function __construct(array $allowedExtensions = array(), $sizeLimit = 10485760) {
+        $this->systemCharset = DIRECTORY_SEPARATOR == '\\' ? 'GB2312' : 'utf-8';
         $allowedExtensions = array_map("strtolower", $allowedExtensions);
-        $this->_allowedExtensions = $allowedExtensions;
-        $this->_sizeLimit = $sizeLimit;
-        $this->_checkServerSettings();
+        $this->allowedExtensions = $allowedExtensions;
+        $this->sizeLimit = $sizeLimit;
+        $this->checkServerSettings();
         if (isset($_GET['qqfile'])) {
-            $this->_file = new AjaxRequest();
-        } elseif (isset($_FILES['qqfile'])) {
-            $this->_file = new FormRequest();
-        } else {
-            $this->_file = false;
+            $this->file = new AjaxRequest();
+        }
+        elseif (isset($_FILES['qqfile'])) {
+            $this->file = new FormRequest();
+        }
+        else {
+            $this->file = false;
         }
     }
-    private function _checkServerSettings(){
-        $postSize = $this->_toBytes(ini_get('post_max_size'));
-        $uploadSize = $this->_toBytes(ini_get('upload_max_filesize'));
-        if ($postSize < $this->_sizeLimit || $uploadSize < $this->_sizeLimit){
-            $size = max(1, $this->_sizeLimit / 1024 / 1024) . 'M';
+
+    private function checkServerSettings() {
+        $postSize = $this->toBytes(ini_get('post_max_size'));
+        $uploadSize = $this->toBytes(ini_get('upload_max_filesize'));
+        if ($postSize < $this->sizeLimit || $uploadSize < $this->sizeLimit) {
+            $size = max(1, $this->sizeLimit / 1024 / 1024) . 'M';
             die("{'error':'increase post_max_size and upload_max_filesize to $size'}");
         }
     }
-    private function _toBytes($str){
+
+    private function toBytes($str) {
         $val = trim($str);
-        $last = strtolower($str[strlen($str)-1]);
-        switch($last) {
-            case 'g': $val *= 1024;
-            case 'm': $val *= 1024;
-            case 'k': $val *= 1024;
+        $last = strtolower($str[strlen($str) - 1]);
+        switch ($last) {
+            case 'g':
+                $val *= 1024;
+            case 'm':
+                $val *= 1024;
+            case 'k':
+                $val *= 1024;
         }
         return $val;
     }
+
     /**
      * 处理上传文件
      * @param string $uploadDir 保存上传文件的目录
      * @param string $replaceFile 是否替换指定文件
      * @return array('success'=>true,'filename'=>string) or array('error'=>'error message')
      */
-    public function saveToDir($uploadDir, $replaceFile = ''){
+    public function saveToDir($uploadDir, $replaceFile = '') {
         $uploadDir = rtrim($uploadDir, '/') . '/';
         if (!$this->dirCheck($uploadDir)) {
             return array('error' => "Server error. Upload directory isn't exist.");
         }
-        if (!is_writable($uploadDir)){
+        if (!is_writable($uploadDir)) {
             return array('error' => "Server error. Upload directory isn't writable.");
         }
-        if (!$this->_file){
+        if (!$this->file) {
             return array('error' => 'No files were uploaded.');
         }
-        $size = $this->_file->get_size();
+        $size = $this->file->getSize();
         if ($size == 0) {
             return array('error' => 'File is empty');
         }
-        if ($size > $this->_sizeLimit) {
+        if ($size > $this->sizeLimit) {
             return array('error' => 'File is too large');
         }
-        $pathinfo = pathinfo($this->_file->get_name());
-        $extLen=  strlen($pathinfo['extension'])+1;
-        $basename=  substr($this->_file->get_name(), 0, 0-$extLen);
-        if($this->_system_charset=='GB2312'){
-            $basename=iconv("UTF-8","GB2312//IGNORE",$basename);
+        $pathinfo = pathinfo($this->file->getName());
+        $extLen = strlen($pathinfo['extension']) + 1;
+        $basename = substr($this->file->getName(), 0, 0 - $extLen);
+        if ($this->systemCharset == 'GB2312') {
+            $basename = iconv("UTF-8", "GB2312//IGNORE", $basename);
         }
         //$filename = md5(uniqid());
         $ext = $pathinfo['extension'];
-        if($this->_allowedExtensions && !in_array(strtolower($ext), $this->_allowedExtensions)){
-            $these = implode(', ', $this->_allowedExtensions);
-            return array('error' => 'File has an invalid extension, it should be one of '. $these . '.');
+        if ($this->allowedExtensions && !in_array(strtolower($ext), $this->allowedExtensions)) {
+            $these = implode(', ', $this->allowedExtensions);
+            return array('error' => 'File has an invalid extension, it should be one of ' . $these . '.');
         }
 
-        if($replaceFile){
+        if ($replaceFile) {
             $basename = $replaceFile;
         }
         else {
@@ -114,18 +124,19 @@ class Uploader {
             }
         }
 
-        $basename= strtr($basename,'.','_');//消除因为apache配置失误造成的上传漏洞。
+        $basename = strtr($basename, '.', '_'); //消除因为apache配置失误造成的上传漏洞。
         $filename = $uploadDir . $basename . '.' . $ext;
-        if ($this->_file->save($filename)){
-            return array('success'=>true, 'filename'=>$filename);
-        } else {
-            return array('error'=> 'Could not save uploaded file.' .
-                'The upload was cancelled, or server error encountered');
+        if ($this->file->save($filename)) {
+            return array('success' => true, 'filename' => $filename);
+        }
+        else {
+            return array(
+                'error' => 'Could not save uploaded file.' . 'The upload was cancelled, or server error encountered'
+            );
         }
     }
 
-    protected function dirCheck($targetDir)
-    {
+    protected function dirCheck($targetDir) {
         if (is_dir($targetDir)) {
             return true;
         }
