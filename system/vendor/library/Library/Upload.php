@@ -140,7 +140,7 @@ class Upload {
      * @param bool $isAloneFile 是否为单文件上传，默认为是true
      * @param array $options 参数结构如下，意义见上面单独设置参数的方法
      * array(
-     *      'field'         =>...,  //见setInputField 必须有，这里设置或上面单独设置都视为有
+     * 'field'         =>...,  //见setInputField 必须有，这里设置或上面单独设置都视为有
      * 'saveDir'       =>...,  //见setSaveDirectory
      * 'saveName'      =>...,  //见setSaveName
      * 'filterType'    =>...,  //见setFilterType

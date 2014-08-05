@@ -372,7 +372,7 @@ class Response {
             }
         }
 
-        $flush ? ob_clean() : flush();
+        $flush ? flush() : ob_clean();
     }
 
     /**

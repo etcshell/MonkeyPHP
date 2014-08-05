@@ -203,12 +203,8 @@ class Insert {
         $fields = $this->insertFields;
 
         if ($this->fromQuery instanceof Select) {
-            $query['sql'] =
-                'INSERT INTO {:' .
-                $this->table .
-                ':} (' .
-                implode(', ', $fields) .
-                ') ' .
+            $query['sql'] = 
+                'INSERT INTO {:' . $this->table . ':} (' . implode(', ', $fields) . ') ' .
                 $this->fromQuery->getString();
             $query['arguments'] = $this->fromQuery->getArguments();
             return $query;

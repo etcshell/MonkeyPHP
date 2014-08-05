@@ -823,12 +823,14 @@ class ExcelReader {
         0x3F => "#333333",
         0x40 => "#000000",
         0x41 => "#FFFFFF",
+
         0x43 => "#000000",
         0x4D => "#000000",
         0x4E => "#FFFFFF",
         0x4F => "#000000",
         0x50 => "#FFFFFF",
         0x51 => "#000000",
+
         0x7FFF => "#000000"
     );
 
@@ -867,8 +869,9 @@ class ExcelReader {
 
     function read16bitstring($data, $start) {
         $len = 0;
-        while (ord($data[$start + $len]) + ord($data[$start + $len + 1]) > 0)
+        while (ord($data[$start + $len]) + ord($data[$start + $len + 1]) > 0) {
             $len++;
+        }
         return substr($data, $start, $len);
     }
 

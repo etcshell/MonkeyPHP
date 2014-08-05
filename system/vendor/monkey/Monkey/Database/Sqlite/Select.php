@@ -121,9 +121,13 @@ class Select extends Query\Select {
         }
 
         // RANGE
-        !empty($this->range) and
-        $query .= "\nLIMIT " . (int)$this->range['length'] . ' OFFSET ' . (int)$this->range['start'];
-        //$this->forUpdate and $query .= ' FOR UPDATE' . ($this->forUpdate===true ? '' : $this->forUpdate) ;
+        if (!empty($this->range)) {
+            $query .= "\nLIMIT " . (int)$this->range['length'] . ' OFFSET ' . (int)$this->range['start'];
+        }
+
+//        if ($this->forUpdate) {
+//            $query .= ' FOR UPDATE' . ($this->forUpdate===true ? '' : $this->forUpdate) ;
+//        }
 
         return $query;
     }

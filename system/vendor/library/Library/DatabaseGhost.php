@@ -36,7 +36,7 @@ class DatabaseGhost {
      * @param string $dbname 数据库名，为空时返回当前连接的数据库
      * @return array
      */
-    public function get_tables($dbname = null) {
+    public function getTables($dbname = null) {
         $sql = 'SHOW TABLES FROM ' . $dbname;
         $tmpArray = $this->query($sql)->fetchAll();
         $tables = array();
@@ -53,7 +53,7 @@ class DatabaseGhost {
      */
     public function backup($table = null) {
         $tables = empty($table) ? $this->getTables() : (is_array($table) ? $table : array($table));
-        $filePre = $this->dataDir . '/' . date('Ymd', TIME);
+        $filePre = $this->dataDir . '/' . date('Ymd', time());
         $tablesStructure = '';
         $i = 0;
         $dataTemp = array();
@@ -94,7 +94,7 @@ class DatabaseGhost {
             file_put_contents($file, $backupData, LOCK_EX);
             $i = 0;
             $dataTemp = array();
-            $dataHead = '';
+            $dataHead = null;
             $backupData = '';
         }
         $file = $filePre . '/' . $this->structureFile;
@@ -122,7 +122,7 @@ class DatabaseGhost {
             return false;
         }
         $handle = opendir($targetDir);
-        $target = '';
+        $target = null;
         $extLen = strlen($this->dataFix);
         $successful = true;
         if ($handle) {
@@ -155,14 +155,14 @@ class DatabaseGhost {
      * @return boolean              成功返回TRUE，失败返回FALSE
      */
     public function importSqlFile($sqlFile, $oldPrefix = '', $newPrefix = '', $separator = ";\n") {
-        $sqlarray = $this->parseFile($sqlFile, $oldPrefix, $newPrefix, $separator);
-        if (empty($sqlarray)) {
+        $sqlArray = $this->parseFile($sqlFile, $oldPrefix, $newPrefix, $separator);
+        if (empty($sqlArray)) {
             return true;
         }
         $successful = true;
         $this->db->beginTransaction();
         try {
-            foreach ($sqlarray as $sql) {
+            foreach ($sqlArray as $sql) {
                 if (!$this->db->exec($sql)) {
                     $successful = false;
                 }

@@ -12,14 +12,14 @@ class Index extends Controller {
      * index action示例，方面名前面必须加“action_”前缀，以标明这是浏览器路由访问的方法
      */
     public function action_index() {
-        $param = $this->getRouteParameter(); //演示从路由中获取参数
+        $param = $this->getRouteParameter('language', ''); //演示从路由中获取参数
         if (empty($param)) {
             echo '--你好hello!--<br/>';
         }
-        if (isset($param['language']) and $param['language'] == 'zh') {
+        if ($param == 'zh') {
             echo '--你好!--<br/>';
         }
-        if (isset($param['language']) and $param['language'] == 'en') {
+        if ($param == 'en') {
             echo '--hello!--<br/>';
         }
         echo date('Y-m-d H:i:s');

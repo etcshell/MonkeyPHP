@@ -659,8 +659,7 @@ class MarkdownExtra extends Markdown {
                     # Check if text inside this tag must be parsed in span mode.
                     $this->mode = $attr_m[2] . $attr_m[3];
                     $spanMode =
-                        $this->mode ==
-                        'span' ||
+                        $this->mode == 'span' ||
                         $this->mode != 'block' &&
                         preg_match('{^<(?:' . $this->containSpanTagsRe . ')\b}', $tag);
 

@@ -233,7 +233,7 @@ final class File implements CacheInterface {
 
     /**
      * 删除缓存文件中指定的内容
-     * @param string $md5Key 要删除的项目的md5_key
+     * @param string $md5Key 要删除的项目的md5Key
      * @param int|bool $pos 要删除的项目的定位指针偏移量
      * @return bool
      */

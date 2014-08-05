@@ -39,7 +39,7 @@ class Exception extends \Exception {
      * @var array
      */
     private static $errorTitle = array(
-        -1 => '致命错误(E_FATAL)',
+        -1 => '其它错误(E_OTHER)',
         1 => '致命错误(E_ERROR)',
         2 => '警告(E_WARNING)',
         4 => '语法解析错误(E_PARSE)',
@@ -56,6 +56,10 @@ class Exception extends \Exception {
     );
 
     public function __construct($message = '', $code = 0, $previous = null, $file = null, $line = null) {
+        if (!is_numeric($code)) {
+            $message = 'Error code: ' . $code . '; ' . $message;
+            $code = -1;
+        }
         parent::__construct($message, $code, $previous);
 
         !is_null($file) and $this->file = $file;

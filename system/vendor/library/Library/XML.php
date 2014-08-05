@@ -15,15 +15,15 @@ class XML {
      * @param string $root
      * @return string
      */
-    public function Encode(&$data, $encoding = 'utf-8', $root = "phpsys.cn") {
+    public function toXML(&$data, $encoding = 'utf-8', $root = "phpsys.cn") {
         $xml = '<?xml version="1.0" encoding="' . $encoding . '"?>';
         $xml .= '<' . $root . '>';
-        $xml .= $this->dataToXML($data);
+        $xml .= $this->toNode($data);
         $xml .= '</' . $root . '>';
         return $xml;
     }
 
-    public function dataToXML(&$data) {
+    public function toNode(&$data) {
         if (is_object($data)) {
             $data = get_object_vars($data);
         }
@@ -31,7 +31,7 @@ class XML {
         foreach ($data as $key => $val) {
             is_numeric($key) and $key = "item id=\"$key\"";
             $xml .= "<$key>";
-            $xml .= (is_array($val) || is_object($val)) ? $this->dataToXML($val) : $val;
+            $xml .= (is_array($val) || is_object($val)) ? $this->toNode($val) : $val;
             list ($key,) = explode(' ', $key);
             $xml .= "</$key>";
         }

@@ -271,12 +271,8 @@ class View {
         //empty($body) and $body= $this->get();
         return
             "<!DOCTYPE html>\n<html>" .
-            "\n<head>\n" .
-            $head .
-            "\n</head>" .
-            "\n<body>\n" .
-            $body .
-            "\n</body>" .
+            "\n<head>\n" . $head . "\n</head>" .
+            "\n<body>\n" . $body . "\n</body>" .
             "\n</html>";
     }
 } 
