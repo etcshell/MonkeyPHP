@@ -64,17 +64,28 @@ class Uploader {
     }
 
     private function toBytes($str) {
-        $val = trim($str);
-        $last = strtolower($str[strlen($str) - 1]);
-        switch ($last) {
-            case 'g':
-                $val *= 1024;
-            case 'm':
-                $val *= 1024;
-            case 'k':
-                $val *= 1024;
+        $powers = array(
+            'b' => 0,
+            'k' => 1,
+            'm' => 2,
+            'g' => 3,
+            't' => 4,
+            'p' => 5,
+            'e' => 6,
+            'z' => 7,
+            'y' => 8
+        );
+        $str = trim($str);
+        strtolower(substr($str, -1)) == 'b' and $str = substr($str, 0, -1);
+        $unit = substr($str, 0, -1);
+        if (isset($powers[$unit])) {
+            $str = substr($str, 0, -1);
         }
-        return $val;
+        else {
+            $unit = 'b';
+        }
+
+        return $str * pow(1024, $powers[$unit]);
     }
 
     /**
