@@ -79,6 +79,7 @@
 ##对结果排序、分组和筛选
 
  1. 排序
+
 		//对id字段做升序排列
         $select->orderBy('id');
         
@@ -86,10 +87,12 @@
         $select->orderBy('id', 'any');
 		
  2. 分组
+
 		//对id字段分组
         $select->groupBy('id');
 
  3. 筛选
+
 		//筛选出 id 字段为5的
         $select->having('id', 5);
         
@@ -102,6 +105,7 @@
         //类似还有havingIsNotNull 和 havingCondition方法 与where的用法差不多
         
  4. 范围
+
 		//筛选出最多 10 结果，从 第 0 个结果算起
         $select->range(10, 0); //和mssql一致
         $select->range(10); //和mssql一致
@@ -114,10 +118,12 @@
         $select->limit(0);
         
 ##执行查询
+
     //辛苦准备那么久了，该执行了
     $stmt = $select->execute();
 		
 ##获取查询结果信息
+
     //获取一条数据，默认为关联数据
     $row = $stmt->fetch();
 
