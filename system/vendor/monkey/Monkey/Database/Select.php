@@ -163,19 +163,19 @@ class Select {
      *
      * 例子：
      * 添加 主表中的所有字段：
-     * field()
+     * fields()
      *
      * 添加 主表中的 'aF1' 字段：
-     * field('f1')
+     * fields('f1')
      *
      * 添加 主表中的 3 个字段：
-     * field('f1', 'f2', 'f3')
+     * fields('f1', 'f2', 'f3')
      *
      * 添加 主表中的 'f1' 字段，并且设置为别名 'aliasF1'：
-     * field(array('f1'=>'aliasF1'))
+     * fields(array('f1'=>'aliasF1'))
      *
      * 添加 主表中的 3 个字段，并且将字段 'f2' 的别名设置为 'aliasF2'
-     * field(array('f1', 'aF2'=>'aliasF2', 'f3')) //即，第二个参数中，可以用字符串键名来设置别名
+     * fields(array('f1', 'aF2'=>'aliasF2', 'f3')) //即，第二个参数中，可以用字符串键名来设置别名
      *
      */
     public function fields($fields = array()) {
