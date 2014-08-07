@@ -63,7 +63,7 @@
     //获取连接
     $conn = $app->database()->getConnection();
     //执行查询，其中参数 $data 表示要插入的数据（其中既包含插入字段名，又包含字段值）
-	$lastInsertId = $conn->insert('article', 'a')
+	$lastInsertId = $conn->insert('article')
             ->fields($data)
             ->execute()
             ->lastInsertId();
