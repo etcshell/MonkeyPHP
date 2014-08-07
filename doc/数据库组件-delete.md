@@ -1,6 +1,6 @@
 ##数据库组件 之 更新数据
 
-更新数据功能都集中在 \Monkey\Database\Update 类中。你需要获取连接并且通过连接来使用这些功能。
+删除数据功能都集中在 \Monkey\Database\Update 类中。你需要获取连接并且通过连接来使用这些功能。
 
 	//获取连接
 	$conn = $app->database()->getConnection();
@@ -79,7 +79,7 @@
     //获取连接
     $conn = $app->database()->getConnection();
     //执行查询，其中参数 $data 表示要更新的数据
-	$affected = $conn->update('article')
+	$affected = $conn->update('article', 'a')
             ->where('a_id', 3)
             ->fields($data)
             ->execute()

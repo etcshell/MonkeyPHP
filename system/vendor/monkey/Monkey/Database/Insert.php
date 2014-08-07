@@ -89,13 +89,12 @@ class Insert {
      *
      * @return $this
      */
-    public function setFields(array $fields) {
+    public function fields(array $fields) {
         if (is_numeric(key($fields))) {
             $this->insertFields = $fields;
         }
         else {
             $this->insertFields = array_keys($fields);
-            $this->insertRow = array();
             $this->insertRow[] = array_values($fields);
         }
 
@@ -109,9 +108,9 @@ class Insert {
      *
      * @return $this
      */
-    public function setFieldsByQuery(Select $query) {
+    public function fieldsByQuery(Select $query) {
         $fields = array_merge(array_keys($query->getFields()), array_keys($query->getFieldOfExpressions()));
-        return $this->setFields($fields);
+        return $this->fields($fields);
     }
 
     /**
