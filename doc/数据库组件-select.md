@@ -139,4 +139,43 @@
     }
 
     //这个stmt是继承PDOStatement的，所以PDOStatement的功能都有！
-        
+
+##统计查询
+当你设置好了查询条件后，在真正查询前还可以预先知道满足条件的数据一共有多少行，如下
+
+	//指定统计别名
+    $newSelect = $select->getCountQuery('myCountAlias');
+    $row = $newSelect->execute()->fetch();
+    $count = $row['myCountAlias'];
+    
+    //习惯了可以像下面这样
+    $row = $select->getCountQuery('myCountAlias')->execute()->fetch();
+    $count = $row['myCountAlias'];
+    
+    //也可以使用默认的统计别名 mk_count_value
+    $row = $select->getCountQuery()->execute()->fetch();
+    $count = $row['mk_count_value'];
+    
+需要注意的是：
+ 1. getCountQuery返回的是一个新的 $newSelect 选择对象，原来的选择对象并没有发生变化，方便继续使用原来的查询获取真正具体的数据行。
+ 2. getCountQuery返回的是新的选择对象，所以必须在准备好了查询之后才能使用。
+ 3. 所有以get开头的方法都有先设置后获取的要求。
+
+##联合查询
+联合方法有多种：join、innerJoin、leftJoin、rightJoin，其中join和innerJoin等价的
+
+	//有 3 个参数，分别是：联合的表名、它的别名、和别的表联合的条件
+    $select->join('other_table2', 'aliasT2', 'aliasT2.t2_id = aliasT1.t2_id');
+
+##综合例子
+
+    //获取连接
+    $conn = $app->database()->getConnection();
+    //执行查询，其中参数 $page 表示页码， $pageLength 表示每页数据条数
+	$data = $conn->select('article', 'a')
+            ->fields('a_id', 'title', 'a_name', 'top_sort', 'add_time', 'click')
+            ->join('article_category', 'ac', 'a.ac_id = ac.ac_id')
+            ->addFields('ac', array('caption' => 'ac_caption'))
+            ->orderBy('a.a_id', 'DESC')
+            ->range($pageLength, $page*$pageLength)
+            ->execute()->fetchAll();

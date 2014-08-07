@@ -772,12 +772,14 @@ class Select {
     /**
      * 获取一个统计查询
      *
+     * @param string $countAlias 结果集中显示统计数的别名
+     *
      * @return Select
      */
-    public function getCountQuery() {
+    public function getCountQuery($countAlias = 'mk_count_value') {
         $count = $this->prepareCountQuery();
         $query = $this->connection->select($count);
-        $query->addFieldByExpression('mk_count_value', 'COUNT(*)');
+        $query->addFieldByExpression($countAlias, 'COUNT(*)');
         return $query;
     }
 
