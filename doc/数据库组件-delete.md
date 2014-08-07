@@ -61,7 +61,7 @@
 
     //获取连接
     $conn = $app->database()->getConnection();
-    //执行查询，其中参数 $data 表示要删除的数据
+    //执行查询
 	$affected = $conn->delete('article')
             ->where('a_id', 3)
             ->execute()
