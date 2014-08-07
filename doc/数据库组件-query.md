@@ -21,4 +21,4 @@ Connection 类最大的特点就是 改写了 query 方法：
 
 还可以通过 Connection 类提供的 getPrepareSQL 方法获取提交到数据库执行之前的预处理语句；
 
-	$prepareSql = $stmt->getPrepareSQL();
+	$prepareSql = $conn->getPrepareSQL();
