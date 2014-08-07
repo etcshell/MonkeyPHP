@@ -11,7 +11,7 @@
     //获取选择数据功能，并且给主表指定一个别名
     $select = $conn->select('tableName', 'alias');
 
-下面捡常用的功能介绍，其它功能见api列表。
+下面捡常用的功能介绍，其它功能见源码。
 
 ##添加结果集中需要的字段
 
@@ -43,7 +43,7 @@
         //添加别名为tableAlias的表中的 3 个字段，并且将字段 'f2' 的别名设置为 'aliasF2'
         $select->fields('tableAlias', array('f1', 'aF2'=>'aliasF2', 'f3'));
 		
-这个方法和添加主表字段方法差不多，区别有二，一是两个参数，第一个参数必须是表别名，第二个参数才是选择的字段；二是第二个参数有多个字段或有字段别名时必须为数组。
+    这个方法和添加主表字段方法差不多，区别有二，一是两个参数，第一个参数必须是表别名，第二个参数才是选择的字段；二是第二个参数有多个字段或有字段别名时必须为数组。
 
  3. 添加一个表达式到结果集中
 
@@ -178,4 +178,5 @@
             ->addFields('ac', array('caption' => 'ac_caption'))
             ->orderBy('a.a_id', 'DESC')
             ->range($pageLength, $page*$pageLength)
-            ->execute()->fetchAll();
+            ->execute()
+            ->fetchAll();

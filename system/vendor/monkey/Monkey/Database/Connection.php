@@ -296,7 +296,7 @@ class Connection extends PDO {
     /**
      * 获取选择查询对象
      *
-     * @param $table
+     * @param string|Select $table
      * @param null $alias
      * @param array $options
      *

@@ -169,25 +169,13 @@ class Update {
     }
 
     /**
-     * 添加更新字段值列表
-     *
-     * @param array $fieldsValue 如 array(field1=>value1,...)
-     *
-     * @return $this
-     */
-    public function addFieldsValue(array $fieldsValue) {
-        $this->fields = array_merge($this->fields, $fieldsValue);
-        return $this;
-    }
-
-    /**
      * 设置更新字段值列表
      *
      * @param array $fieldsValue 如 array(field1=>value1,...)
      *
      * @return $this
      */
-    public function setFieldsValue(array $fieldsValue) {
+    public function set(array $fieldsValue) {
         $this->fields = $fieldsValue;
         return $this;
     }
@@ -201,7 +189,7 @@ class Update {
      *
      * @return $this
      */
-    public function addFieldsValueByExpression($field, $expression, array $arguments = NULL) {
+    public function setExpression($field, $expression, array $arguments = NULL) {
         $this->expressionFields[$field] = array(
             'expression' => $expression,
             'arguments' => $arguments,

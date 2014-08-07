@@ -123,7 +123,7 @@ class Select {
      * 构造方法
      *
      * @param Connection $connection
-     * @param string $table
+     * @param string|Select $table
      * @param null $alias
      * @param array $options
      */
