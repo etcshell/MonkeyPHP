@@ -45,6 +45,13 @@ class App {
     public $TIME;
 
     /**
+     * 响应字符集
+     *
+     * @var string
+     */
+    public $CHARSET = 'UTF-8';
+
+    /**
      * 调试模式
      *
      * @var int
@@ -143,6 +150,20 @@ class App {
     protected $configFile = null;
 
     /**
+     * 默认时区设置
+     *
+     * @var string
+     */
+    public $timezone = 'PRC';
+
+    /**
+     * 网站的主域名
+     *
+     * @var string
+     */
+    public $domain = '';
+
+    /**
      * 构造方法
      *
      * @param string $staticDir 静态资源目录
@@ -166,16 +187,21 @@ class App {
         //设置临时目录
         !$this->TEMP and $this->TEMP = $appDir . '/temp';
 
-        //加载配置，并设置时区
+        //设置时区
+        date_default_timezone_set($this->timezone);
+
+        //加载配置
         !$this->configFile and $this->configFile = $appDir . '/data/config.php';
         $this->config = new Config($this->configFile, $this->TEMP);
-        date_default_timezone_set($this->config->get('timezone', 'PRC'));
 
         //加载请求对象
         $this->request = $request = new Request();
 
         //获取请求时间
         $this->TIME = $request->getTime();
+
+        //修补主域名
+        !$this->domain and $this->domain = $request->getDomain();
 
         //设置前端资源目录 及其网址
         $documentRoot = $request->getDocumentRoot();

@@ -43,13 +43,6 @@ class Response {
     private $charset = 'UTF-8';
 
     /**
-     * 响应主域名
-     *
-     * @var string
-     */
-    private $domain = '';
-
-    /**
      * 内容是否已输出
      *
      * @var bool
@@ -179,12 +172,7 @@ class Response {
             $this->setHttpHeaderOnly(true);
         }
 
-        $this->charset = $app->config()->get('response_charset', 'UTF-8');
-        $this->domain = $app->config()->get('domain', null);
-
-        if (empty($this->domain)) {
-            $this->domain = $app->request()->getDomain();
-        }
+        $this->charset = $app->CHARSET;
 
         $app->shutdown()->register(array($this, 'send'));
 
@@ -835,7 +823,7 @@ class Response {
                 'value' => $value,
                 'expire' => $expire ? $expire + time() : 0,
                 'path' => $path,
-                'domain' => $domain ? $domain : $this->domain,
+                'domain' => $domain ? $domain : $this->app->domain,
                 'secure' => $secure ? true : false,
                 'httpOnly' => $httpOnly,
             );

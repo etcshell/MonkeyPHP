@@ -1,9 +1,6 @@
 <?php
 
 return array(
-    'timezone' => 'PRC',
-    'response_charset' => 'UTF-8',
-    'domain' => 'localhost', //网站主域名
 
     'cache' => array(
         'default_provider' => 'apc',

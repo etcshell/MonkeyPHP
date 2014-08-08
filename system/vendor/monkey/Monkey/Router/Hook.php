@@ -1,13 +1,4 @@
 <?php
-/**
- * Project MonkeyPHP
- *
- * PHP Version 5.3.9
- *
- * @package   Monkey\Router
- * @author    黄易 <582836313@qq.com>
- * @version   GIT:<git_id>
- */
 namespace Monkey\Router;
 
 use Monkey;
